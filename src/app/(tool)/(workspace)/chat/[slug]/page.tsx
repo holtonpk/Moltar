@@ -1,0 +1,63 @@
+"use client";
+
+import React, {use} from "react";
+import {Project} from "./project";
+import {ProjectType} from "@/types";
+import {ChatProvider2} from "@/context/chat-context2";
+import {db} from "@/config/firebase";
+import {doc, getDoc} from "firebase/firestore";
+
+interface Params {
+  params: {
+    slug: string;
+  };
+}
+
+export default function Page({params}: Params) {
+  const [loading, setLoading] = React.useState(true);
+  const [project, setProject] = React.useState<ProjectType>();
+
+  React.useEffect(() => {
+    const fetchProject = async (projectId: string) => {
+      const docRef = doc(
+        db,
+        "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects",
+        projectId
+      );
+      const docSnap = await getDoc(docRef);
+      console.log("Document data: ======", docSnap.data());
+
+      setProject(docSnap.data() as ProjectType);
+      setLoading(false);
+    };
+
+    fetchProject(params.slug);
+  }, [params.slug]);
+
+  return (
+    <>
+      {loading ? (
+        "loading..."
+      ) : (
+        <ChatProvider2 projectId={params.slug}>
+          <Project project={project as ProjectType} />
+        </ChatProvider2>
+      )}
+    </>
+  );
+}
+
+const dummyData = {
+  uploadId: "yljgm",
+  chat: null,
+  upload: {
+    id: "yljgm",
+    path: "https://firebasestorage.googleapis.com/v0/b/moltar-bc665.appspot.com/o/yljgm?alt=media&token=e9d2eaea-e713-44f2-bd03-17d93972430b",
+    title: "Casner Park strategy.pdf",
+  },
+  createdAt: {
+    seconds: 1709762996,
+    nanoseconds: 270000000,
+  },
+  id: "ecdok4",
+};

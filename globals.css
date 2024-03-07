@@ -1,0 +1,214 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap&family=Poppins:wght@400;500;600;700;800&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap"); */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@font-face {
+  font-family: "porter_sans_blockblock";
+  src: url(/fonts/porter-sans-inline-block-webfont.eot);
+  src: url(/fonts/porter-sans-inline-block-webfont.eot?#iefix)
+      format("embedded-opentype"),
+    url(/fonts/porter-sans-inline-block-webfont.woff) format("woff"),
+    url(/fonts/porter-sans-inline-block-webfont.ttf) format("truetype"),
+    url(/fonts/porter-sans-inline-block-webfont.svg#porter_sans_blockblock)
+      format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.hero-font {
+  font-family: "porter_sans_blockblock", Arial, sans-serif;
+}
+
+@layer base {
+  :root {
+    /* Theme colors */
+    --red: 0 100% 50;
+    --orange: 21 92% 47%;
+    --yellow: 33 86% 51%;
+    --green: 138 40% 48%;
+    --blue: 212 90% 58%;
+    --purple: 259 82% 67%;
+    /* Component colors */
+    --background: 210 9% 9%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Theme colors */
+    --red: 0 100% 50;
+    --orange: 21 92% 47%;
+    --yellow: 33 86% 51%;
+    --green: 138 40% 48%;
+    --blue: 212 90% 58%;
+    --purple: 259 82% 67%;
+
+    /* Component colors */
+    --background: 210 9% 9%;
+    --foreground: 0 0% 98%;
+    --card: 195 5% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 6% 20%;
+
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+.b-b {
+  border: 1px solid blue;
+}
+
+.b-r {
+  border: 1px solid red;
+}
+
+.fade-in {
+  animation: fadeIn 800ms ease-in-out;
+}
+
+.fade-in-fast {
+  animation: fadeIn 200ms ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.project-hover-bg-gradient {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    90deg,
+    rgba(33, 35, 37, 0.2) 0%,
+    rgba(33, 35, 37, 1) 30%
+  );
+}
+
+.project-hover-bg-gradient-active {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    90deg,
+    rgba(44, 47, 48, 0.2) 0%,
+    rgba(44, 47, 48, 1) 30%
+  );
+}
+
+.textarea-no-resize {
+  resize: none;
+}
+
+.border-gradient {
+  position: relative; /* Make sure the parent is positioned */
+  border-radius: 8px; /* Apply border radius to the parent element */
+  overflow: hidden; /* Ensure gradient doesn't overflow */
+  z-index: 1; /* Ensure the parent is above the pseudo-element */
+}
+
+.border-gradient::after {
+  content: ""; /* Add content to the pseudo-element */
+  position: absolute; /* Position the pseudo-element */
+  top: 0; /* Adjust to cover the parent's border */
+  left: 0; /* Adjust to cover the parent's border */
+  right: 0; /* Adjust to cover the parent's border */
+  bottom: 0; /* Adjust to cover the parent's border */
+  z-index: -1; /* Ensure the pseudo-element is behind the content */
+  border-radius: inherit; /* Inherit border-radius from the parent */
+  background: linear-gradient(
+    135deg,
+    rgba(145, 100, 240, 1) 0%,
+    rgba(53, 142, 244, 1) 50%,
+    rgba(74, 171, 103, 1) 100%
+  ); /* Apply gradient as background */
+}
+
+textarea:focus,
+input:focus {
+  outline: 0;
+}
+
+.gradient-fill {
+  background-image: linear-gradient(
+    135deg,
+    rgba(145, 100, 240, 1) 0%,
+    rgba(53, 142, 244, 1) 50%,
+    rgba(74, 171, 103, 1) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.chat-box-bg-gradient {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    180deg,
+    hsl(var(--card) / 0) 0%,
+    hsl(var(--card) / 1) 10%
+  );
+}
+
+.dark .chat-box-bg-gradient {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    180deg,
+    rgba(47, 50, 51, 0) 0%,
+    rgba(47, 50, 51, 1) 10%
+  );
+}
+
+.chat-box-bg-gradient {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    180deg,
+    hsl(var(--card) / 0) 0%,
+    hsl(var(--card) / 1) 10%
+  );
+}
+
+.blurBack {
+  backdrop-filter: blur(10px);
+}
+
+.blurBack-light {
+  backdrop-filter: blur(2px);
+}
+
+.zoom-75 {
+  zoom: 0.75;
+}

@@ -1,7 +1,7 @@
 import React from "react";
-
+import {Uploads} from "./uploads";
 const Page = () => {
-  return <div>Home Page</div>;
+  return <Uploads />;
 };
 
 export default Page;
