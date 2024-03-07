@@ -12,7 +12,17 @@ import {
 } from "firebase/storage";
 
 import {app} from "@/config/firebase";
+import {
+  doc,
+  getDocs,
+  onSnapshot,
+  setDoc,
+  query,
+  collection,
+  deleteDoc,
+} from "firebase/firestore";
 
+import {db} from "@/config/firebase";
 const UploadsContext = createContext<any | null>(null);
 
 export function useUploads() {
@@ -25,22 +35,34 @@ interface Props {
 
 export const UploadsProvider = ({children}: Props) => {
   const [uploadList, setUploadList] = React.useState<UploadType[]>();
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [filterList, setFilterList] = useState<string[]>();
 
-  const setStateToLocalStorage = () => {
-    const userUploads = localStorage.getItem("userUploads");
-    if (userUploads) {
-      setUploadList(JSON.parse(userUploads));
-      setFilterList(
-        JSON.parse(userUploads).map((upload: UploadType) => upload.id)
-      );
-    }
-  };
+  // const setStateToLocalStorage = () => {
+  //   // const userUploads = localStorage.getItem("userUploads");
+
+  //   if (userUploads) {
+  //     setUploadList(JSON.parse(userUploads));
+  //     setFilterList(
+  //       JSON.parse(userUploads).map((upload: UploadType) => upload.id)
+  //     );
+  //   }
+  // };
 
   useEffect(() => {
-    setStateToLocalStorage();
-    setLoading(false);
+    const q = query(
+      collection(db, "users/h9h731yJGLdovlUrQgmEDB2ehr23/uploads")
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const uploads = querySnapshot.docs.map((doc) => doc.data());
+      const savedProjects = uploads as UploadType[];
+
+      setUploadList(savedProjects);
+      setFilterList(savedProjects.map((upload: UploadType) => upload.id));
+    });
+
+    // Cleanup this component
+    return () => unsubscribe();
   }, []); // Empty dependency array ensures effect runs only once
 
   async function uploadFileToFirebase(file: File, fileID: string) {
@@ -63,19 +85,15 @@ export const UploadsProvider = ({children}: Props) => {
       id: fileID,
       path: firebaseUrl,
     };
-    const userStorage = localStorage.getItem("userUploads");
-    if (!userStorage) {
-      localStorage.setItem("userUploads", JSON.stringify([upload]));
-    } else {
-      localStorage.setItem(
-        "userUploads",
-        JSON.stringify([...JSON.parse(userStorage), upload])
-      );
-    }
 
+    // save upload ref to firebase firestore
+    const docRef = doc(
+      db,
+      "users/h9h731yJGLdovlUrQgmEDB2ehr23/uploads",
+      fileID
+    );
+    await setDoc(docRef, upload);
     return upload;
-
-    // save url userUploads in local storage
   }
 
   async function FileDrop(files: File[]) {
@@ -95,25 +113,13 @@ export const UploadsProvider = ({children}: Props) => {
   }
 
   const ReNameUpload = (fileId: string, name: string) => {
-    const storage = localStorage.getItem("userUploads");
-    if (storage) {
-      const userStorage = JSON.parse(storage);
-      const newStorage = userStorage.map((upload: UploadType) => {
-        if (upload.id === fileId) {
-          upload.title = name;
-        }
-        return upload;
-      });
-      localStorage.setItem("userUploads", JSON.stringify(newStorage));
-    }
-    setUploadList(
-      uploadList?.map((upload) => {
-        if (upload.id === fileId) {
-          upload.title = name;
-        }
-        return upload;
-      })
+    // renmame file field in firebase storage
+    const docRef = doc(
+      db,
+      "users/h9h731yJGLdovlUrQgmEDB2ehr23/uploads",
+      fileId
     );
+    setDoc(docRef, {title: name}, {merge: true});
   };
 
   async function DeleteUploadFromFirebase(fileId: string) {
@@ -123,20 +129,13 @@ export const UploadsProvider = ({children}: Props) => {
   }
 
   async function DeleteUpload(fileId: string) {
-    const storage = localStorage.getItem("userUploads");
-    if (storage) {
-      const userStorage = JSON.parse(storage);
-      const newStorage = userStorage.filter(
-        (upload: UploadType) => upload.id !== fileId
-      );
-      localStorage.setItem("userUploads", JSON.stringify(newStorage));
-    }
-    await DeleteUploadFromFirebase(fileId);
-    setUploadList((prevUploadList) =>
-      prevUploadList
-        ? prevUploadList.filter((upload) => upload.id !== fileId)
-        : []
+    const docRef = doc(
+      db,
+      "users/h9h731yJGLdovlUrQgmEDB2ehr23/uploads",
+      fileId
     );
+    await deleteDoc(docRef);
+    await DeleteUploadFromFirebase(fileId);
   }
 
   const FilterUploads = (search: string) => {
