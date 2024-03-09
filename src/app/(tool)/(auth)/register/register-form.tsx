@@ -37,7 +37,7 @@ const RegisterForm = () => {
     );
 
     if (createAccountResult?.success) {
-      router.push("/onboarding/plan");
+      router.push("/upload");
     }
     if (createAccountResult?.error === "auth/email-already-in-use") {
       setError("email", {
@@ -89,7 +89,7 @@ const RegisterForm = () => {
       handleLoginError(error);
     } finally {
       setIsGoogleLoading(false);
-      router.push("/onboarding/plan");
+      router.push("/upload");
     }
   }
 

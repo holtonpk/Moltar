@@ -7,7 +7,7 @@ import {useForm} from "react-hook-form";
 import {toast} from "@/components/ui/use-toast";
 import {Input} from "@/components/ui/input";
 import * as z from "zod";
-// import { useAuth } from "@/context/user-auth";
+import {useAuth} from "@/context/user-auth";
 import {PasswordInput} from "@/components/ui/password-input";
 import {Icons} from "@/components/icons";
 import {useRouter} from "next/navigation";
@@ -16,7 +16,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
 
-  // const {signIn, logInWithGoogle} = useAuth()!;
+  const {signIn, logInWithGoogle} = useAuth()!;
   type FormData = z.infer<typeof userAuthSchema>;
   const {
     register,
@@ -26,15 +26,16 @@ const LoginForm = () => {
   } = useForm<FormData>({
     resolver: zodResolver(userAuthSchema),
   });
+  const router = useRouter();
 
   async function onSubmit(data: FormData) {
     setIsLoading(true);
-    // const signInResult = await signIn(data.email, data.password);
-    const signInResult = {success: true};
+    const signInResult = await signIn(data.email, data.password);
+
     setIsLoading(false);
     console.log("ress", signInResult);
     if (signInResult?.success) {
-      return;
+      router.push("/upload");
     }
     if (signInResult?.error === "auth/user-not-found") {
       setError("email", {
@@ -83,8 +84,7 @@ const LoginForm = () => {
   async function googleSingIn(): Promise<void> {
     try {
       setIsGoogleLoading(true);
-      // const createAccountResult = await logInWithGoogle();
-      const createAccountResult = {success: true};
+      const createAccountResult = await logInWithGoogle();
 
       if (createAccountResult.error) {
         handleLoginError(createAccountResult.error);
