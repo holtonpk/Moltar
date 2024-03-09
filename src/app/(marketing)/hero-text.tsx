@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {LinkButton} from "@/components/ui/link";
 import {Icons} from "@/components/icons";
-// import { siteConfig } from "@/config/site";
+
 type HeaderProps = {
   text: string;
   gradientClass: string;
