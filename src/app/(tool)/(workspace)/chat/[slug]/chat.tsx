@@ -9,6 +9,7 @@ import {doc, setDoc, serverTimestamp} from "firebase/firestore";
 import {useChat} from "@/context/chat-context2";
 import {ChatLog, UploadType} from "@/types";
 import {useRouter} from "next/navigation";
+import {useAuth} from "@/context/user-auth";
 
 import {
   Dialog,
@@ -102,26 +103,25 @@ const Header = () => {
   const [selectedColor, setSelectedColor] = React.useState<string>(
     openProject?.color || ""
   );
-  // useEffect(() => {
-  //   if (!openProject?.name) {
-  //     if (project?.id) generateNewProject(project?.id);
-  //   }
-  // }, [openProject, project]);
+
+  const {currentUser, unSubscribedUserId} = useAuth()!;
 
   async function createNewProject(file: UploadType) {
     const id = Math.random().toString(36).substring(7);
 
-    await setDoc(doc(db, "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects", id), {
-      id: id,
-      uploadId: file.id,
-      chat: null,
-      upload: file,
-      createdAt: serverTimestamp(),
-    });
+    await setDoc(
+      doc(db, `users/${currentUser?.uid || unSubscribedUserId}/projects`, id),
+      {
+        id: id,
+        uploadId: file.id,
+        chat: null,
+        upload: file,
+        createdAt: serverTimestamp(),
+      }
+    );
 
     return id;
   }
-  console.log("render ==");
 
   const router = useRouter();
   async function goToNewProject() {
@@ -141,7 +141,7 @@ const Header = () => {
 
       <button
         onClick={() => setOpenMenu(true)}
-        className="flex gap-2 items-center w-full justify-center hover:opacity-60"
+        className="flex w-fit gap-2 items-center mx-auto justify-center hover:opacity-60"
       >
         <div
           className="h-4 w-4 rounded-full"

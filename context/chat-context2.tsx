@@ -17,6 +17,7 @@ import {ProjectType, ChatLog} from "@/types";
 const ChatContext = createContext<ChatContextType | null>(null);
 
 const LOCAL_STORAGE_KEY = "userProjects";
+import {useAuth} from "@/context/user-auth";
 
 export function useChat() {
   return useContext(ChatContext);
@@ -44,11 +45,11 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
   const [project, setProject] = useState<ProjectType | null>(null);
   const [chat, setChat] = useState<ChatLog[] | null>(null);
 
-  console.log("render ((())))");
+  const {currentUser, unSubscribedUserId} = useAuth()!;
 
   useEffect(() => {
     const q = query(
-      collection(db, "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects")
+      collection(db, `users/${currentUser?.uid || unSubscribedUserId}/projects`)
     );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -71,7 +72,7 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
     const saveProject = () => {
       const projectRef = doc(
         db,
-        "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects",
+        `users/${currentUser?.uid || unSubscribedUserId}/projects`,
         projectId
       );
       setDoc(projectRef, project, {merge: true}).then(() => {
@@ -169,7 +170,7 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
     //  update the project name in firestore
     const projectRef = doc(
       db,
-      "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects",
+      `users/${currentUser?.uid || unSubscribedUserId}/projects`,
       projectId
     );
     await setDoc(projectRef, {name: newName}, {merge: true}).then(() => {
@@ -181,7 +182,7 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
     //  update the project color in firestore
     const projectRef = doc(
       db,
-      "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects",
+      `users/${currentUser?.uid || unSubscribedUserId}/projects`,
       projectId
     );
     await setDoc(projectRef, {color: color}, {merge: true}).then(() => {
@@ -191,7 +192,7 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
 
   const generateProjectName = (prompt: string) => {
     // this will be on the server to generate a relevant name
-    return `${project?.upload.title} - ${prompt.slice(0, 20)}`;
+    return `${project?.upload.title.slice(0, 10)} - ${prompt.slice(0, 10)}`;
   };
 
   const generateTagColor = () => {

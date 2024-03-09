@@ -23,6 +23,8 @@
 
 @layer base {
   :root {
+    --background-url: url("/_static/grid.svg");
+
     /* Theme colors */
     --red: 0 100% 50;
     --orange: 21 92% 47%;
@@ -54,6 +56,7 @@
   }
 
   .dark {
+    --background-url: url("/_static/grid-dark.svg");
     /* Theme colors */
     --red: 0 100% 50;
     --orange: 21 92% 47%;

@@ -10,8 +10,8 @@ export const Navbar = () => {
 
   return (
     <div
-      style={{width: collapsed ? "50px" : "30%"}}
-      className={`max-w-[250px] h-full flex flex-col pr-4  relative z-40 transition-all duration-300 ease-in-out 
+      style={{width: collapsed ? "50px" : "225px"}}
+      className={`h-full flex flex-col pr-4  relative z-40 transition-all duration-300 ease-in-out 
     
     `}
     >
@@ -29,7 +29,7 @@ export const Navbar = () => {
 
       <div className="h-[100px] mt-auto relative flex flex-col justify-between">
         <UserInfo collapsed={collapsed} />
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between mt-auto">
           {!collapsed && <ModeToggle />}
           <button
             onClick={() => setCollapsed(!collapsed)}

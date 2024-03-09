@@ -6,6 +6,8 @@ import {ProjectType} from "@/types";
 import {ChatProvider2} from "@/context/chat-context2";
 import {db} from "@/config/firebase";
 import {doc, getDoc} from "firebase/firestore";
+import {useAuth} from "@/context/user-auth";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface Params {
   params: {
@@ -17,11 +19,13 @@ export default function Page({params}: Params) {
   const [loading, setLoading] = React.useState(true);
   const [project, setProject] = React.useState<ProjectType>();
 
+  const {currentUser, unSubscribedUserId} = useAuth()!;
+
   React.useEffect(() => {
     const fetchProject = async (projectId: string) => {
       const docRef = doc(
         db,
-        "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects",
+        `users/${currentUser?.uid || unSubscribedUserId}/projects`,
         projectId
       );
       const docSnap = await getDoc(docRef);
@@ -32,12 +36,20 @@ export default function Page({params}: Params) {
     };
 
     fetchProject(params.slug);
-  }, [params.slug]);
+  }, [params.slug, unSubscribedUserId, currentUser?.uid]);
 
   return (
     <>
       {loading ? (
-        "loading..."
+        <div className="flex">
+          <div className="w-[55%] flex flex-col justify-between gap-4 items-center pt-6">
+            <Skeleton className="gap-4 flex-grow bg-primary/40   w-[80%]" />
+
+            <Skeleton className="h-20 bg-primary/40 w-full  rounded-none" />
+          </div>
+
+          <Skeleton className="h-screen bg-primary/40 w-[45%] rounded-none" />
+        </div>
       ) : (
         <ChatProvider2 projectId={params.slug}>
           <Project project={project as ProjectType} />

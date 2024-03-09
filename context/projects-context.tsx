@@ -20,6 +20,7 @@ import {
   deleteDoc,
   orderBy,
 } from "firebase/firestore";
+import {useAuth} from "@/context/user-auth";
 
 const ProjectsContext = createContext<ProjectsContextType | null>(null);
 
@@ -47,6 +48,9 @@ interface Props {
 
 export const ProjectsProvider = ({children}: Props) => {
   // this is for displaying the projects only
+
+  const {currentUser, unSubscribedUserId} = useAuth()!;
+
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [displayedProjects, setDisplayedProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -58,11 +62,12 @@ export const ProjectsProvider = ({children}: Props) => {
   const projectsRef = useRef<ProjectType[]>([]);
   const displayedProjectsRef = useRef<ProjectType[]>([]);
 
-  console.log("projects render -------------");
-
   useEffect(() => {
     const q = query(
-      collection(db, "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects"),
+      collection(
+        db,
+        `users/${currentUser?.uid || unSubscribedUserId}/projects`
+      ),
       orderBy("createdAt", "desc")
     );
 
@@ -73,14 +78,11 @@ export const ProjectsProvider = ({children}: Props) => {
         return project.name && project.color && project.uploadId;
       });
 
-      console.log("dProjects", projectsRef.current.length);
-
       if (
         dProjects.length > displayedProjectsRef.current.length &&
         projectsRef.current.length > 1
       ) {
         setAddingNewAnimation(true);
-        console.log("adding new project &&&&&&");
       }
 
       setProjects(savedProjects);
@@ -92,28 +94,13 @@ export const ProjectsProvider = ({children}: Props) => {
 
     // Cleanup this component
     return () => unsubscribe();
-  }, []);
-
-  // useEffect(() => {
-  //   const q = query(
-  //     collection(db, "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects")
-  //   );
-
-  //   const unsubscribe = onSnapshot(q, (querySnapshot) => {
-  //     const projectsData = querySnapshot.docs.map((doc) => doc.data());
-  //     const savedProjects = projectsData as ProjectType[];
-  //     setProjects(savedProjects);
-  //   });
-
-  //   // Cleanup this component
-  //   return () => unsubscribe();
-  // }, []);
+  }, [currentUser]);
 
   async function ChangeProjectName(id: string, newName: string) {
     //  update the project name in firestore
     const projectRef = doc(
       db,
-      "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects",
+      `users/${currentUser?.uid || unSubscribedUserId}/projects`,
       id
     );
     await setDoc(projectRef, {name: newName}, {merge: true}).then(() => {
@@ -125,7 +112,7 @@ export const ProjectsProvider = ({children}: Props) => {
     //  update the project color in firestore
     const projectRef = doc(
       db,
-      "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects",
+      `users/${currentUser?.uid || unSubscribedUserId}/projects`,
       id
     );
     await setDoc(projectRef, {color: color}, {merge: true}).then(() => {
@@ -136,7 +123,7 @@ export const ProjectsProvider = ({children}: Props) => {
   //  delete the project from firestore
   async function DeleteProject(id: string) {
     await deleteDoc(
-      doc(db, "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects", id)
+      doc(db, `users/${currentUser?.uid || unSubscribedUserId}/projects`, id)
     ).then(() => {
       console.log("Document successfully deleted!");
     });

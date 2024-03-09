@@ -6,26 +6,26 @@ import {Icons} from "@/components/icons";
 import UploadsPanel from "./uploads-pannel";
 import {useUploads} from "@/context/upload-context";
 import {useToast} from "@/components/ui/use-toast";
-
+import {useAuth} from "@/context/user-auth";
 //  these need to be moved to a types file
 
 export const Uploads = () => {
+  const {currentUser} = useAuth()!;
+
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
 
   const {uploadList, setUploadList, loading, filterList, resetFilter} =
     useUploads();
 
-  console.log("uploadList render **************");
-
   return (
-    <div className=" flex flex-col items-center max-h-full h-full relative">
+    <div className=" flex flex-col items-center max-h-full h-full relative ">
       <UploadHeader />
       {loading ? (
         <div className="flex flex-col items-center justify-center h-full w-full ">
           <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
         </div>
       ) : (
-        <div className="h-full relative w-full ">
+        <div className="h-full relative w-full max-w-full ">
           <FileDrop />
           {!uploadList || uploadList.length === 0 ? (
             <EmptyUploadList />

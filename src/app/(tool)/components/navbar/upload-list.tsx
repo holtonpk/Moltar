@@ -36,47 +36,87 @@ import {useProjects} from "@/context/projects-context";
 import {Input} from "@/components/ui/input";
 import {ProjectType} from "@/types";
 import {useSelectedLayoutSegments, useRouter} from "next/navigation";
+import {useAuth} from "@/context/user-auth";
 
 export const UploadList = ({collapsed}: {collapsed: boolean}) => {
   const {displayedProjects, loading, addingNewAnimation} = useProjects()!;
+  const {currentUser, setShowLoginModal, setNewUser} = useAuth()!;
 
   return (
     <>
-      {loading ? (
-        <div className="flex-grow  flex justify-center pt-20 ">
-          <Icons.loader className="animate-spin h-6 w-6 text-white" />
-        </div>
-      ) : (
+      {currentUser ? (
         <>
-          {collapsed ? (
-            <div className="flex flex-col items-start mx-auto w-6 ">
-              {displayedProjects.map((project) => (
-                <CollapsedProject key={project.id} project={project} />
-              ))}
+          {loading ? (
+            <div className="flex-grow  flex justify-center pt-20 ">
+              <Icons.loader className="animate-spin h-6 w-6 text-white" />
             </div>
           ) : (
-            <div
-              className={`flex flex-col  relative   flex-grow overflow-scroll fade-in
+            <>
+              {collapsed ? (
+                <div className="flex flex-col items-start mx-auto w-6 ">
+                  {displayedProjects.map((project) => (
+                    <CollapsedProject key={project.id} project={project} />
+                  ))}
+                </div>
+              ) : (
+                <div
+                  className={`flex flex-col  relative   flex-grow overflow-scroll fade-in
     `}
-            >
-              <div className="flex justify-between items-center pl-2">
-                <span className="text-sm font-bold text-white">Your Chats</span>
-              </div>
-              <div className="flex flex-col items-start  mt-2">
-                {addingNewAnimation ? (
-                  <>
-                    <NewProject project={displayedProjects[0]} />
-                    {displayedProjects.slice(1).map((project: ProjectType) => (
-                      <Project key={project.id} project={project} />
-                    ))}
-                  </>
-                ) : (
-                  <>
-                    {displayedProjects.map((project: ProjectType) => (
-                      <Project key={project.id} project={project} />
-                    ))}
-                  </>
-                )}
+                >
+                  <div className="flex justify-between items-center pl-2">
+                    <span className="text-sm font-bold text-white">
+                      Your Chats
+                    </span>
+                  </div>
+                  {displayedProjects.length === 0 && (
+                    <div className="flex-grow flex items-center justify-center">
+                      <p className="text-white text-lg">No chats yet</p>
+                    </div>
+                  )}
+                  <div className="flex flex-col items-start  mt-2">
+                    {addingNewAnimation ? (
+                      <>
+                        <NewProject project={displayedProjects[0]} />
+                        {displayedProjects
+                          .slice(1)
+                          .map((project: ProjectType) => (
+                            <Project key={project.id} project={project} />
+                          ))}
+                      </>
+                    ) : (
+                      <>
+                        {displayedProjects.map((project: ProjectType) => (
+                          <Project key={project.id} project={project} />
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </>
+      ) : (
+        <>
+          {!collapsed && (
+            <div className="flex-grow flex pt-10 fade-in">
+              <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-[#242728] border-white/30 border">
+                <p className="text-lg text-center text-white">
+                  Create an account to save your chats, projects and so much
+                  more
+                </p>
+
+                <Button
+                  onClick={() => {
+                    setNewUser(true);
+                    setShowLoginModal(true);
+                  }}
+                  className="text-white text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
+                >
+                  <span className="bg-[#242728] w-full h-full rounded-md flex items-center justify-center hover:bg-opacity-80">
+                    Sign up
+                  </span>
+                </Button>
               </div>
             </div>
           )}

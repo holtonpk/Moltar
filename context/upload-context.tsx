@@ -23,6 +23,8 @@ import {
 } from "firebase/firestore";
 
 import {db} from "@/config/firebase";
+import {useAuth} from "@/context/user-auth";
+
 const UploadsContext = createContext<any | null>(null);
 
 export function useUploads() {
@@ -35,38 +37,28 @@ interface Props {
 
 export const UploadsProvider = ({children}: Props) => {
   const [uploadList, setUploadList] = React.useState<UploadType[]>();
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
   const [filterList, setFilterList] = useState<string[]>();
 
-  // const setStateToLocalStorage = () => {
-  //   // const userUploads = localStorage.getItem("userUploads");
-
-  //   if (userUploads) {
-  //     setUploadList(JSON.parse(userUploads));
-  //     setFilterList(
-  //       JSON.parse(userUploads).map((upload: UploadType) => upload.id)
-  //     );
-  //   }
-  // };
+  const {currentUser, unSubscribedUserId} = useAuth()!;
 
   useEffect(() => {
     const q = query(
-      collection(db, "users/h9h731yJGLdovlUrQgmEDB2ehr23/uploads")
+      collection(db, `users/${currentUser?.uid || unSubscribedUserId}/uploads`)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const uploads = querySnapshot.docs.map((doc) => doc.data());
       const savedProjects = uploads as UploadType[];
-
+      setLoading(false);
       setUploadList(savedProjects);
       setFilterList(savedProjects.map((upload: UploadType) => upload.id));
     });
 
     // Cleanup this component
     return () => unsubscribe();
-  }, []); // Empty dependency array ensures effect runs only once
+  }, [currentUser]); // Empty dependency array ensures effect runs only once
 
   async function uploadFileToFirebase(file: File, fileID: string) {
-    console.log("uploading file to firebase");
     const storage = getStorage(app);
     const fileRef = ref(storage, fileID);
     // upload file
@@ -89,7 +81,9 @@ export const UploadsProvider = ({children}: Props) => {
     // save upload ref to firebase firestore
     const docRef = doc(
       db,
-      "users/h9h731yJGLdovlUrQgmEDB2ehr23/uploads",
+      `users/${
+        currentUser?.uid || unSubscribedUserId || unSubscribedUserId
+      }/uploads`,
       fileID
     );
     await setDoc(docRef, upload);
@@ -116,7 +110,7 @@ export const UploadsProvider = ({children}: Props) => {
     // renmame file field in firebase storage
     const docRef = doc(
       db,
-      "users/h9h731yJGLdovlUrQgmEDB2ehr23/uploads",
+      `users/${currentUser?.uid || unSubscribedUserId}/uploads`,
       fileId
     );
     setDoc(docRef, {title: name}, {merge: true});
@@ -131,7 +125,7 @@ export const UploadsProvider = ({children}: Props) => {
   async function DeleteUpload(fileId: string) {
     const docRef = doc(
       db,
-      "users/h9h731yJGLdovlUrQgmEDB2ehr23/uploads",
+      `users/${currentUser?.uid || unSubscribedUserId}/uploads`,
       fileId
     );
     await deleteDoc(docRef);
@@ -161,8 +155,6 @@ export const UploadsProvider = ({children}: Props) => {
   const resetFilter = () => {
     setFilterList(uploadList?.map((upload: UploadType) => upload.id));
   };
-
-  console.log("filterList", filterList);
 
   const values = {
     filterList,

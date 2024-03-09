@@ -4,9 +4,9 @@ import {Navbar} from "../components/navbar/navbar";
 import {ProjectsProvider} from "@/context/projects-context";
 import {UploadsProvider} from "@/context/upload-context";
 import {Toaster} from "@/components/ui/toaster";
+import AuthModal from "@/components/auth/auth-modal";
 
 const Workspace = ({children}: {children: React.ReactNode}) => {
-  console.log("render workspace");
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <Toaster />
@@ -14,9 +14,10 @@ const Workspace = ({children}: {children: React.ReactNode}) => {
         <UploadsProvider>
           <ProjectsProvider>
             <Navbar />
-            <div className="flex-grow bg-card overflow-hidden rounded-xl ">
+            <div className="flex-grow bg-card overflow-hidden rounded-xl  ">
               {children}
             </div>
+            <AuthModal />
           </ProjectsProvider>
         </UploadsProvider>
       </div>

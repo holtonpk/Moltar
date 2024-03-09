@@ -12,6 +12,8 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import {LinkButton} from "@/components/ui/link";
 import {UploadType} from "@/types";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
+import {Skeleton} from "@/components/ui/skeleton";
+
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const FileView = ({upload}: {upload: UploadType}) => {
@@ -37,11 +39,15 @@ const FileView = ({upload}: {upload: UploadType}) => {
   //   add event listener it see if page is in view
   useEffect(() => {
     const handleScroll = () => {
+      const containerHeight =
+        containerRef.current?.getBoundingClientRect().height;
+      if (!containerHeight) return;
       for (let index = 0; index < numPages; index++) {
         const element = document.getElementById(`page-number-${index + 1}`);
         if (element) {
           const rect = element.getBoundingClientRect();
-          if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+
+          if (rect.top >= 0 && rect.bottom <= containerHeight) {
             setCurrentPage(index + 1);
           }
         }
@@ -83,6 +89,25 @@ const FileView = ({upload}: {upload: UploadType}) => {
     setShowGridPages(false);
   };
 
+  const [containerWidth, setContainerWidth] = React.useState<number>(0);
+
+  const calculateWidth = () => {
+    console.log("calculating width");
+    const container = containerRef.current;
+    if (container) {
+      const width = container.getBoundingClientRect().width;
+      setContainerWidth(width - 200);
+    }
+  };
+
+  useEffect(() => {
+    calculateWidth();
+    const container = containerRef.current;
+    if (container) {
+      calculateWidth();
+    }
+  }, []);
+
   return (
     <div className="flex flex-col  items-center justify-center h-full w-full  shadow-2xl relative ">
       <LinkButton
@@ -94,32 +119,37 @@ const FileView = ({upload}: {upload: UploadType}) => {
       </LinkButton>
       <ScrollArea
         ref={containerRef}
-        className="w-full flex-grow  rounded-md  overflow-scroll relative z-10 flex flex-col  gap-3 pt-2  zoom-75 "
+        className="w-full flex-grow p-6 rounded-md  overflow-scroll relative z-10 flex flex-col  gap-3   zoom-75 "
       >
         <Document
           className={
-            "absolute h-full w-fit flex flex-col gap-4 p-2   left-1/2 -translate-x-1/2 "
+            "absolute w-fit  flex flex-col gap-4    left-1/2 -translate-x-1/2 "
           }
           file={upload.path}
           onLoadSuccess={onDocumentLoadSuccess}
-          loading={
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <Icons.spinner className="animate-spin h-10 w-10 mx-auto text-[#4DA6E0]" />
-            </div>
-          }
+          // loading={
+          //   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          //     <Icons.spinner className="animate-spin h-10 w-10 mx-auto text-[#4DA6E0]" />
+          //   </div>
+          // }
         >
           {/* {docLoading && <div className="h-full w-full bg-red-600"></div>} */}
           {Array.from(new Array(numPages), (el, index) => (
-            <div
+            // <div
+            //   key={index}
+            //   id={`page-number-${index + 1}`}
+            //   className="h-fit w-fit "
+            //   >
+            //   <Page
+            //     className={"shadow-lg h-fit border rounded-lg  p-1 "}
+            //     pageNumber={index + 1}
+            //   ></Page>
+            // </div>
+            <PdfPage
               key={index}
-              id={`page-number-${index + 1}`}
-              className="h-fit w-fit "
-            >
-              <Page
-                className={"shadow-lg h-fit border rounded-lg  p-1 "}
-                pageNumber={index + 1}
-              ></Page>
-            </div>
+              index={index}
+              containerWidth={containerWidth}
+            />
           ))}
         </Document>
       </ScrollArea>
@@ -183,12 +213,7 @@ const FileView = ({upload}: {upload: UploadType}) => {
                   <div className="absolute right-0 bottom-0 z-20 text-theme-blue font-bold bg-white px-2 py-1 rounded-md border  rounded-r-none">
                     {index + 1}
                   </div>
-                  <Page
-                    className={
-                      "shadow-lg border rounded-lg  p-1 scale-[.35]  absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                    }
-                    pageNumber={index + 1}
-                  ></Page>
+                  <PdfPagePreview index={index} />
                 </button>
               ))}
             </Document>
@@ -211,3 +236,61 @@ const FileView = ({upload}: {upload: UploadType}) => {
 };
 
 export default FileView;
+
+const PdfPagePreview = ({index}: {index: number}) => {
+  const [loading, setLoading] = React.useState(true);
+  return (
+    <>
+      <Page
+        onLoadSuccess={() => setLoading(false)}
+        width={200}
+        className={`shadow-lg border rounded-lg  p-1   absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none
+        ${loading ? "hidden" : "visible"}
+        `}
+        pageNumber={index + 1}
+      ></Page>
+      {loading && (
+        <Skeleton
+          style={{width: 200}}
+          className="aspect-[1/1.414] bg-border flex items-center justify-center"
+        >
+          {/* <Icons.loader className="h-10 w-10 text-primary animate-spin " /> */}
+        </Skeleton>
+      )}
+    </>
+  );
+};
+
+const PdfPage = ({
+  index,
+  containerWidth,
+}: {
+  index: number;
+  containerWidth: number;
+}) => {
+  const [loading, setLoading] = React.useState(true);
+
+  console.log("containerWidth", containerWidth);
+
+  return (
+    <div id={`page-number-${index + 1}`} className="h-full w-full  ">
+      <Page
+        width={containerWidth}
+        onLoadSuccess={() => setLoading(false)}
+        className={`shadow-lg  border rounded-lg  p-1 
+        
+        ${loading ? "hidden" : "visible"}
+        `}
+        pageNumber={index + 1}
+      ></Page>
+      {loading && (
+        <Skeleton
+          style={{width: containerWidth}}
+          className="aspect-[1/1.414] bg-border flex items-center justify-center"
+        >
+          {/* <Icons.loader className="h-10 w-10 text-primary animate-spin " /> */}
+        </Skeleton>
+      )}
+    </div>
+  );
+};

@@ -37,6 +37,8 @@ import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import {db} from "@/config/firebase";
 import {doc, setDoc, serverTimestamp} from "firebase/firestore";
+import {useAuth} from "@/context/user-auth";
+import {Skeleton} from "@/components/ui/skeleton";
 
 import {useUploads} from "@/context/upload-context";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
@@ -45,29 +47,30 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 const UploadsPanel = () => {
   const {uploadList, FileUpload, DeleteUpload, ReNameUpload, filterList} =
     useUploads();
+  const {currentUser, unSubscribedUserId} = useAuth()!;
 
   async function createNewProject(file: UploadType) {
     const id = Math.random().toString(36).substring(7);
 
-    await setDoc(doc(db, "users/h9h731yJGLdovlUrQgmEDB2ehr23/projects", id), {
-      id: id,
-      uploadId: file.id,
-      chat: null,
-      upload: file,
-      createdAt: serverTimestamp(),
-    });
+    await setDoc(
+      doc(db, `users/${currentUser?.uid || unSubscribedUserId}/projects`, id),
+      {
+        id: id,
+        uploadId: file.id,
+        chat: null,
+        upload: file,
+        createdAt: serverTimestamp(),
+      }
+    );
 
     return id;
   }
-  console.log("render ==");
 
   const router = useRouter();
   async function goToNewProject(file: UploadType) {
     const projectId = await createNewProject(file);
     router.push(`/chat/${projectId}`);
   }
-
-  console.log("uploadList", uploadList);
 
   const [openRename, setOpenRename] = React.useState(false);
   const nameRef = React.useRef<HTMLInputElement>(null);
@@ -77,44 +80,25 @@ const UploadsPanel = () => {
   const [selectedFile, setSelectedFile] = React.useState<string | null>(null);
 
   return (
-    <div className="  overflow-scroll h-full items-center relative pb-20   w-full p-6 ">
-      <div className="grid grid-cols-4 h-fit gap-4  pb-6">
+    <div className="  overflow-scroll h-full items-center  pb-20   w-[full] absolute p-6 ">
+      <div className="flex flex-wrap items-center w-full h-fit gap-4  pb-6">
         {uploadList.map((file: UploadType) => (
           <div
             key={file.id}
-            className={` cursor-pointer w-full overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg 
+            className={` cursor-pointer w-fit h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
             ${filterList.includes(file.id) ? "visible" : "hidden"} `}
           >
             <button
               onClick={() => goToNewProject(file)}
               className="absolute  z-20 top-0 left-0 h-full w-full group"
             />
-            <Document
-              className={
-                " relative overflow-hidden group mx-auto  aspect-[1/1.2] w-full "
-              }
-              onLoadSuccess={() => console.log("PDF loaded successfully")}
-              file={file.path}
-              onLoadError={(error) => console.log("Inside Error", error)}
-              loading={
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <Icons.spinner className="animate-spin h-10 w-10 mx-auto text-[#4DA6E0]" />
-                </div>
-              }
-            >
-              <Page
-                className={
-                  " rounded-lg  p-1 shadow-lg scale-[.35] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                }
-                pageNumber={1}
-              />
-            </Document>
-            <div className="grid grid-cols-[1fr_50px] relative z-30">
-              <div className="p-2 text-primary text-left whitespace-nowrap font-bold overflow-hidden text-ellipsis ">
+            <PdfViewer file={file} />
+            <div className="pr-6  z-30 border-t-border border-t h-fit absolute bg-card  top-full  w-full left-1/2 -translate-x-1/2  group-hover: -translate-y-full transition-transform">
+              <div className="p-2 text-primary  text-sm text-left  font- overflow-hidden text-ellipsis ">
                 {file.title}
               </div>
               <DropdownMenu>
-                <DropdownMenuTrigger className="z-30 flex items-center justify-center relative hover:opacity-60 s rounded-md  ">
+                <DropdownMenuTrigger className="z-30 flex items-center justify-center  hover:opacity-60 absolute top-2 right-2 rounded-md  ">
                   <Icons.ellipsis className="h-5 w-5" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -200,3 +184,42 @@ const UploadsPanel = () => {
   );
 };
 export default UploadsPanel;
+
+const PdfViewer = ({file}: {file: UploadType}) => {
+  const [loading, setLoading] = React.useState(true);
+
+  return (
+    <>
+      <Document
+        className={
+          " relative  group mx-auto rounded-lg   w-[190px] h-[242px]  z-10 "
+        }
+        onLoadSuccess={() => console.log("PDF loaded successfully")}
+        file={file.path}
+        onLoadError={(error) => console.log("Inside Error", error)}
+        loading={
+          // <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500 w-full h-full">
+          //   <Icons.spinner className="animate-spin h-10 w-10 mx-auto text-[#4DA6E0]" />
+          // </div>
+          <Skeleton className="rounded-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  w-full h-full" />
+        }
+      >
+        <Page
+          height={260}
+          onLoadSuccess={() => setLoading(false)}
+          className={`rounded-lg overflow-hidden p-1 border-2 border-border   absolute top-1/2  left-1/2 -translate-y-1/2 -translate-x-1/2  pointer-events-none 
+        ${loading ? "hidden" : "visible"}
+        `}
+          // loading={
+          //   <Skeleton className="rounded-lg   w-[190px] h-[242px] " />
+          // }
+          pageNumber={1}
+        />
+      </Document>
+      {/* <div className="relative  group mx-auto rounded-lg   w-[190px] h-[242px]  z-10 "></div> */}
+      {loading && (
+        <Skeleton className="rounded-lg bg-primary/30  w-[190px] h-[242px] absolute top-1/2  left-1/2 -translate-y-1/2 -translate-x-1/2 z-20" />
+      )}
+    </>
+  );
+};

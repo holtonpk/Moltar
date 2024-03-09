@@ -14,6 +14,29 @@ import {ProjectType} from "@/types";
 
 export const Project = ({project}: {project: ProjectType}) => {
   console.log("pp", project);
+
+  //   const [containerWidth, setContainerWidth] = React.useState<number>(0);
+
+  //   const fileViewRef = React.useRef<any>(null);
+
+  //   const calculateWidth = () => {
+  //     console.log("calculating width");
+  //     const container = containerRef.current;
+  //     if (container) {
+  //       const width = container.getBoundingClientRect().width;
+  //       setContainerWidth(width - 48);
+  //     }
+  //   };
+
+  //   React.useEffect(() => {
+  //     calculateWidth();
+
+  // const fileViewContainer = fileViewRef.current
+  //     fileViewContainer.addEventListener("resize", calculateWidth);
+  //     return () =>
+  //       fileViewContainer.removeEventListener("resize", calculateWidth);
+  //   }, []);
+
   return (
     <>
       <ResizablePanelGroup
