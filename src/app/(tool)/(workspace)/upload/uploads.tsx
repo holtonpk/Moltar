@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect} from "react";
+import React, {useEffect, useCallback} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons";
@@ -104,8 +104,11 @@ const UploadHeader = () => {
         New Upload
       </Button>
       <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-        {uploadQueue.map((file) => (
-          <div className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue ">
+        {uploadQueue.map((file, i) => (
+          <div
+            key={i}
+            className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
+          >
             <Icons.spinner className="h-5 w-5 animate-spin text-white" />
             <span className="text-white font-bold">{file.name}</span>
           </div>
@@ -160,8 +163,11 @@ const EmptyUploadList = () => {
         />
       </div>
       <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-        {uploadQueue.map((file) => (
-          <div className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue ">
+        {uploadQueue.map((file, i) => (
+          <div
+            key={i}
+            className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
+          >
             <Icons.spinner className="h-5 w-5 animate-spin text-white" />
             <span className="text-white font-bold">{file.name}</span>
           </div>
@@ -181,53 +187,53 @@ const FileDrop = () => {
   const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
   const [activeUpload, setActiveUpload] = React.useState<File | null>(null);
 
-  useEffect(() => {
-    if (!dragContainer?.current) return;
-    dragContainer?.current.addEventListener("dragover", handleDragOver);
-    dragContainer?.current.addEventListener("dragleave", handleDragLeave);
-    dragContainer?.current.addEventListener("drop", handleDrop);
+  const dragContainer = React.useRef<HTMLDivElement>(null);
 
-    return () => {
-      if (!dragContainer?.current) return;
-
-      dragContainer?.current.removeEventListener("dragover", handleDragOver);
-      dragContainer?.current.removeEventListener("dragleave", handleDragLeave);
-      dragContainer?.current.removeEventListener("drop", handleDrop);
-    };
-  }, [toast]);
-
-  const handleDragOver = (e: DragEvent) => {
-    console.log("dragging");
+  const handleDragOver = useCallback((e: DragEvent) => {
     e.preventDefault();
     setDragging(true);
-  };
+  }, []);
 
-  const handleDragLeave = (e: DragEvent) => {
-    // if (!e.currentTarget.contains(e.relatedTarget)) {
+  const handleDragLeave = useCallback((e: DragEvent) => {
     setDragging(false);
-    // }
-  };
+  }, []);
 
-  async function handleDrop(e: DragEvent) {
-    e.preventDefault();
-    setDragging(false);
+  const handleDrop = useCallback(
+    async (e: DragEvent) => {
+      e.preventDefault();
+      setDragging(false);
 
-    // Handle the dropped files here
-    if (e.dataTransfer === null) return;
-    const files = Array.from(e.dataTransfer.files);
-    const pdfFiles = files.filter(
-      (file: File) => file.type === "application/pdf"
-    );
-    setUploadQueue(pdfFiles);
-    for (let file of pdfFiles) {
-      setActiveUpload(file);
-      await uploadFile(file);
-      setUploadQueue((prev) => prev.filter((f) => f !== file));
-    }
-    setActiveUpload(null);
-  }
+      // Handle the dropped files here
+      if (e.dataTransfer === null) return;
+      const files = Array.from(e.dataTransfer.files);
+      const pdfFiles = files.filter(
+        (file: File) => file.type === "application/pdf"
+      );
+      setUploadQueue(pdfFiles);
+      for (let file of pdfFiles) {
+        setActiveUpload(file);
+        await uploadFile(file);
+        setUploadQueue((prev) => prev.filter((f) => f !== file));
+      }
+      setActiveUpload(null);
+    },
+    [uploadFile]
+  );
 
-  const dragContainer = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const currentDragContainer = dragContainer.current;
+    if (!currentDragContainer) return;
+
+    currentDragContainer.addEventListener("dragover", handleDragOver);
+    currentDragContainer.addEventListener("dragleave", handleDragLeave);
+    currentDragContainer.addEventListener("drop", handleDrop);
+
+    return () => {
+      currentDragContainer.removeEventListener("dragover", handleDragOver);
+      currentDragContainer.removeEventListener("dragleave", handleDragLeave);
+      currentDragContainer.removeEventListener("drop", handleDrop);
+    };
+  }, [handleDrop, handleDragOver, handleDragLeave]); // Assuming `handleDrop` is stable or wrapped with useCallback
 
   return (
     <>
@@ -248,8 +254,11 @@ const FileDrop = () => {
       </div>
 
       <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-        {uploadQueue.map((file) => (
-          <div className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue ">
+        {uploadQueue.map((file, i) => (
+          <div
+            key={i}
+            className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
+          >
             <Icons.spinner className="h-5 w-5 animate-spin text-white" />
             <span className="text-white font-bold">{file.name}</span>
           </div>
