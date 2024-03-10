@@ -7,6 +7,9 @@ import UploadsPanel from "./uploads-pannel";
 import {useUploads} from "@/context/upload-context";
 import {useToast} from "@/components/ui/use-toast";
 import {useAuth} from "@/context/user-auth";
+import {Toast} from "@/components/ui/toast";
+import {set} from "zod";
+
 //  these need to be moved to a types file
 
 export const Uploads = () => {
@@ -46,7 +49,7 @@ export const Uploads = () => {
 };
 
 const UploadHeader = () => {
-  const {FileUpload, FilterUploads, resetFilter} = useUploads();
+  const {uploadFile, FilterUploads, resetFilter} = useUploads();
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     // if search value is not empty, resetFilter
@@ -59,6 +62,23 @@ const UploadHeader = () => {
     }
   };
 
+  const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
+
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = Array.from(event.target.files); // Convert FileList to an array
+      setUploadQueue(files); // Set the initial queue
+
+      for (let file of files) {
+        await uploadFile(file); // Upload the file
+        // Remove the uploaded file from the queue
+        setUploadQueue((currentQueue) =>
+          currentQueue.filter((f) => f !== file)
+        );
+      }
+    }
+  };
+
   return (
     <div className=" w-full bg-card dark:bg-[#3A3D3E]  py-3 flex items-center justify-between px-4 gap-4">
       <Input
@@ -67,10 +87,11 @@ const UploadHeader = () => {
         placeholder="Search uploads"
       />
       <input
+        multiple
         id="selectedFile"
         type="file"
         accept=".pdf"
-        onChange={FileUpload}
+        onChange={onFileChange}
         style={{display: "none"}}
         className="bg-theme-blue hover:bg-theme-blue/60 text-white"
       />
@@ -82,15 +103,39 @@ const UploadHeader = () => {
         <Icons.add className="h-5 w-5" />
         New Upload
       </Button>
+      <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
+        {uploadQueue.map((file) => (
+          <div className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue ">
+            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
+            <span className="text-white font-bold">{file.name}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
 const EmptyUploadList = () => {
-  const {FileUpload} = useUploads();
+  const {uploadFile} = useUploads();
+  const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
+
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = Array.from(event.target.files); // Convert FileList to an array
+      setUploadQueue(files); // Set the initial queue
+
+      for (let file of files) {
+        await uploadFile(file); // Upload the file
+        // Remove the uploaded file from the queue
+        setUploadQueue((currentQueue) =>
+          currentQueue.filter((f) => f !== file)
+        );
+      }
+    }
+  };
 
   return (
-    <div className="flex flex-col w-full gap-4 items-center pt-20  h-full p-6 shadow-2xl dark:bg-white/5">
+    <div className="flex flex-col w-full gap-4 items-center pt-20  h-full p-6 shadow-2xl dark:bg-white/5 relative z-10">
       <div className="text-3xl font-bold capitalize text-center text-theme-blued">
         Upload files & start interacting
       </div>
@@ -106,12 +151,21 @@ const EmptyUploadList = () => {
           Select files
         </Button>
         <input
+          multiple
           id="selectedFile"
           type="file"
           accept=".pdf"
-          onChange={FileUpload}
+          onChange={onFileChange}
           style={{display: "none"}}
         />
+      </div>
+      <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
+        {uploadQueue.map((file) => (
+          <div className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue ">
+            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
+            <span className="text-white font-bold">{file.name}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -119,76 +173,88 @@ const EmptyUploadList = () => {
 
 const FileDrop = () => {
   const [dragging, setDragging] = React.useState(false);
-  const {FileDrop, uploadFile} = useUploads();
+  const {uploadFile} = useUploads();
 
   const [dropError, setDropError] = React.useState(false);
   const {toast} = useToast();
 
+  const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
+  const [activeUpload, setActiveUpload] = React.useState<File | null>(null);
+
   useEffect(() => {
-    const handleDragOver = (e: DragEvent) => {
-      e.preventDefault();
-      setDragging(true);
-    };
-
-    const handleDragLeave = () => {
-      setDragging(false);
-    };
-
-    async function handleDrop(e: DragEvent) {
-      e.preventDefault();
-      setDragging(false);
-
-      // Handle the dropped files here
-      if (e.dataTransfer === null) return;
-      const files = Array.from(e.dataTransfer.files);
-      const pdfFiles = files.filter(
-        (file: File) => file.type === "application/pdf"
-      );
-      console.log("dropped==>", pdfFiles);
-      if (pdfFiles.length > 0) {
-        await FileDrop(pdfFiles);
-        toast({
-          variant: "blue",
-          title: `${pdfFiles.length > 1 ? "Files" : "File"} uploaded`,
-          description:
-            `${pdfFiles.length} ` +
-            (pdfFiles.length > 1 ? " files have" : " file has") +
-            " been uploaded successfully",
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Unsupported file type",
-          description: "Only PDF files are supported",
-        });
-      }
-    }
-
-    document.addEventListener("dragover", handleDragOver);
-    document.addEventListener("dragleave", handleDragLeave);
-    document.addEventListener("drop", handleDrop);
+    if (!dragContainer?.current) return;
+    dragContainer?.current.addEventListener("dragover", handleDragOver);
+    dragContainer?.current.addEventListener("dragleave", handleDragLeave);
+    dragContainer?.current.addEventListener("drop", handleDrop);
 
     return () => {
-      document.removeEventListener("dragover", handleDragOver);
-      document.removeEventListener("dragleave", handleDragLeave);
-      document.removeEventListener("drop", handleDrop);
+      if (!dragContainer?.current) return;
+
+      dragContainer?.current.removeEventListener("dragover", handleDragOver);
+      dragContainer?.current.removeEventListener("dragleave", handleDragLeave);
+      dragContainer?.current.removeEventListener("drop", handleDrop);
     };
-  }, [toast, FileDrop]);
+  }, [toast]);
+
+  const handleDragOver = (e: DragEvent) => {
+    console.log("dragging");
+    e.preventDefault();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e: DragEvent) => {
+    // if (!e.currentTarget.contains(e.relatedTarget)) {
+    setDragging(false);
+    // }
+  };
+
+  async function handleDrop(e: DragEvent) {
+    e.preventDefault();
+    setDragging(false);
+
+    // Handle the dropped files here
+    if (e.dataTransfer === null) return;
+    const files = Array.from(e.dataTransfer.files);
+    const pdfFiles = files.filter(
+      (file: File) => file.type === "application/pdf"
+    );
+    setUploadQueue(pdfFiles);
+    for (let file of pdfFiles) {
+      setActiveUpload(file);
+      await uploadFile(file);
+      setUploadQueue((prev) => prev.filter((f) => f !== file));
+    }
+    setActiveUpload(null);
+  }
+
+  const dragContainer = React.useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      className={`h-full w-full absolute p-2 left-0 top-0 z-40 ${
-        dragging ? "visible" : "hidden"
-      }`}
-    >
-      <div className="h-full  pointer-events-none w-full border-2 border-dashed border-theme-blue bg-theme-blue/10 rounded-xl z-40 flex items-center justify-center flex-col">
-        <div className="flex items-center flex-col justify-center p-4 rounded-lg ">
-          <Icons.uploadCloud className="h-20 w-20 text-theme-blue" />
-          <h1 className="font-bold text-2xl text-theme-blue">
-            Drag & Drop files here
-          </h1>
+    <>
+      <div
+        ref={dragContainer}
+        className={`h-full w-full absolute p-2 left-0 top-0 z-40 pointer-events-none ${
+          dragging ? " opacity-1" : "opacity-0"
+        }`}
+      >
+        <div className="h-full  pointer-events-none w-full border-2 border-dashed border-theme-blue bg-theme-blue/10 blurBack rounded-xl z-40 flex items-center justify-center flex-col">
+          <div className="flex items-center flex-col justify-center p-4 rounded-lg ">
+            <Icons.uploadCloud className="h-20 w-20 text-theme-blue" />
+            <h1 className="font-bold text-2xl text-theme-blue">
+              Drag & Drop files here
+            </h1>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
+        {uploadQueue.map((file) => (
+          <div className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue ">
+            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
+            <span className="text-white font-bold">{file.name}</span>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };

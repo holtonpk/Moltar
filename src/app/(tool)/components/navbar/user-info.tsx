@@ -1,19 +1,19 @@
 import {Button} from "@/components/ui/button";
+import {LinkButton} from "@/components/ui/link";
 import {useAuth} from "@/context/user-auth";
 import Image from "next/image";
 export const UserInfo = ({collapsed}: {collapsed: boolean}) => {
-  const {currentUser, logOut} = useAuth()!;
-
-  async function sOut() {
-    const log = await logOut();
-  }
+  const {currentUser} = useAuth()!;
 
   return (
     <>
       {currentUser ? (
-        <div className="flex flex-col gap-4 items-center border-y border-white/30  relative  p-4 ">
+        <div className="flex flex-col gap-4 items-center border-y border-white/30  relative  py-4 px-2">
           {!collapsed ? (
-            <div className="flex flex-row gap-2 w-full items-center   ">
+            <LinkButton
+              href={"/settings"}
+              className="grid grid-cols-[32px_1fr] gap-2 w-full items-center  group p-0 "
+            >
               <div className="h-8 w-8 overflow-hidden relative rounded-full bg-white/30">
                 <Image
                   src={currentUser?.photoURL || ""}
@@ -22,7 +22,7 @@ export const UserInfo = ({collapsed}: {collapsed: boolean}) => {
                   objectFit="cover"
                 />
               </div>
-              <div className="flex flex-col group cursor-pointer">
+              <div className="flex flex-col  cursor-pointer">
                 <p className="text-[12px] font-bold text-white group-hover:opacity-70">
                   {currentUser?.displayName || "User"}
                 </p>
@@ -30,13 +30,7 @@ export const UserInfo = ({collapsed}: {collapsed: boolean}) => {
                   {currentUser?.email || ""}
                 </p>
               </div>
-              {/* <Button
-                size={"sm"}
-                className="text-white text-sm bg-transparent border-[#E4E4E7] border hover:bg-white/15"
-              >
-                Upgrade
-              </Button> */}
-            </div>
+            </LinkButton>
           ) : (
             <div className="h-8 w-8 rounded-full bg-white/30 overflow-hidden relative">
               <Image
@@ -55,9 +49,6 @@ export const UserInfo = ({collapsed}: {collapsed: boolean}) => {
           )}
         </>
       )}
-      <button className="absolute bg-red-500" onClick={sOut}>
-        L
-      </button>
     </>
   );
 };

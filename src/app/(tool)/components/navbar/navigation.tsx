@@ -12,7 +12,7 @@ export const Navigation = ({collapsed}: {collapsed: boolean}) => {
   return (
     <div className="flex flex-col w-full gap-3 ">
       <LinkButton
-        href="/chat"
+        href="/upload"
         className={`hover:bg-white/15 relative text-lg  items-center font-bold text-white  px-4 leading-[24px]
           ${segment === "chat" ? "bg-white/15" : "bg-transparent"}
   
