@@ -24,7 +24,7 @@ const FileView = ({upload}: {upload: UploadType}) => {
 
   const [docLoading, setDocLoading] = React.useState<boolean>(true);
 
-  async function onDocumentLoadSuccess({numPages}: {numPages: number}): void {
+  async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
     // Extract text from each page
     const textPromises = [];
     for (let i = 1; i <= numPages; i++) {
@@ -33,7 +33,7 @@ const FileView = ({upload}: {upload: UploadType}) => {
         return pdf.getPage(i).then((page) => {
           return page.getTextContent().then((textContent) => {
             const pageText = textContent.items
-              .map((item) => item.str)
+              .map((item: any) => item.str)
               .join(" ");
             return pageText;
           });
