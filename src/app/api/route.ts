@@ -2,11 +2,8 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {NextResponse} from "next/server";
 import OpenAI from "openai";
 
-const key = "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";
-
 const openai = new OpenAI({
-  // apiKey: process.env.OPENAI_API_KEY, // Ensure your API key is securely stored
-  apiKey: key,
+  apiKey: process.env.OPENAI_API_KEY, // Ensure your API key is securely stored
 });
 export async function POST(req: NextApiRequest, response: NextApiResponse) {
   try {
