@@ -10,9 +10,8 @@ export const Navbar = () => {
 
   return (
     <div
-      style={{width: collapsed ? "50px" : "225px"}}
       className={`h-full flex flex-col pr-4  relative z-40 transition-all duration-300 ease-in-out 
-    
+    ${collapsed ? "w-[50px] min-w-[50px]" : "w-[225px] min-w-[225px]"} 
     `}
     >
       <div className="grid grid-cols-[32px_1fr]  gap-2 mb-6 ">

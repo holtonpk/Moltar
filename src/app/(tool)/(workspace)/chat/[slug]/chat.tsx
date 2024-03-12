@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect} from "react";
+import React, {use, useEffect} from "react";
 import {Icons} from "@/components/icons";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -10,6 +10,7 @@ import {useChat} from "@/context/chat-context2";
 import {ChatLog, UploadType} from "@/types";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/context/user-auth";
+import ReactMarkdown from "react-markdown";
 
 import {
   Dialog,
@@ -21,12 +22,35 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import {useProjects} from "@/context/projects-context";
+import {toast} from "@/components/ui/use-toast";
+import "./chat-style.css";
 const Chat = () => {
-  const {responseRendering, project} = useChat()!;
+  const {responseLoading, project} = useChat()!;
 
   // useEffect(() => {
   //   setChat(chat);
   // }, [chat]);
+  const chatContainer = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (responseLoading) {
+      // scroll to the bottom of the chat container
+
+      chatContainer.current?.scrollTo({
+        top: chatContainer.current?.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [responseLoading]);
+
+  useEffect(() => {
+    if (project?.chat) {
+      // scroll to the bottom of the chat container
+      chatContainer.current?.scrollTo({
+        top: chatContainer.current?.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [project?.chat]);
 
   return (
     <div className="flex flex-col  items-center justify-center h-full w-full  relative   z-10">
@@ -39,13 +63,16 @@ const Chat = () => {
             <Icons.chevronDown className="h-6 w-6 text-theme-blue animate-bounce" />
           </div>
           <ChatBox />
-          <DefaultChat />
+          <PresetChat />
         </div>
       ) : (
         <>
           <div className="w-full h-full  justify-between overflow-hidden  dark:bg-white/5 flex flex-col gap-0 items-center  p-0  ">
             <Header />
-            <div className="p-6 pt-4 pb-36  flex-grow overflow-scroll z-10 relative gap-4 flex flex-col w-full ">
+            <div
+              ref={chatContainer}
+              className="p-6 pt-4 pb-36  flex-grow overflow-scroll z-10 relative gap-4 flex flex-col w-full max-w-full  "
+            >
               {project.chat.map((message: ChatLog, index: number) => (
                 <div key={index}>
                   {message.sender === "human" ? (
@@ -55,7 +82,7 @@ const Chat = () => {
                   )}
                 </div>
               ))}
-              {responseRendering && <AiMessageRender />}
+              {responseLoading && <AiMessageRender />}
             </div>
 
             <div className="h-fit overflow-hidden w-full absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
@@ -211,28 +238,57 @@ const Header = () => {
 };
 
 const AiMessageRender = () => {
-  const {responseLoading, animatedMessage} = useChat()!;
-
   return (
-    <>
-      {responseLoading ? (
-        <span className="relative flex h-3 w-3 mr-auto">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-theme-blue opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-theme-blue"></span>
-        </span>
-      ) : (
-        <div className="max-w-[85%] w-fit rounded-[8px_8px_8px_0px] shadow-lg bg-theme-blue/20 p-3 flex items-center mr-auto">
-          {animatedMessage}
-        </div>
-      )}
-    </>
+    <div className="rounded-[8px_8px_8px_0px] shadow-lg bg-theme-blue/20 w-fit p-[10px] flex flex-row gap-[5px]">
+      <span className="relative flex h-[10px] w-[10px] ">
+        <span className="animate-ping  absolute inline-flex h-full w-full rounded-full bg-theme-blue opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-[10px] w-[10px]  bg-theme-blue"></span>
+      </span>
+      <span className="relative flex h-[10px] w-[10px]  ">
+        <span className="animate-ping delay-150 absolute inline-flex h-full w-full rounded-full bg-theme-blue opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-[10px] w-[10px]  bg-theme-blue"></span>
+      </span>
+      <span className="relative flex h-[10px] w-[10px]  ">
+        <span className="animate-ping delay-300 absolute inline-flex h-full w-full rounded-full bg-theme-blue opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-[10px] w-[10px]  bg-theme-blue"></span>
+      </span>
+    </div>
   );
 };
 
 const AiMessage = ({message}: {message: string}) => {
+  const {responseLoading} = useChat()!;
+
+  const [copied, setCopied] = React.useState(false);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(message);
+    setCopied(true);
+    toast({
+      title: "Copied to clipboard",
+      variant: "blue",
+    });
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
+
   return (
-    <div className="max-w-[85%] w-fit rounded-[8px_8px_8px_0px] shadow-lg bg-theme-blue/20 p-3 mr-auto">
-      {message}
+    <div className="max-w-full  w-fit rounded-[8px_8px_8px_0px] shadow-lg bg-theme-blue/20  mr-auto  relative group prose">
+      <ReactMarkdown className={"gap-2 p-4 px-6 flex flex-col items-start"}>
+        {message}
+      </ReactMarkdown>
+
+      <button
+        onClick={copyToClipboard}
+        className="hidden group-hover:block absolute top-3 right-3 hover:opacity-80 fade-in-fast"
+      >
+        {copied ? (
+          <Icons.check className="h-4 w-4 primary" />
+        ) : (
+          <Icons.copy className="h-4 w-4 primary" />
+        )}
+      </button>
     </div>
   );
 };
@@ -317,54 +373,103 @@ const BigChatBox = () => {
   );
 };
 
-const DefaultChat = () => {
+const PresetChat = () => {
+  const {setPrompt} = useChat()!;
+
+  const selectPreset = (message: string) => {
+    setPrompt(message);
+  };
+
   return (
     <>
       <div className="flex flex-col items-center gap-4 mt-4 w-full">
-        <div className="border w-full rounded-lg shadow-lg h-20 p-4 flex flex-row items-center justify-between cursor-pointer">
-          <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-red/40 p-2 rounded-md flex justify-center items-center">
-              <Icons.Youtube className="h-6 w-6" />
-            </div>
-            <h1 className="font-bold capitalize">Summarize a YouTube Video</h1>
-          </div>
-
-          <Icons.chevronRight className="h-6 w-6" />
-        </div>
-        <div className="border w-full rounded-lg shadow-lg h-20 p-4 flex flex-row items-center justify-between cursor-pointer">
+        <button
+          onClick={() => setPrompt("Create a detailed note outline")}
+          className="border border-border hover:border-theme-blue w-full rounded-lg  h-20 p-4 flex flex-row items-center justify-between cursor-pointer"
+        >
           <div className="flex gap-2 w-fit items-center">
             <div className="h-10  aspect-square bg-theme-green/40 p-2 rounded-md flex justify-center items-center">
               <Icons.newspaper className="h-6 w-6 text-theme-green" />
-            </div>
-            <h1 className="font-bold capitalize">
-              Get The Cliff Notes of a blog
-            </h1>
-          </div>
-          <Icons.chevronRight className="h-6 w-6" />
-        </div>
-        <div className="border w-full rounded-lg shadow-lg h-20 p-4 flex flex-row items-center justify-between cursor-pointer">
-          <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-blue/40 p-2 rounded-md flex justify-center items-center">
-              <Icons.pencil className="h-6 w-6 text-theme-blue" />
             </div>
             <h1 className="font-bold capitalize">
               Create a detailed note outline
             </h1>
           </div>
           <Icons.chevronRight className="h-6 w-6" />
-        </div>
-        <div className="border w-full rounded-lg shadow-lg h-20 p-4 flex flex-row items-center justify-between cursor-pointer">
+        </button>
+        <button
+          onClick={() => setPrompt("Create 5 questions to help me study")}
+          className="border border-border hover:border-theme-blue w-full group rounded-lg  h-20 p-4 flex flex-row items-center justify-between cursor-pointer"
+        >
           <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-orange/40 p-2 rounded-md flex justify-center items-center">
-              <Icons.flask className="h-6 w-6 text-theme-orange" />
+            <div className="h-10  aspect-square bg-theme-blue/40 p-2 rounded-md flex justify-center items-center">
+              <Icons.pencil className="h-6 w-6 text-theme-blue" />
             </div>
-            <h1 className="font-bold capitalize">
-              Explain the method used in the study
+            <h1 className="font-bold capitalize ">
+              Create 5 questions to help me study
             </h1>
           </div>
+          <Icons.chevronRight className="h-6 w-6 " />
+        </button>
+        <button
+          onClick={() => setPrompt("list the main points")}
+          className="border border-border hover:border-theme-blue w-full rounded-lg  h-20 p-4 flex flex-row items-center justify-between cursor-pointer"
+        >
+          <div className="flex gap-2 w-fit items-center">
+            <div className="h-10  aspect-square bg-theme-orange/40 p-2 rounded-md flex justify-center items-center">
+              <Icons.chart className="h-6 w-6 text-theme-orange" />
+            </div>
+            <h1 className="font-bold capitalize">List the main points</h1>
+          </div>
           <Icons.chevronRight className="h-6 w-6" />
-        </div>
+        </button>
+        <button
+          onClick={() => setPrompt("Create a short summary")}
+          className="border border-border hover:border-theme-blue w-full rounded-lg  h-20 p-4 flex flex-row items-center justify-between cursor-pointer"
+        >
+          <div className="flex gap-2 w-fit items-center">
+            <div className="h-10  aspect-square bg-theme-purple/40 p-2 rounded-md flex justify-center items-center">
+              <Icons.bookText className="h-6 w-6 text-theme-purple" />
+            </div>
+            <h1 className="font-bold capitalize">Give me a short summary</h1>
+          </div>
+
+          <Icons.chevronRight className="h-6 w-6" />
+        </button>
       </div>
     </>
   );
 };
+
+const dummyMessage = ` # Video Series Ideas from the Document
+
+## "Whiskey 101 / Whiskey for Dummies"
+- Explain different types of whiskeys in individual videos
+  - Single malt
+  - Blended malt
+  - Etc.
+- Include most popular/favorite brands within each type for potential sponsorships
+- Explain nuances of whiskey 
+- Cover common misconceptions
+
+## "Behind the Bottle"
+- Give background history of individual distilleries
+- Think about most interesting part of each story to use as hook
+- Potential to use archived footage/images to tell story
+- Opportunity for sponsorship by focusing on specific bottle
+- Example hook given for "Buffalo Trace" distillery
+
+## "Whiskey Routine" Satisfying Video
+- Show process of pouring and preparing a glass of whiskey
+- Break into cut shots of each step 
+- Emphasize audio for ASMR feel
+- Keep pace fast
+- Final shot of drinking whiskey
+- Example shot list provided
+
+# Additional Tips for Video Content
+- Have a strong hook in first 5 seconds (page 1)
+- Create content you'd watch yourself (page 1)  
+- Be consistent with regular posting schedule (page 1)
+- Leverage the set/location with good lighting (page 1)  
+- Build a professional brand for monetization (page 1)`;

@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 
 import {db} from "@/config/firebase";
+import OpenAI from "openai";
 
 import {ProjectType, ChatLog} from "@/types";
 
@@ -38,12 +39,15 @@ interface ChatContextType {
   responseRendering: boolean;
   animatedMessage: string;
   responseLoading: boolean;
+  pdfText: string;
+  setPdfText: (text: string) => void;
 }
 
 export const ChatProvider2 = ({children, projectId}: Props) => {
   const [totalProjects, setTotalProjects] = useState<number>();
   const [project, setProject] = useState<ProjectType | null>(null);
   const [chat, setChat] = useState<ChatLog[] | null>(null);
+  const [pdfText, setPdfText] = React.useState("");
 
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
@@ -99,7 +103,7 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
   };
 
   const [prompt, setPrompt] = React.useState<string>("");
-  const [responseLoading, setResponseLoading] = React.useState(true);
+  const [responseLoading, setResponseLoading] = React.useState(false);
   const [responseRendering, setResponseRendering] = React.useState(false);
   const [animatedMessage, setAnimatedMessage] = React.useState("");
   const [aiResponse, setAiResponse] = React.useState("");
@@ -123,39 +127,56 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
   }, [prompt]);
 
   const fetchAiResponse = async (prompt: string) => {
-    // simulate api delay
-    setTimeout(() => {
-      setResponseLoading(false);
-    }, 2000);
+    const response = await fetch("/api", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text : ${pdfText}`,
+      }),
+    })
+      .then((res) => res.json())
 
-    const response = {
-      sender: "ai",
-      text: `This is a placeholder for the actual AI response to the prompt: ${prompt}`,
-    };
-    setAiResponse(response.text);
+      .then((data) => {
+        setAiResponse(data.response);
+        setResponseLoading(false);
+      });
+    // setAiResponse(
+    //   "The document provides an overview of the importance of time management in helping individuals achieve their goals and lead a more productive life. It highlights how effective time management can lead to increased efficiency, reduced stress levels, and improved overall well-being. The document emphasizes the significance of setting priorities, creating a to-do list, and practicing self-discipline to make the most of one's time. It also discusses the benefits of breaking tasks into smaller, more manageable parts and incorporating breaks into a daily routine. Ultimately, the document serves as a guide to help readers optimize their time and reach their full potential."
+    // );
+    // setResponseLoading(false);
   };
 
   useEffect(() => {
     if (!responseLoading && responseRendering) {
-      const animationInterval = setInterval(() => {
-        if (aiResponse.length > animatedMessage.length) {
-          setAnimatedMessage(
-            (prevMessage) => prevMessage + aiResponse[animatedMessage.length]
-          );
-        } else {
-          clearInterval(animationInterval);
-          setResponseRendering(false);
+      // const animationInterval = setInterval(() => {
+      //   if (aiResponse.length > animatedMessage.length) {
+      //     setAnimatedMessage(
+      //       (prevMessage) => prevMessage + aiResponse[animatedMessage.length]
+      //     );
+      //   } else {
+      //     clearInterval(animationInterval);
+      //     setResponseRendering(false);
 
-          const UpdatedChat = {
-            sender: "ai",
-            text: aiResponse,
-          };
-          updateChat(UpdatedChat as ChatLog);
-          setAnimatedMessage("");
-        }
-      }, 20); // Adjust the speed of the animation here (milliseconds)
+      //     const UpdatedChat = {
+      //       sender: "ai",
+      //       text: aiResponse,
+      //     };
+      //     updateChat(UpdatedChat as ChatLog);
+      //     setAnimatedMessage("");
+      //   }
+      // }, 10); // Adjust the speed of the animation here (milliseconds)
 
-      return () => clearInterval(animationInterval);
+      // return () => clearInterval(animationInterval);
+      setResponseRendering(false);
+
+      const UpdatedChat = {
+        sender: "ai",
+        text: aiResponse,
+      };
+      updateChat(UpdatedChat as ChatLog);
+      setAnimatedMessage("");
     }
   }, [aiResponse, animatedMessage, responseLoading]);
 
@@ -215,6 +236,8 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
     responseRendering,
     animatedMessage,
     responseLoading,
+    pdfText,
+    setPdfText,
   };
 
   return <ChatContext.Provider value={values}>{children}</ChatContext.Provider>;

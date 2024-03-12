@@ -14,7 +14,7 @@ const Workspace = ({children}: {children: React.ReactNode}) => {
         <UploadsProvider>
           <ProjectsProvider>
             <Navbar />
-            <div className="flex-grow bg-card overflow-hidden rounded-xl  ">
+            <div className="flex-grow bg-card overflow-hidden rounded-xl ">
               {children}
             </div>
             <AuthModal />

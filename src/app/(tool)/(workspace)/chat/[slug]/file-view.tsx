@@ -13,20 +13,47 @@ import {LinkButton} from "@/components/ui/link";
 import {UploadType} from "@/types";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
 import {Skeleton} from "@/components/ui/skeleton";
-
+import {useChat} from "@/context/chat-context2";
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const FileView = ({upload}: {upload: UploadType}) => {
+  const {pdfText, setPdfText} = useChat()!;
   const [numPages, setNumPages] = React.useState<number>(1);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const [docLoading, setDocLoading] = React.useState<boolean>(true);
 
-  function onDocumentLoadSuccess({numPages}: {numPages: number}): void {
+  async function onDocumentLoadSuccess({numPages}: {numPages: number}): void {
+    // Extract text from each page
+    const textPromises = [];
+    for (let i = 1; i <= numPages; i++) {
+      const loadingTask = pdfjs.getDocument({url: upload.path});
+      const promise = loadingTask.promise.then((pdf) => {
+        return pdf.getPage(i).then((page) => {
+          return page.getTextContent().then((textContent) => {
+            const pageText = textContent.items
+              .map((item) => item.str)
+              .join(" ");
+            return pageText;
+          });
+        });
+      });
+      textPromises.push(promise);
+    }
+
+    Promise.all(textPromises)
+      .then((pageTexts) => {
+        const extractedText = pageTexts.join(" ");
+        setPdfText(extractedText);
+      })
+      .catch((error) => console.error("Failed to extract PDF text:", error));
+
     setNumPages(numPages);
     setDocLoading(false);
   }
+
+  console.log("pdfText", pdfText);
 
   const goToPage = (pageNumber: number) => {
     if (pageNumber < 1 || pageNumber > numPages) return;
@@ -92,7 +119,6 @@ const FileView = ({upload}: {upload: UploadType}) => {
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
 
   const calculateWidth = () => {
-    console.log("calculating width");
     const container = containerRef.current;
     if (container) {
       const width = container.getBoundingClientRect().width;
@@ -153,36 +179,18 @@ const FileView = ({upload}: {upload: UploadType}) => {
           ))}
         </Document>
       </ScrollArea>
-      <div className=" w-full  justify-between  py-2  bg-card dark:bg-[#3A3D3E] border-t border-border  z-20 flex items-center px-4 ">
-        <span className="p-1  rounded-md flex items-center whitespace-nowrap gap-2 w-fit text-[12px] font-bold  ">
-          <Button
-            onClick={() => goToPage(currentPage - 1)}
-            size="sm"
-            className="p-1"
-            variant={"ghost"}
-          >
-            <Icons.chevronLeft className="h-5 w-5" />
-          </Button>
-          Page
-          <Input
-            ref={pageInput}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === "") return;
-              goToPage(parseInt(value));
-            }}
-            className="p-1 text-center bg-card/20 border rounded-lg aspect-square border-gray-200 font-normal text-theme-blue"
+      <div className=" w-full man-w-fit gap-10 justify-between  py-2  bg-card dark:bg-[#3A3D3E] border-t border-border  z-20 flex items-center px-4 ">
+        <div className="w-[200px] min-w-[200px]  flex flex-row items-center gap-2 text-theme-blue">
+          {zoomValue + "%"}
+          <Slider
+            defaultValue={[75]}
+            max={200}
+            min={1}
+            step={1}
+            onValueChange={handleZoom}
           />
-          of {numPages}
-          <Button
-            onClick={() => goToPage(currentPage + 1)}
-            size="sm"
-            className="p-1"
-            variant={"ghost"}
-          >
-            <Icons.chevronRight className="h-5 w-5" />
-          </Button>
-        </span>
+        </div>
+
         <Popover open={showGridPages} onOpenChange={setShowGridPages}>
           <PopoverTrigger className="bg-card dark:bg-[#3A3D3E] shadow-md text-theme-blue border dark:border-transparent dark:bg-white/5  p-2 rounded-md">
             <Icons.grid className="h-5 w-5 " />
@@ -220,16 +228,35 @@ const FileView = ({upload}: {upload: UploadType}) => {
           </PopoverContent>
         </Popover>
 
-        <div className="w-[200px] flex flex-row items-center gap-2 text-theme-blue">
-          {zoomValue + "%"}
-          <Slider
-            defaultValue={[75]}
-            max={200}
-            min={1}
-            step={1}
-            onValueChange={handleZoom}
+        <span className="p-1  rounded-md flex items-center whitespace-nowrap gap-2 w-fit text-[12px] font-bold  ">
+          <Button
+            onClick={() => goToPage(currentPage - 1)}
+            size="sm"
+            className="p-1"
+            variant={"ghost"}
+          >
+            <Icons.chevronLeft className="h-5 w-5" />
+          </Button>
+          Page
+          <Input
+            ref={pageInput}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === "") return;
+              goToPage(parseInt(value));
+            }}
+            className="p-1 text-center bg-card/20 border rounded-lg aspect-square border-gray-200 font-normal text-theme-blue"
           />
-        </div>
+          of {numPages}
+          <Button
+            onClick={() => goToPage(currentPage + 1)}
+            size="sm"
+            className="p-1"
+            variant={"ghost"}
+          >
+            <Icons.chevronRight className="h-5 w-5" />
+          </Button>
+        </span>
       </div>
     </div>
   );
@@ -269,8 +296,6 @@ const PdfPage = ({
   containerWidth: number;
 }) => {
   const [loading, setLoading] = React.useState(true);
-
-  console.log("containerWidth", containerWidth);
 
   return (
     <div id={`page-number-${index + 1}`} className="h-full w-full  ">

@@ -45,7 +45,7 @@ export const Project = ({project}: {project: ProjectType}) => {
       >
         <ResizablePanel
           defaultSize={55}
-          className=" z-10 relative bg-primary/5 dark:bg-card"
+          className=" z-10 relative bg-primary/5 dark:bg-card overflow-hidden"
         >
           <FileView upload={project.upload} />
         </ResizablePanel>

@@ -132,11 +132,13 @@ import {
   ArrowUp,
   Layers3,
   Loader,
+  BookText,
 } from "lucide-react";
 
 //   export type XIcon = LucideIcon;
 
 export const Icons = {
+  bookText: BookText,
   loader: Loader,
   stack: Layers3,
   arrowUp: ArrowUp,
