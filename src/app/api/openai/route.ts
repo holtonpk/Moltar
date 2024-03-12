@@ -5,7 +5,7 @@ import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 });
-export async function POST(req: NextApiRequest, response: NextApiResponse) {
+export async function POST(req: Request) {
   try {
     const prompt = await req.json();
     const completion = await openai.chat.completions.create({
