@@ -53,9 +53,9 @@ const Chat = () => {
   }, [project?.chat]);
 
   return (
-    <div className="flex flex-col  items-center justify-center h-full w-full  relative   z-10">
+    <div className="flex flex-col  items-center justify-center h-full w-full  relative   z-10 ">
       {!project?.chat || project.chat?.length === 0 ? (
-        <div className="px-4">
+        <div className="px-4 ">
           <div className="flex flex-col gap-2 items-center mt-auto">
             <h2 className="font-bold mt-auto text-theme-blue">
               Enter your prompt here
@@ -67,7 +67,7 @@ const Chat = () => {
         </div>
       ) : (
         <>
-          <div className="w-full h-full  justify-between overflow-hidden  dark:bg-white/5 flex flex-col gap-0 items-center  p-0  ">
+          <div className="w-full h-full  justify-between overflow-hidden  dark:bg-white/10 flex flex-col gap-0 items-center  p-0  ">
             <Header />
             <div
               ref={chatContainer}

@@ -245,7 +245,7 @@ const FileView = ({upload}: {upload: UploadType}) => {
               if (value === "") return;
               goToPage(parseInt(value));
             }}
-            className="p-1 text-center bg-card/20 border rounded-lg aspect-square border-gray-200 font-normal text-theme-blue"
+            className="p-1 text-center bg-transparent border rounded-lg aspect-square border-border dark:border-white/30 font-normal text-theme-blue"
           />
           of {numPages}
           <Button

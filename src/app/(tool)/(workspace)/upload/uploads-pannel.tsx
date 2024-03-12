@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Document, Page, pdfjs} from "react-pdf";
 import {useRouter} from "next/navigation";
 import {Icons} from "@/components/icons";
@@ -39,6 +39,7 @@ import {db} from "@/config/firebase";
 import {doc, setDoc, serverTimestamp} from "firebase/firestore";
 import {useAuth} from "@/context/user-auth";
 import {Skeleton} from "@/components/ui/skeleton";
+import {useNavbar} from "@/context/navbar-context";
 
 import {useUploads} from "@/context/upload-context";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
@@ -78,14 +79,19 @@ const UploadsPanel = () => {
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
 
   const [selectedFile, setSelectedFile] = React.useState<string | null>(null);
+  const {collapsed} = useNavbar()!;
 
   return (
-    <div className="  overflow-scroll h-full items-center  pb-20   w-[full] absolute p-6 ">
-      <div className="flex flex-wrap items-center w-full h-fit gap-4  pb-6">
+    <div className="  overflow-scroll h-full items-center  pb-20   w-full absolute p-6 ">
+      <div
+        className={`grid  items-center w-fit mx-auto h-fit gap-4   pb-6
+      ${collapsed ? "grid-cols-6" : "grid-cols-5"}
+      `}
+      >
         {uploadList.map((file: UploadType) => (
           <div
             key={file.id}
-            className={` cursor-pointer w-fit h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
+            className={` cursor-pointer w-full h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
             ${filterList.includes(file.id) ? "visible" : "hidden"} `}
           >
             <button
@@ -93,7 +99,7 @@ const UploadsPanel = () => {
               className="absolute  z-20 top-0 left-0 h-full w-full group"
             />
             <PdfViewer file={file} />
-            <div className="pr-6  z-30 border-t-border border-t h-fit absolute bg-card  top-full  w-full left-1/2 -translate-x-1/2  group-hover: -translate-y-full transition-transform">
+            <div className="pr-6  z-30 border-t-border border-t h-fit absolute bg-card  top-full  w-[110%] pl-4 left-1/2 -translate-x-1/2  group-hover: -translate-y-full transition-transform">
               <div className="p-2 text-primary  text-sm text-left  font- overflow-hidden text-ellipsis ">
                 {file.title}
               </div>
@@ -188,11 +194,14 @@ export default UploadsPanel;
 const PdfViewer = ({file}: {file: UploadType}) => {
   const [loading, setLoading] = React.useState(true);
 
+  const documentRef = React.useRef<HTMLDivElement>(null);
+
   return (
     <>
       <Document
+        ref={documentRef}
         className={
-          " relative  group mx-auto rounded-lg   w-[190px] h-[242px]  z-10 "
+          " relative  group mx-auto rounded-lg    h-[242px] w-[190px]  z-10 "
         }
         onLoadSuccess={() => console.log("PDF loaded successfully")}
         file={file.path}
@@ -205,7 +214,7 @@ const PdfViewer = ({file}: {file: UploadType}) => {
         }
       >
         <Page
-          height={260}
+          height={242}
           onLoadSuccess={() => setLoading(false)}
           className={`rounded-lg overflow-hidden p-1 border-2 border-border   absolute top-1/2  left-1/2 -translate-y-1/2 -translate-x-1/2  pointer-events-none 
         ${loading ? "hidden" : "visible"}

@@ -33,7 +33,7 @@
     --blue: 212 90% 58%;
     --purple: 259 82% 67%;
     /* Component colors */
-    --background: 210 9% 9%;
+    --background: 210 23% 97%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -118,6 +118,15 @@
   /* global 94%+ browsers support */
   background: linear-gradient(
     90deg,
+    rgba(233, 236, 237, 0.2) 0%,
+    rgba(233, 236, 237, 1) 30%
+  );
+}
+
+.dark .project-hover-bg-gradient {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    90deg,
     rgba(33, 35, 37, 0.2) 0%,
     rgba(33, 35, 37, 1) 30%
   );
@@ -127,8 +136,17 @@
   /* global 94%+ browsers support */
   background: linear-gradient(
     90deg,
-    rgba(44, 47, 48, 0.2) 0%,
-    rgba(44, 47, 48, 1) 30%
+    rgba(222, 225, 227, 0.2) 0%,
+    rgba(222, 225, 227) 30%
+  );
+}
+
+.dark .project-hover-bg-gradient-active {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    90deg,
+    rgba(43, 46, 47, 0.2) 0%,
+    rgb(43, 46, 47) 30%
   );
 }
 

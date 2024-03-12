@@ -5,21 +5,24 @@ import {ProjectsProvider} from "@/context/projects-context";
 import {UploadsProvider} from "@/context/upload-context";
 import {Toaster} from "@/components/ui/toaster";
 import AuthModal from "@/components/auth/auth-modal";
+import {NavbarProvider} from "@/context/navbar-context";
 
 const Workspace = ({children}: {children: React.ReactNode}) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <Toaster />
-      <div className="bg-background p-4 flex h-screen overflow-hidden">
-        <UploadsProvider>
-          <ProjectsProvider>
-            <Navbar />
-            <div className="flex-grow bg-card overflow-hidden rounded-xl ">
-              {children}
-            </div>
-            <AuthModal />
-          </ProjectsProvider>
-        </UploadsProvider>
+      <div className="bg-background  flex h-screen overflow-hidden">
+        <NavbarProvider>
+          <UploadsProvider>
+            <ProjectsProvider>
+              <Navbar />
+              <div className="flex-grow bg-card overflow-hidden   border border-border ">
+                {children}
+              </div>
+              <AuthModal />
+            </ProjectsProvider>
+          </UploadsProvider>
+        </NavbarProvider>
       </div>
     </ThemeProvider>
   );

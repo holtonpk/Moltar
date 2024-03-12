@@ -37,8 +37,9 @@ import {Input} from "@/components/ui/input";
 import {ProjectType} from "@/types";
 import {useSelectedLayoutSegments, useRouter} from "next/navigation";
 import {useAuth} from "@/context/user-auth";
-
-export const UploadList = ({collapsed}: {collapsed: boolean}) => {
+import {useNavbar} from "@/context/navbar-context";
+export const UploadList = () => {
+  const {collapsed} = useNavbar()!;
   const {displayedProjects, loading, addingNewAnimation} = useProjects()!;
   const {currentUser, setShowLoginModal, setNewUser} = useAuth()!;
 
@@ -53,7 +54,7 @@ export const UploadList = ({collapsed}: {collapsed: boolean}) => {
           ) : (
             <>
               {collapsed ? (
-                <div className="flex flex-col items-start mx-auto w-6 ">
+                <div className="flex flex-col items-start mx-auto w-6 flex-grow  gap-4  overflow-hidden">
                   {displayedProjects.map((project) => (
                     <CollapsedProject key={project.id} project={project} />
                   ))}
@@ -64,7 +65,7 @@ export const UploadList = ({collapsed}: {collapsed: boolean}) => {
     `}
                 >
                   <div className="flex justify-between items-center pl-2">
-                    <span className="text-sm font-bold text-white">
+                    <span className="text-sm font-bold text-primary">
                       Your Chats
                     </span>
                   </div>
@@ -100,8 +101,8 @@ export const UploadList = ({collapsed}: {collapsed: boolean}) => {
         <>
           {!collapsed && (
             <div className="flex-grow flex pt-10 fade-in">
-              <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-[#242728] border-white/30 border">
-                <p className="text-lg text-center text-white">
+              <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-card border-border border">
+                <p className="text-lg text-center text-primary">
                   Create an account to save your chats, projects and so much
                   more
                 </p>
@@ -111,9 +112,9 @@ export const UploadList = ({collapsed}: {collapsed: boolean}) => {
                     setNewUser(true);
                     setShowLoginModal(true);
                   }}
-                  className="text-white text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
+                  className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
                 >
-                  <span className="bg-[#242728] w-full h-full rounded-md flex items-center justify-center hover:bg-opacity-80">
+                  <span className="bg-card w-full h-full rounded-md flex items-center justify-center hover:opacity-80">
                     Sign up
                   </span>
                 </Button>
@@ -157,7 +158,7 @@ const NewProject = ({project}: {project: ProjectType}) => {
 
   return (
     <div
-      className={`relative  w-full   group overflow-hidden  rounded-lg  bg-white/10 fade-in
+      className={`relative  w-full   group overflow-hidden  rounded-lg  bg-primary/10 fade-in
 
     `}
     >
@@ -168,7 +169,7 @@ const NewProject = ({project}: {project: ProjectType}) => {
 
         `}
         />
-        <p className="text-card text-left whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-white relative z-10">
+        <p className=" text-left whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
           {displayName}
         </p>
       </div>
@@ -248,7 +249,7 @@ const Project = ({project}: {project: ProjectType}) => {
     <div
       ref={ItemRef}
       className={`relative  w-full   group overflow-hidden  rounded-lg   
-    ${activeTab ? "bg-white/10" : hovered ? "bg-white/5" : "bg-transparent"}
+    ${activeTab ? "bg-primary/10" : hovered ? "bg-primary/5" : "bg-transparent"}
 
     `}
     >
@@ -262,7 +263,7 @@ const Project = ({project}: {project: ProjectType}) => {
 
         `}
         />
-        <p className="text-card text-left whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-white relative z-10">
+        <p className=" text-left whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
           {project?.name}
         </p>
       </Link>
@@ -279,7 +280,7 @@ const Project = ({project}: {project: ProjectType}) => {
       >
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger>
-            <Icons.ellipsis className="h-4 w-4 text-white" />
+            <Icons.ellipsis className="h-4 w-4 text-primary" />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="border-border dark:border-gray-500 l">
             <DropdownMenuItem
@@ -419,19 +420,21 @@ const CollapsedProject = ({project}: {project: ProjectType}) => {
     <Link
       href={"/chat/" + project.id}
       ref={ItemRef}
-      className="h-[36px] grid grid-cols-[24px_1fr] fade-in w-fit   z-30 group relative"
+      className="h-[24px] grid grid-cols-[24px_1fr] fade-in w-fit   z-30 group relative "
     >
       <span
         className={`w-6 aspect-square rounded-md relative  cursor-pointer
         ${
-          segments.slice(-1)[0] === project.id ? "border" : "group-hover:border"
+          segments.slice(-1)[0] === project.id
+            ? "border border-primary"
+            : "group-hover:border border-primary"
         }
         `}
         style={{background: project.color}}
       />
       <div
         id={project.id + "-toolTip"}
-        className="hidden fade-in-fast  bg-card text-primary ml-6  border z-[60] rounded-md p-2 h-fit w-fit min-w-[200px] max-w-[350px] text-sm"
+        className="hidden fixed fade-in-fast  bg-card text-primary  ml-8 mb-4  border border-border z-[60] rounded-md p-2 h-fit w-fit min-w-[200px] max-w-[350px] text-sm"
       >
         {project.name}
       </div>

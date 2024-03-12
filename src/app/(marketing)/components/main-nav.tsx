@@ -36,8 +36,8 @@ export default function Nav() {
   return (
     <div
       className={clsx(`sticky inset-x-0 top-0 z-30 w-full transition-all`, {
-        "border-b-border border-b bg-card/75 backdrop-blur-lg": scrolled,
-        "border-b-border border-b bg-background":
+        "border-order border-b bg-card/75 backdrop-blur-lg": scrolled,
+        "border-order border-b bg-background":
           segment && !transparentHeaderSegments.has(segment),
       })}
     >
@@ -45,10 +45,10 @@ export default function Nav() {
         <div className="flex h-20 items-center justify-between w-full">
           <div className="flex justify-between md:justify-start  w-full items-end sticky  md:gap-10 ">
             <div className="grid grid-cols-[32px_1fr]  gap-2 ">
-              <Icons.logoAdaptive className="h-8 w-8 " />
+              <Icons.logoSolid className="h-8 w-8 " />
 
-              <span className="font-bold  text-3xl  leading-[32px] fade-in bg-gradient-to-r from-theme-purple via-theme-blue to-theme-green bg-clip-text text-transparent ">
-                moltar.ai
+              <span className="font-bold  text-3xl  leading-[32px] fade-in text-primary">
+                Moltar
               </span>
             </div>
 

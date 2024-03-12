@@ -3,9 +3,10 @@ import * as React from "react";
 import {LinkButton} from "@/components/ui/link";
 import {Icons} from "@/components/icons";
 import {useParams, useSelectedLayoutSegment} from "next/navigation";
-
-export const Navigation = ({collapsed}: {collapsed: boolean}) => {
+import {useNavbar} from "@/context/navbar-context";
+export const Navigation = () => {
   type Tabs = "chat" | "upload" | "settings";
+  const {collapsed} = useNavbar()!;
 
   const segment = useSelectedLayoutSegment();
 
@@ -13,8 +14,8 @@ export const Navigation = ({collapsed}: {collapsed: boolean}) => {
     <div className="flex flex-col w-full gap-3 ">
       <LinkButton
         href="/upload"
-        className={`hover:bg-white/15 relative text-lg  items-center font-bold text-white  px-4 leading-[24px]
-          ${segment === "chat" ? "bg-white/15" : "bg-transparent"}
+        className={`hover:bg-primary/10 relative text-lg  items-center font-bold text-primary  px-4 leading-[24px]
+          ${segment === "upload" ? "bg-primary/5" : "bg-transparent"}
   
           ${
             collapsed
@@ -23,14 +24,14 @@ export const Navigation = ({collapsed}: {collapsed: boolean}) => {
           }
           `}
       >
-        <Icons.chat className="h-6 w-6 aspect-square text-theme-blue" />
-        {!collapsed && <span className="fade-in"> Chat </span>}
+        <Icons.upload className="h-6 w-6 aspect-square text-theme-blue" />
+        {!collapsed && <span className="fade-in "> Upload </span>}
       </LinkButton>
       <LinkButton
         href="/settings"
-        className={`hover:bg-white/15 relative text-lg  items-center font-bold text-white  px-4 leading-[24px]
+        className={`hover:bg-primary/10 relative text-lg  items-center font-bold text-primary  px-4 leading-[24px]
   
-          ${segment === "settings" ? "bg-white/15" : "bg-transparent"}
+          ${segment === "settings" ? "bg-primary/5" : "bg-transparent"}
           ${
             collapsed
               ? "px-0  "
