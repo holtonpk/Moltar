@@ -37,7 +37,7 @@ const HeroText: React.FC = () => {
           <div className="p-[2px] rounded-lg bg-gradient-to-r from-theme-purple via-theme-blue to-theme-green shadow-lg">
             <LinkButton
               size="lg"
-              href="/onboarding/register"
+              href="/upload"
               className="w-full md:w-fit whitespace-nowrap   bg-card  hover:bg-card/80"
             >
               <span className="flex items-center justify-between w-full gap-3 font-bold bg-gradient-to-r from-theme-purple via-theme-blue to-theme-green bg-clip-text text-transparent">
