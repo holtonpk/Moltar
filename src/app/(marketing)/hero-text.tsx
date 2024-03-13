@@ -41,7 +41,7 @@ const HeroText: React.FC = () => {
               className="w-full md:w-fit whitespace-nowrap   bg-card  hover:bg-card/80"
             >
               <span className="flex items-center justify-between w-full gap-3 font-bold bg-gradient-to-r from-theme-purple via-theme-blue to-theme-green bg-clip-text text-transparent">
-                Start leveraging Moltar
+                Start Using Moltar
                 <Icons.arrowRight className="w-5 h-5 inline-block text-theme-green" />
               </span>
             </LinkButton>
