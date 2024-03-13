@@ -17,7 +17,7 @@ export default async function MarketingLayout({
         <Nav />
         <MobileNav />
         <main className="flex-1 z-10">{children}</main>
-        <SiteFooter />
+        {/* <SiteFooter /> */}
         <Background />
       </div>
     </ThemeProvider>
