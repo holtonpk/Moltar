@@ -20,6 +20,8 @@ export const Uploads = () => {
   const {uploadList, setUploadList, loading, filterList, resetFilter} =
     useUploads();
 
+  const dragContainer = React.useRef<HTMLDivElement>(null);
+
   return (
     <div className=" flex flex-col items-center max-h-full h-full relative ">
       <UploadHeader />
@@ -28,8 +30,8 @@ export const Uploads = () => {
           <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
         </div>
       ) : (
-        <div className="h-full relative w-full max-w-full ">
-          <FileDrop />
+        <div ref={dragContainer} className="h-full relative w-full max-w-full ">
+          <FileDrop dragContainer={dragContainer} />
           {!uploadList || uploadList.length === 0 ? (
             <EmptyUploadList />
           ) : (
@@ -50,6 +52,7 @@ export const Uploads = () => {
 
 const UploadHeader = () => {
   const {uploadFile, FilterUploads, resetFilter} = useUploads();
+  const {toast} = useToast();
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     // if search value is not empty, resetFilter
@@ -70,7 +73,15 @@ const UploadHeader = () => {
       setUploadQueue(files); // Set the initial queue
 
       for (let file of files) {
-        await uploadFile(file); // Upload the file
+        if (file.size > 10000000) {
+          toast({
+            title: `${file.name} is too large`,
+            description: "Please upload a file less than 10MB",
+            variant: "destructive",
+          });
+        } else {
+          await uploadFile(file); // Upload the file
+        }
         // Remove the uploaded file from the queue
         setUploadQueue((currentQueue) =>
           currentQueue.filter((f) => f !== file)
@@ -121,6 +132,7 @@ const UploadHeader = () => {
 const EmptyUploadList = () => {
   const {uploadFile} = useUploads();
   const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
+  const {toast} = useToast();
 
   const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -128,7 +140,15 @@ const EmptyUploadList = () => {
       setUploadQueue(files); // Set the initial queue
 
       for (let file of files) {
-        await uploadFile(file); // Upload the file
+        if (file.size > 10000000) {
+          toast({
+            title: `${file.name} is too large`,
+            description: "Please upload a file less than 10MB",
+            variant: "destructive",
+          });
+        } else {
+          await uploadFile(file); // Upload the file
+        }
         // Remove the uploaded file from the queue
         setUploadQueue((currentQueue) =>
           currentQueue.filter((f) => f !== file)
@@ -139,45 +159,62 @@ const EmptyUploadList = () => {
 
   return (
     <div className="flex flex-col w-full gap-4 items-center pt-20  h-full p-6 shadow-2xl dark:bg-white/5 relative z-10">
-      <div className="text-3xl font-bold capitalize text-center text-theme-blued">
-        Upload files & start interacting
-      </div>
-      <div className="w-[80%] p-6  border-border dark  rounded-lg bgs-[rgb(25,118,210,.2)] flex flex-col gap-2 items-center justify-center">
-        <div className="flex items-center justify-center p-6 rounded-lg bg-[rgb(25,118,210,.2)]">
-          <Icons.uploadCloud className="h-20 w-20 text-theme-blue" />
-        </div>
-        <h1 className="text- text-2xl font-bold mt-2">Drag and Drop Files</h1>
-        <Button
-          onClick={() => document.getElementById("selectedFile")?.click()}
-          className="text-primary font-bold  rounded-full py-2 px-6 bg-theme-blue shadow-lg"
-        >
-          Select files
-        </Button>
-        <input
-          multiple
-          id="selectedFile"
-          type="file"
-          accept=".pdf"
-          onChange={onFileChange}
-          style={{display: "none"}}
-        />
-      </div>
-      <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-        {uploadQueue.map((file, i) => (
-          <div
-            key={i}
-            className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
-          >
-            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
-            <span className="text-white font-bold">{file.name}</span>
+      <div className="h-fit w-fit flex flex-col items-center  p-8 px-20 rounded-lg border border-border dark:border-white/10  dark:bg-white/5 shadow-lg">
+        {/* <div className="text-3xl font-bold capitalize text-center text-theme-blued">
+          The easy way to simplify <br /> your reading
+        </div> */}
+        <div className="w-[80%] p-6  border-border   rounded-lg bgs-[rgb(25,118,210,.2)] flex flex-col gap-2 items-center justify-center">
+          <div className="flex items-center justify-center p-6 rounded-lg bg-[rgb(25,118,210,.2)]">
+            <Icons.uploadCloud className="h-20 w-20 text-theme-blue" />
           </div>
-        ))}
+          <h1 className="text- text-2xl font-bold mt-2 whitespace-nowrap">
+            Drag & Drop your .pdf Files
+          </h1>
+          <span>or</span>
+          {/* <Button
+            onClick={() => document.getElementById("selectedFile")?.click()}
+            className="text-primary font-bold  rounded-full py-2 px-6 bg-theme-blue hover:bg-theme-blue hover:opacity-80 shadow-lg"
+          >
+            Click to browse
+          </Button> */}
+          <Button
+            onClick={() => document.getElementById("selectedFile")?.click()}
+            className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
+          >
+            <span className="bg-card dark:bg-[#3B3C3D] text-primary w-full h-full rounded-md flex items-center justify-center hover:opacity-90">
+              Click to browse
+            </span>
+          </Button>
+          <input
+            multiple
+            id="selectedFile"
+            type="file"
+            accept=".pdf"
+            onChange={onFileChange}
+            style={{display: "none"}}
+          />
+        </div>
+        <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
+          {uploadQueue.map((file, i) => (
+            <div
+              key={i}
+              className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
+            >
+              <Icons.spinner className="h-5 w-5 animate-spin text-white" />
+              <span className="text-white font-bold">{file.name}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
 
-const FileDrop = () => {
+const FileDrop = ({
+  dragContainer,
+}: {
+  dragContainer: React.RefObject<HTMLDivElement>;
+}) => {
   const [dragging, setDragging] = React.useState(false);
   const {uploadFile} = useUploads();
 
@@ -187,9 +224,8 @@ const FileDrop = () => {
   const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
   const [activeUpload, setActiveUpload] = React.useState<File | null>(null);
 
-  const dragContainer = React.useRef<HTMLDivElement>(null);
-
   const handleDragOver = useCallback((e: DragEvent) => {
+    console.log("dragging");
     e.preventDefault();
     setDragging(true);
   }, []);
@@ -209,15 +245,25 @@ const FileDrop = () => {
       const pdfFiles = files.filter(
         (file: File) => file.type === "application/pdf"
       );
+
       setUploadQueue(pdfFiles);
       for (let file of pdfFiles) {
-        setActiveUpload(file);
-        await uploadFile(file);
+        // get the total words in the pdf file
+        if (file.size > 10000000) {
+          toast({
+            title: `${file.name} is too large`,
+            description: "Please upload a file less than 10MB",
+            variant: "destructive",
+          });
+        } else {
+          setActiveUpload(file);
+          await uploadFile(file);
+        }
         setUploadQueue((prev) => prev.filter((f) => f !== file));
       }
       setActiveUpload(null);
     },
-    [uploadFile]
+    [uploadFile, toast]
   );
 
   useEffect(() => {
@@ -233,14 +279,13 @@ const FileDrop = () => {
       currentDragContainer.removeEventListener("dragleave", handleDragLeave);
       currentDragContainer.removeEventListener("drop", handleDrop);
     };
-  }, [handleDrop, handleDragOver, handleDragLeave]); // Assuming `handleDrop` is stable or wrapped with useCallback
+  }, [handleDrop, handleDragOver, handleDragLeave, dragContainer]); // Assuming `handleDrop` is stable or wrapped with useCallback
 
   return (
     <>
       <div
-        ref={dragContainer}
-        className={`h-full w-full absolute p-2 left-0 top-0 z-40 pointer-events-none ${
-          dragging ? " opacity-1" : "opacity-0"
+        className={`h-full w-full absolute p-2 left-0 top-0 z-40 pointer-events-none  ${
+          dragging ? " opacity-1" : "opacity-0 "
         }`}
       >
         <div className="h-full  pointer-events-none w-full border-2 border-dashed border-theme-blue bg-theme-blue/10 blurBack rounded-xl z-40 flex items-center justify-center flex-col">

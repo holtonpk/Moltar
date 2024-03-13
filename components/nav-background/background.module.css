@@ -1,0 +1,80 @@
+/* 
+  Author's note: The styles for this gradient grid background is heavily inspired by
+  Paco & Rauno's amazing CMDK site (https://cmdk.paco.me) – all credits go to them! 
+*/
+
+.main {
+  width: 100%;
+  min-height: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  /* padding: 120px 24px 160px 24px; */
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.main:before {
+  background: radial-gradient(circle, var(--muted) 0, var(--background) 100%);
+
+  position: absolute;
+  content: "";
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  top: 0;
+}
+
+.main:after {
+  content: "";
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  opacity: 0.4;
+  filter: invert(1);
+}
+
+.content {
+  width: 100%;
+
+  background-image: radial-gradient(
+      at 10% 10%,
+      hsl(var(--orange)) 0px,
+      hsla(125, 98%, 72%, 0) 30%
+    ),
+    radial-gradient(
+      at 20% 90%,
+      hsl(var(--green)) 0px,
+      hsla(354, 98%, 61%, 0) 30%
+    ),
+    radial-gradient(
+      at 100% 10%,
+      hsl(var(--purple)) 0px,
+      hsla(256, 96%, 67%, 0) 30%
+    ),
+    radial-gradient(at 60% 60%, hsl(var(--blue)) 0px, hsla(38, 60%, 74%, 0) 30%),
+    radial-gradient(
+      at 70% 100%,
+      hsl(var(--green)) 0px,
+      hsla(222, 67%, 73%, 0) 50%
+    ),
+    radial-gradient(
+      at 80% 80%,
+      hsl(var(--blue)) 0px,
+      hsla(343, 68%, 79%, 0) 50%
+    );
+
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+
+  filter: saturate(150%) blur(40px);
+  -webkit-filter: saturate(150%) blur(40px);
+  top: 0px;
+  opacity: 0.1;
+}

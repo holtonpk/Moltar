@@ -64,14 +64,32 @@ export const UploadList = () => {
                   className={`flex flex-col  relative   flex-grow overflow-scroll fade-in
     `}
                 >
-                  <div className="flex justify-between items-center pl-2">
-                    <span className="text-sm font-bold text-primary">
-                      Your Chats
-                    </span>
-                  </div>
-                  {displayedProjects.length === 0 && (
-                    <div className="flex-grow flex items-center justify-center">
-                      <p className="text-white text-lg">No chats yet</p>
+                  {displayedProjects.length === 0 ? (
+                    <div className="flex-grow flex pt-10 fade-in ">
+                      <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-card border-border border">
+                        <p className="text-lg text-center text-primary">
+                          You don&apos;t have any chats yet when you create a
+                          chat it will appear here
+                        </p>
+
+                        {/* <Button
+                          onClick={() => {
+                            setNewUser(true);
+                            setShowLoginModal(true);
+                          }}
+                          className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
+                        >
+                          <span className="bg-card w-full h-full rounded-md flex items-center justify-center hover:opacity-80">
+                            Sign up
+                          </span>
+                        </Button> */}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between items-center pl-2">
+                      <span className="text-sm font-bold text-primary">
+                        Your Chats
+                      </span>
                     </div>
                   )}
                   <div className="flex flex-col items-start  mt-2">

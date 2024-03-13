@@ -179,8 +179,8 @@ const FileView = ({upload}: {upload: UploadType}) => {
           ))}
         </Document>
       </ScrollArea>
-      <div className=" w-full man-w-fit gap-10 justify-between  py-2  bg-card dark:bg-[#3A3D3E] border-t border-border  z-20 flex items-center px-4 ">
-        <div className="w-[200px] min-w-[200px]  flex flex-row items-center gap-2 text-theme-blue">
+      <div className="absolute bottom-4 w-[95%] rounded-lg min-w-fit gap-10 justify-between  py-2  bg-card blurBack dark:bg-[#3A3D3E]   z-20 flex items-center px-2 ">
+        <div className="w-[200px] min-w-[200px]  flex flex-row items-center gap-2 text-theme-blue bg-card p-2 rounded-md border border-border">
           {zoomValue + "%"}
           <Slider
             defaultValue={[75]}
@@ -192,8 +192,9 @@ const FileView = ({upload}: {upload: UploadType}) => {
         </div>
 
         <Popover open={showGridPages} onOpenChange={setShowGridPages}>
-          <PopoverTrigger className="bg-card dark:bg-[#3A3D3E] shadow-md text-theme-blue border dark:border-transparent dark:bg-white/5  p-2 rounded-md">
+          <PopoverTrigger className="bg-card   text-theme-blue border dark:border-transparent   p-2 rounded-md flex items-center gap-2">
             <Icons.grid className="h-5 w-5 " />
+            Page View
           </PopoverTrigger>
           <PopoverContent className="blurBack bg-card/10 p-4 w-[500px]  top-4 h-[450px] overflow-scroll">
             <Document
@@ -228,7 +229,7 @@ const FileView = ({upload}: {upload: UploadType}) => {
           </PopoverContent>
         </Popover>
 
-        <span className="p-1  rounded-md flex items-center whitespace-nowrap gap-2 w-fit text-[12px] font-bold  ">
+        <span className="p-1 bg-card rounded-md border border-border flex items-center whitespace-nowrap gap-2 w-fit text-[12px] font-bold  ">
           <Button
             onClick={() => goToPage(currentPage - 1)}
             size="sm"

@@ -208,8 +208,8 @@ input:focus {
   /* global 94%+ browsers support */
   background: linear-gradient(
     180deg,
-    rgba(47, 50, 51, 0) 0%,
-    rgba(47, 50, 51, 1) 10%
+    rgba(58, 61, 62, 0) 0%,
+    rgba(58, 61, 62, 1) 10%
   );
 }
 

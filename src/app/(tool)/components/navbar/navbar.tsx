@@ -6,12 +6,14 @@ import {UploadList} from "@/src/app/(tool)/components/navbar/upload-list";
 import {UserInfo} from "@/src/app/(tool)/components/navbar/user-info";
 import {ModeToggle} from "@/src/app/(tool)/components/navbar/mode-toggle";
 import {useNavbar} from "@/context/navbar-context";
+import NavBackground from "@/components/nav-background";
+
 export const Navbar = () => {
   const {collapsed, setCollapsed} = useNavbar()!;
 
   return (
     <div
-      className={`h-full flex flex-col  p-4  relative z-40 transition-all duration-300 ease-in-out 
+      className={`h-full flex flex-col  p-4 relative   z-40 transition-all duration-300 ease-in-out 
     ${collapsed ? "w-[50px] min-w-[70px]" : "w-[225px] min-w-[225px]"} 
     `}
     >
@@ -41,6 +43,7 @@ export const Navbar = () => {
           </button>
         </div>
       </div>
+      <NavBackground />
     </div>
   );
 };
