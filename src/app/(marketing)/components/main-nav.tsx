@@ -83,7 +83,7 @@ export default function Nav() {
               href="/register"
               variant="default"
               size="sm"
-              className="px-4 whitespace-nowrap bg-theme-blue"
+              className="px-4 whitespace-nowrap "
             >
               Sign up
             </LinkButton>
