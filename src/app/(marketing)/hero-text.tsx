@@ -33,16 +33,16 @@ const HeroText: React.FC = () => {
           immediate answers.
         </h2>
 
-        <div className="mx-auto mt-10 flex w-full flex-col md:flex-row md:max-w-fit gap-4 ">
+        <div className="mx-auto mt-6 flex w-full flex-col md:flex-row md:max-w-fit gap-4 ">
           <div className="p-[2px] rounded-lg bg-gradient-to-r from-theme-purple via-theme-blue to-theme-green shadow-lg">
             <LinkButton
               size="lg"
               href="/upload"
-              className="w-full md:w-fit whitespace-nowrap   bg-card  hover:bg-card/80"
+              className="w-full md:w-fit whitespace-nowrap   bg-background/50 hover:bg-background/60  "
             >
-              <span className="flex items-center justify-between w-full gap-3 font-bold bg-gradient-to-r from-theme-purple via-theme-blue to-theme-green bg-clip-text text-transparent">
+              <span className="flex items-center justify-between w-full gap-3 font-bold text-primary">
                 Start Using Moltar
-                <Icons.arrowRight className="w-5 h-5 inline-block text-theme-green" />
+                <Icons.arrowRight className="w-5 h-5 inline-block text-primary group-hover:ml-6" />
               </span>
             </LinkButton>
           </div>
