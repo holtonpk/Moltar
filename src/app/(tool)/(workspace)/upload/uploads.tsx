@@ -24,7 +24,7 @@ export const Uploads = () => {
 
   return (
     <div className=" flex flex-col items-center max-h-full h-full relative ">
-      <UploadHeader />
+      {uploadList && uploadList?.length > 0 && <UploadHeader />}
       {loading ? (
         <div className="flex flex-col items-center justify-center h-full w-full ">
           <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
@@ -158,12 +158,12 @@ const EmptyUploadList = () => {
   };
 
   return (
-    <div className="flex flex-col w-full gap-4 items-center pt-20  h-full p-6 shadow-2xl dark:bg-white/5 relative z-10">
-      <div className="h-fit w-fit flex flex-col items-center  p-8 px-20 rounded-lg border border-border dark:border-white/10  dark:bg-white/5 shadow-lg">
+    <div className="flex flex-col w-full gap-4 items-center pt-2 justify-center   h-full p-6 shadow-2xl  relative z-10">
+      <div className="h-fit w-fit flex flex-col items-center   p-8 px-20 rounded-lg border border-border dark:border-white/10  dark:bg-white/5 shadow-lg">
         {/* <div className="text-3xl font-bold capitalize text-center text-theme-blued">
           The easy way to simplify <br /> your reading
         </div> */}
-        <div className="w-[80%] p-6  border-border   rounded-lg bgs-[rgb(25,118,210,.2)] flex flex-col gap-2 items-center justify-center">
+        <div className="w-[80%] p-6  border-border  rounded-lg bgs-[rgb(25,118,210,.2)] flex flex-col gap-2 items-center justify-center">
           <div className="flex items-center justify-center p-6 rounded-lg bg-[rgb(25,118,210,.2)]">
             <Icons.uploadCloud className="h-20 w-20 text-theme-blue" />
           </div>
@@ -179,9 +179,9 @@ const EmptyUploadList = () => {
           </Button> */}
           <Button
             onClick={() => document.getElementById("selectedFile")?.click()}
-            className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
+            className="text-primary text-sm bg-transparent  w-full bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue p-[2px]"
           >
-            <span className="bg-card dark:bg-[#3B3C3D] text-primary w-full h-full rounded-md flex items-center justify-center hover:opacity-90">
+            <span className=" bg-card hover:bg-card/80 text-primary w-full h-full rounded-md flex items-center justify-center hover:opacity-90">
               Click to browse
             </span>
           </Button>
