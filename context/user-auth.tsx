@@ -8,6 +8,7 @@ import {
   signOut,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
+  GoogleSignIn,
   updateProfile,
   signInWithPopup,
   updateEmail,
@@ -142,7 +143,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         createUserStorage(cred?.user.uid, name, email);
         return {success: cred};
       })
-      .catch((error) => {
+      .catch((error: any) => {
         return {error: error.code};
       });
 
@@ -151,10 +152,10 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 
   function signIn(email: string, password: string) {
     const login = signInWithEmailAndPassword(auth, email, password)
-      .then((value) => {
+      .then((value: any) => {
         return {success: value};
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.log("error((((", error);
         return {error: error.code};
       });
@@ -172,7 +173,10 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 
   async function logInWithGoogle(): Promise<{success?: any; error?: any}> {
     try {
-      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      const result = await signInWithPopup(
+        auth,
+        new GoogleAuthProvider().setCustomParameters({prompt: "select_account"})
+      );
       if (result.user) {
         createUserStorage(
           result.user.uid,
