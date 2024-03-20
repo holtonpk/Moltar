@@ -8,7 +8,6 @@ import {
   signOut,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  GoogleSignIn,
   updateProfile,
   signInWithPopup,
   updateEmail,
