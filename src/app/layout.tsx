@@ -8,7 +8,7 @@ export const metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="max-h-screen overflow-hidden">{children}</body>
     </html>
   );
 }
