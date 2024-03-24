@@ -384,59 +384,63 @@ const PresetChat = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center gap-4 mt-4 w-full">
+      <div className="flex flex-col items-center gap-2 md:gap-4 mt-4 w-full">
         <button
           onClick={() => setPrompt("Create a detailed note outline")}
-          className="border border-border hover:border-theme-blue w-full rounded-lg  h-20 p-4 flex flex-row items-center justify-between cursor-pointer"
+          className="border border-border hover:border-theme-blue w-full rounded-lg  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
         >
           <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-green/40 p-2 rounded-md flex justify-center items-center">
-              <Icons.newspaper className="h-6 w-6 text-theme-green" />
+            <div className="h-10  aspect-square bg-theme-green/40 p-1 md:p-2 rounded-md flex justify-center items-center">
+              <Icons.newspaper className="h-4 w-4 md:h-6 md:w-6 text-theme-green" />
             </div>
-            <h1 className="font-bold capitalize">
+            <h1 className="font-bold capitalize text-sm md:text-base">
               Create a detailed note outline
             </h1>
           </div>
-          <Icons.chevronRight className="h-6 w-6" />
+          <Icons.chevronRight className="h-4 w-4 md:h-6 md:w-6" />
         </button>
         <button
           onClick={() => setPrompt("Create 5 questions to help me study")}
-          className="border border-border hover:border-theme-blue w-full group rounded-lg  h-20 p-4 flex flex-row items-center justify-between cursor-pointer"
+          className="border border-border hover:border-theme-blue w-full group rounded-lg  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
         >
           <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-blue/40 p-2 rounded-md flex justify-center items-center">
-              <Icons.pencil className="h-6 w-6 text-theme-blue" />
+            <div className="h-10  aspect-square bg-theme-blue/40 p-1 md:p-2 rounded-md flex justify-center items-center">
+              <Icons.pencil className="h-4 w-4 md:h-6 md:w-6 text-theme-blue" />
             </div>
-            <h1 className="font-bold capitalize ">
-              Create 5 questions to help me study
+            <h1 className="font-bold capitalize text-sm md:text-base">
+              5 questions to help me study
             </h1>
           </div>
-          <Icons.chevronRight className="h-6 w-6 " />
+          <Icons.chevronRight className="h-4 w-4 md:h-6 md:w-6" />
         </button>
         <button
           onClick={() => setPrompt("list the main points")}
-          className="border border-border hover:border-theme-blue w-full rounded-lg  h-20 p-4 flex flex-row items-center justify-between cursor-pointer"
+          className="border border-border hover:border-theme-blue w-full rounded-lg  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
         >
           <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-orange/40 p-2 rounded-md flex justify-center items-center">
-              <Icons.chart className="h-6 w-6 text-theme-orange" />
+            <div className="h-10  aspect-square bg-theme-orange/40 p-1 md:p-2 rounded-md flex justify-center items-center">
+              <Icons.chart className="h-4 w-4 md:h-6 md:w-6 text-theme-orange" />
             </div>
-            <h1 className="font-bold capitalize">List the main points</h1>
+            <h1 className="font-bold capitalize text-sm md:text-base">
+              List the main points
+            </h1>
           </div>
-          <Icons.chevronRight className="h-6 w-6" />
+          <Icons.chevronRight className="h-4 w-4 md:h-6 md:w-6" />
         </button>
         <button
           onClick={() => setPrompt("Create a short summary")}
-          className="border border-border hover:border-theme-blue w-full rounded-lg  h-20 p-4 flex flex-row items-center justify-between cursor-pointer"
+          className="border border-border hover:border-theme-blue w-full rounded-lg h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
         >
           <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-purple/40 p-2 rounded-md flex justify-center items-center">
-              <Icons.bookText className="h-6 w-6 text-theme-purple" />
+            <div className="h-10  aspect-square bg-theme-purple/40 p-1 md:p-2 rounded-md flex justify-center items-center">
+              <Icons.bookText className="h-4 w-4 md:h-6 md:w-6 text-theme-purple" />
             </div>
-            <h1 className="font-bold capitalize">Give me a short summary</h1>
+            <h1 className="font-bold capitalize text-sm md:text-base">
+              Give me a short summary
+            </h1>
           </div>
 
-          <Icons.chevronRight className="h-6 w-6" />
+          <Icons.chevronRight className="h-4 w-4 md:h-6 md:w-6" />
         </button>
       </div>
     </>
