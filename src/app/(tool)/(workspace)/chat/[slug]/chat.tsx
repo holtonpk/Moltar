@@ -429,7 +429,7 @@ const PresetChat = () => {
         </button>
         <button
           onClick={() => setPrompt("Create a short summary")}
-          className="border border-border hover:border-theme-blue w-full rounded-lg h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
+          className="hidden md:flex border border-border hover:border-theme-blue w-full rounded-lg h-16 md:h-20 p-2 md:p-4 flex-row items-center justify-between cursor-pointer"
         >
           <div className="flex gap-2 w-fit items-center">
             <div className="h-10  aspect-square bg-theme-purple/40 p-1 md:p-2 rounded-md flex justify-center items-center">
