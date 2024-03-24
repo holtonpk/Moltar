@@ -318,7 +318,7 @@ export const FileViewMobile = ({upload}: {upload: UploadType}) => {
       </div>
 
       <>
-        <div className="w-screen h-[200px] mt-2 px-4    overflow-x-scroll relative z-10 flex   gap-3    ">
+        <div className="w-screen h-[200px] mt-4 px-4    overflow-x-scroll relative z-10 flex   gap-3    ">
           <Document
             className={"relative w-fit  h-[200px]  flex  gap-4   "}
             file={upload.path}
