@@ -55,9 +55,9 @@ const Chat = () => {
   return (
     <>
       {!project?.chat || project.chat?.length === 0 ? (
-        <div className="flex flex-col  items-center justify-center mt-16 md:mt-0  flex-grow  w-full  relative  z-10 ">
+        <div className="flex flex-col  items-center justify-center mt-4 md:mt-0  flex-grow  w-full  relative  z-10 ">
           <div className="px-4 ">
-            <div className="flex flex-col gap-2 items-center mt-auto">
+            <div className=" flex-col gap-2 items-center mt-auto hidden md:flex">
               <h2 className="font-bold mt-auto text-theme-blue">
                 Enter your prompt here
               </h2>
@@ -325,7 +325,7 @@ const ChatBox = () => {
         <textarea
           ref={promptRef}
           placeholder="Enter your prompt here..."
-          className="w-full p-2 rounded-l-lg h-[42px]  textarea-no-resize bg-card dark:bg-[#444748] "
+          className="w-full p-2 rounded-l-lg h-[42px] rounded-r-none  textarea-no-resize bg-card dark:bg-[#444748] "
           onKeyDown={handleKeyDown}
         />
         <button
