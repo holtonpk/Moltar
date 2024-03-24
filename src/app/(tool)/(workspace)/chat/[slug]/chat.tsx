@@ -87,7 +87,7 @@ const Chat = () => {
               ))}
               {responseLoading && <AiMessageRender />}
             </div>
-            <div className="h-fit  overflow-hidden w-full absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
+            <div className="h-fit  overflow-hidden w-full fixed md:absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
               <BigChatBox />
               <p className="text-[12px] text-muted-foreground text-center mt-2 ">
                 Moltar can make mistakes. Consider checking important

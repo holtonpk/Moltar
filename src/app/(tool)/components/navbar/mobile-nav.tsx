@@ -44,7 +44,7 @@ const MobileNav = () => {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      <span className="text-xl font-bold ">{Instuction}</span>
+      <span className="text-sm font-bold ">{Instuction}</span>
 
       <Button className="aspect-square h-fit bg-transparent text-primary">
         <Icons.upload className="h-6 w-6" />
