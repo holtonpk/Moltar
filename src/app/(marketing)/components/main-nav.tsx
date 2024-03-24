@@ -45,7 +45,7 @@ export default function Nav() {
         <div className="flex h-20 items-center justify-between w-full">
           <div className="flex justify-between md:justify-start  w-full items-end sticky  md:gap-10 ">
             <div className="grid grid-cols-[32px_1fr]  gap-2 ">
-              <Icons.logoSolid className="h-8 w-8 " />
+              <Icons.logo className="h-8 w-8 " />
 
               <span className="font-bold  text-3xl  leading-[32px] fade-in text-primary">
                 Moltar

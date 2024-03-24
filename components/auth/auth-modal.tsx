@@ -19,7 +19,7 @@ const AuthModal = () => {
 
   return (
     <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
-      <DialogContent className="bg-transparent p-none  h-fit border-none p-0  w-[60vw] max-w-md">
+      <DialogContent className="bg-transparent p-none  h-fit border-none p-0  md:w-[60vw] md:max-w-md">
         {newUser ? <RegisterForm /> : <Login />}
       </DialogContent>
     </Dialog>

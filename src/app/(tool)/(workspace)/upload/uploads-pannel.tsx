@@ -85,7 +85,11 @@ const UploadsPanel = () => {
     <div className="  overflow-scroll h-full items-center  pb-20   w-full absolute p-6 ">
       <div
         className={`grid  items-center w-fit mx-auto h-fit gap-4   pb-6
-      ${collapsed ? "grid-cols-6" : "grid-cols-5"}
+      ${
+        collapsed
+          ? "md:grid-cols-6 xsm:grid-cols-2 grid-cols-1"
+          : "md:grid-cols-5 xsm:grid-cols-2 grid-cols-1"
+      }
       `}
       >
         {uploadList.map((file: UploadType) => (

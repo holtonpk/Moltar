@@ -11,26 +11,14 @@ const HeroText: React.FC = () => {
   return (
     <div className=" flex z-10 flex-col items-center gap-2 text-center ">
       <div className="mx-auto mb-10  px-2.5 text-center flex items-center flex-col max-w-md sm:px-0">
-        {/* <a
-          href="/onboarding/register"
-          target="_blank"
-          rel="noreferrer"
-          className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-md border-theme-blue border px-7 py-2 transition-all z-10"
-        >
-          <p className="text-[12px] font-semibold text-theme-blue">
-            Start now for free!
-          </p>
-        </a> */}
-
         <h1 className=" mt-5 font-display capitalize text-3xl font-extrabold leading-[1.15] text-primary sm:text-5xl sm:leading-[1.15]">
-          <span className="mr-4 text-theme-blue">Upload</span>&
-          <span className=" mx-4 text-theme-blue">Ask</span>
-          Moltar will do the rest!
+          {/* <span className="mx-4 text-theme-blue">Never</span> */}
+          With <span className="mx-2 text-theme-blue">Moltar</span> <br />
+          You&apos;ll Never have to read again
         </h1>
         <h2 className="mt-5 text-muted-foreground sm:text-xl">
-          Moltar.ai is an AI tool that analyzes uploaded documents, files, and
-          URLs, allowing users to ask questions or prompts about the content for
-          immediate answers.
+          Need a 10 page document analyzed? An article read? Our AI model can do
+          it all and more!! Try it out for free below 👇
         </h2>
 
         <div className="mx-auto mt-6 flex w-full flex-col md:flex-row md:max-w-fit gap-4 ">
@@ -38,9 +26,9 @@ const HeroText: React.FC = () => {
             <LinkButton
               size="lg"
               href="/upload"
-              className="w-full md:w-fit whitespace-nowrap   bg-background/50 hover:bg-background/60  "
+              className="w-full md:w-fit whitespace-nowrap   bg-background/70 dark:bg-background/50 hover:bg-background/60  justify-center md:justify-start"
             >
-              <span className="flex items-center justify-between w-full gap-3 font-bold text-primary">
+              <span className="flex items-center  md:justify-between md:w-full gap-3 font-bold text-primary">
                 Start Using Moltar
                 <Icons.arrowRight className="w-5 h-5 inline-block text-primary group-hover:ml-6" />
               </span>

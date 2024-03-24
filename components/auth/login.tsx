@@ -101,7 +101,7 @@ const Login = () => {
   }
 
   return (
-    <div className=" z-10  h-fit w-full  overflow-hidden border border-border sm:rounded-2xl sm:shadow-xl">
+    <div className=" z-10  h-fit w-full  overflow-hidden border border-border rounded-2xl shadow-xl">
       <div className="flex flex-col space-y-2 text-center bg-card px-4 py-6 pt-8">
         <h1 className="text-4xl font-semibold text-theme-blue">Welcome Back</h1>
         <p className="text-sm text-muted-foreground">

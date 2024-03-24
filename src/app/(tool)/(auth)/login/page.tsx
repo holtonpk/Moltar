@@ -15,19 +15,19 @@ import {Metadata} from "next";
 
 const Login = () => {
   return (
-    <div className="container flex h-screen w-screen bg-card flex-col items-center ">
+    <div className="container flex h-screen w-screen  flex-col items-center ">
       <Toaster />
 
       <LinkButton
         href="/register"
         // variant="ghost"]
         variant="outline"
-        className="bg-white dark:bg-black absolute top-4 right-4 border-theme-blue text-theme-blue hover:text-theme-blue"
+        className="bg-transparent absolute top-4 right-4 border-theme-blue text-theme-blue hover:text-theme-blue"
       >
         Sign up
       </LinkButton>
 
-      <div className="z-10 mt-[calc(15vh)] h-fit w-full max-w-md overflow-hidden border border-border sm:rounded-2xl sm:shadow-xl">
+      <div className="z-10 mt-[calc(15vh)] h-fit w-full  max-w-md overflow-hidden border border-border sm:rounded-2xl sm:shadow-xl">
         <div className="flex flex-col space-y-2 text-center bg-card px-4 py-6 pt-8">
           {/* <Icons.logo className="mx-auto h-6 w-6" /> */}
 
@@ -38,7 +38,7 @@ const Login = () => {
             Welcome back! Please enter your details
           </p>
         </div>
-        <div className="grid gap-6 bg-card/60 blurBack px-4 py-8 sm:px-16">
+        <div className="grid gap-6 bg-card/10 blurBack px-4 py-8 sm:px-16">
           <LoginForm />
 
           <p className="text-center text-sm text-gray-500">
@@ -53,7 +53,6 @@ const Login = () => {
           </p>
         </div>
       </div>
-      <Background />
     </div>
   );
 };

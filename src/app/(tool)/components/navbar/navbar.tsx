@@ -13,7 +13,7 @@ export const Navbar = () => {
 
   return (
     <div
-      className={`h-full flex flex-col  p-4 relative   z-40 transition-all duration-300 ease-in-out 
+      className={`h-full  flex-col  p-4 relative md:flex hidden   z-40 transition-all duration-300 ease-in-out 
     ${collapsed ? "w-[50px] min-w-[70px]" : "w-[225px] min-w-[225px]"} 
     `}
     >

@@ -24,7 +24,12 @@ export const Uploads = () => {
 
   return (
     <div className=" flex flex-col items-center max-h-full h-full relative ">
-      {uploadList && uploadList?.length > 0 && <UploadHeader />}
+      {uploadList && uploadList?.length > 0 && (
+        <>
+          {/* <MobileUploadHeader /> */}
+          <UploadHeader />
+        </>
+      )}
       {loading ? (
         <div className="flex flex-col items-center justify-center h-full w-full ">
           <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
@@ -46,6 +51,84 @@ export const Uploads = () => {
           )}
         </div>
       )}
+    </div>
+  );
+};
+const MobileUploadHeader = () => {
+  const {uploadFile, FilterUploads, resetFilter} = useUploads();
+  const {toast} = useToast();
+
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // if search value is not empty, resetFilter
+
+    FilterUploads(e.target.value);
+
+    // if search value is empty, resetFilter
+    if (e.target.value === "") {
+      resetFilter();
+    }
+  };
+
+  const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
+
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = Array.from(event.target.files); // Convert FileList to an array
+      setUploadQueue(files); // Set the initial queue
+
+      for (let file of files) {
+        if (file.size > 10000000) {
+          toast({
+            title: `${file.name} is too large`,
+            description: "Please upload a file less than 10MB",
+            variant: "destructive",
+          });
+        } else {
+          await uploadFile(file); // Upload the file
+        }
+        // Remove the uploaded file from the queue
+        setUploadQueue((currentQueue) =>
+          currentQueue.filter((f) => f !== file)
+        );
+      }
+    }
+  };
+
+  return (
+    <div className="md:hidden flex w-full bg-card dark:bg-[#3A3D3E]  py-3  items-center justify-between px-4 gap-4 h-28">
+      {/* <Input
+        onChange={onSearch}
+        className="w-full bg-card focus-visible:ring-theme-blue dark:focus-visible:ring-offset-[#3A3D3E] dark:border-[#3A3D3E]"
+        placeholder="Search uploads"
+      /> */}
+      <input
+        multiple
+        id="selectedFile"
+        type="file"
+        accept=".pdf"
+        onChange={onFileChange}
+        style={{display: "none"}}
+        className="bg-theme-blue hover:bg-theme-blue/60 text-white"
+      />
+
+      <Button
+        onClick={() => document.getElementById("selectedFile")?.click()}
+        className="bg-theme-blue hover:bg-theme-blue/60 text-white"
+      >
+        <Icons.add className="h-5 w-5" />
+        New Upload
+      </Button>
+      <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
+        {uploadQueue.map((file, i) => (
+          <div
+            key={i}
+            className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
+          >
+            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
+            <span className="text-white font-bold">{file.name}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -91,7 +174,7 @@ const UploadHeader = () => {
   };
 
   return (
-    <div className=" w-full bg-card dark:bg-[#3A3D3E]  py-3 flex items-center justify-between px-4 gap-4">
+    <div className="md:flex hidden w-full bg-card dark:bg-[#3A3D3E]  py-3  items-center justify-between px-4 gap-4">
       <Input
         onChange={onSearch}
         className="w-full bg-card focus-visible:ring-theme-blue dark:focus-visible:ring-offset-[#3A3D3E] dark:border-[#3A3D3E]"

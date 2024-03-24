@@ -100,7 +100,7 @@ const RegisterForm = () => {
           <div className="grid gap-2 grid-cols-2">
             <div>
               <Input
-                className="bg-card"
+                className="bg-card  border border-border"
                 id="firstName"
                 placeholder="First name"
                 type="text"
@@ -117,7 +117,7 @@ const RegisterForm = () => {
             </div>
             <div>
               <Input
-                className="bg-card"
+                className="bg-card  border border-border"
                 id="lastName"
                 placeholder="Last name"
                 type="text"
@@ -134,7 +134,7 @@ const RegisterForm = () => {
             </div>
           </div>
           <Input
-            className="bg-card"
+            className="bg-card  border border-border"
             id="email"
             placeholder="Email"
             type="email"
@@ -152,6 +152,7 @@ const RegisterForm = () => {
             placeholder="Password"
             type="password"
             autoCapitalize="none"
+            className=" border border-border"
             disabled={isLoading || isGoogleLoading}
             {...register("password")}
           />
@@ -182,7 +183,7 @@ const RegisterForm = () => {
       <Button
         onClick={googleSingIn}
         type="button"
-        className="w-full bg-card hover:bg-primary hover:text-card border-none "
+        className="w-full bg-card hover:bg-primary hover:text-card border-none  border border-border"
         variant="outline"
       >
         {isGoogleLoading ? (

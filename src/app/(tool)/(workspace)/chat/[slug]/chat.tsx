@@ -53,25 +53,28 @@ const Chat = () => {
   }, [project?.chat]);
 
   return (
-    <div className="flex flex-col  items-center justify-center h-full w-full  relative   z-10 ">
+    <>
       {!project?.chat || project.chat?.length === 0 ? (
-        <div className="px-4 ">
-          <div className="flex flex-col gap-2 items-center mt-auto">
-            <h2 className="font-bold mt-auto text-theme-blue">
-              Enter your prompt here
-            </h2>
-            <Icons.chevronDown className="h-6 w-6 text-theme-blue animate-bounce" />
+        <div className="flex flex-col  items-center justify-center mt-16 md:mt-0  flex-grow  w-full  relative  z-10 ">
+          <div className="px-4 ">
+            <div className="flex flex-col gap-2 items-center mt-auto">
+              <h2 className="font-bold mt-auto text-theme-blue">
+                Enter your prompt here
+              </h2>
+              <Icons.chevronDown className="h-6 w-6 text-theme-blue animate-bounce" />
+            </div>
+            <ChatBox />
+            <PresetChat />
           </div>
-          <ChatBox />
-          <PresetChat />
         </div>
       ) : (
         <>
-          <div className="w-full h-full  justify-between overflow-hidden  dark:bg-white/10 flex flex-col gap-0 items-center  p-0  ">
+          <div className="w-full h-full flex-grow  justify-between  md:relative md:dark:bg-white/10 flex flex-col gap-0 items-center  p-0  ">
             <Header />
+
             <div
               ref={chatContainer}
-              className="p-6 pt-4 pb-36  flex-grow overflow-scroll z-10 relative gap-4 flex flex-col w-full max-w-full  "
+              className="flex-grow overflow-scroll p-6 pt-4 pb-[230px] md:pb-[180px] w-full gap-4 flex flex-col"
             >
               {project.chat.map((message: ChatLog, index: number) => (
                 <div key={index}>
@@ -84,10 +87,9 @@ const Chat = () => {
               ))}
               {responseLoading && <AiMessageRender />}
             </div>
-
-            <div className="h-fit overflow-hidden w-full absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
+            <div className="h-fit  overflow-hidden w-full absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
               <BigChatBox />
-              <p className="text-[12px] text-muted-foreground text-center mt-2">
+              <p className="text-[12px] text-muted-foreground text-center mt-2 ">
                 Moltar can make mistakes. Consider checking important
                 information.
               </p>
@@ -95,7 +97,7 @@ const Chat = () => {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 };
 
@@ -157,7 +159,7 @@ const Header = () => {
   }
 
   return (
-    <div className=" w-full p-4     h-fit  z-30 relative border-b border-border dark:border-none dark:border-white  bg-card dark:bg-[#444748] ">
+    <div className=" w-full p-4     h-fit  z-30 relative border-b border-border dark:border-none dark:border-white  bg-primary/5 md:bg-card md:dark:bg-[#444748] ">
       <Button
         className="absolute left-4 top-1/2 -translate-y-1/2"
         variant={"ghost"}
@@ -354,7 +356,7 @@ const BigChatBox = () => {
   };
 
   return (
-    <div className="w-full  ">
+    <div className="w-full  h-fit">
       <div className="grid grid-cols-[1fr_42px] items-center  border-gradient  p-[2px] shadow-xl ">
         <textarea
           ref={promptRef}

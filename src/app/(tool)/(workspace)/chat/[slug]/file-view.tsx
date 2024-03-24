@@ -53,8 +53,6 @@ const FileView = ({upload}: {upload: UploadType}) => {
     setDocLoading(false);
   }
 
-  console.log("pdfText", pdfText);
-
   const goToPage = (pageNumber: number) => {
     if (pageNumber < 1 || pageNumber > numPages) return;
     setCurrentPage(pageNumber);
@@ -265,6 +263,99 @@ const FileView = ({upload}: {upload: UploadType}) => {
 
 export default FileView;
 
+export const FileViewMobile = ({upload}: {upload: UploadType}) => {
+  const {pdfText, setPdfText} = useChat()!;
+  const [numPages, setNumPages] = React.useState<number>(1);
+  const [currentPage, setCurrentPage] = React.useState<number>(1);
+
+  const [docLoading, setDocLoading] = React.useState<boolean>(true);
+
+  async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
+    // Extract text from each page
+    const textPromises = [];
+    for (let i = 1; i <= numPages; i++) {
+      const loadingTask = pdfjs.getDocument({url: upload.path});
+      const promise = loadingTask.promise.then((pdf) => {
+        return pdf.getPage(i).then((page) => {
+          return page.getTextContent().then((textContent) => {
+            const pageText = textContent.items
+              .map((item: any) => item.str)
+              .join(" ");
+            return pageText;
+          });
+        });
+      });
+      textPromises.push(promise);
+    }
+
+    Promise.all(textPromises)
+      .then((pageTexts) => {
+        const extractedText = pageTexts.join(" ");
+        setPdfText(extractedText);
+      })
+      .catch((error) => console.error("Failed to extract PDF text:", error));
+
+    setNumPages(numPages);
+    setDocLoading(false);
+    console.log("setting loading to", docLoading);
+  }
+
+  const [showGrid, setShowGrid] = React.useState(true);
+
+  const toggleGrid = () => {
+    setShowGrid(!showGrid);
+  };
+
+  return (
+    <div className="flex flex-col  items-center justify-center h-fit  py-4 w-full   bg-primary/5   relative ">
+      <div className="w-full flex items-center h-fit justify-center ">
+        <LinkButton
+          href={"/upload"}
+          variant="ghost"
+          className=" z-20 text-theme-blue hover:text-theme-blue/60 absolute left-4 p-0 "
+        >
+          <Icons.chevronLeft className="h-6 w-6" />
+        </LinkButton>
+        <div className="flex items-center justify-between w-fit  gap-4 px-[56px]">
+          <Button
+            onClick={toggleGrid}
+            className="p-0 bg-transparent hover:bg-transparent text-primary text-lg gap-2 grid grid-cols-[1fr_24px]"
+          >
+            <span className="w-full overflow-hidden text-ellipsis">
+              {upload.title}
+            </span>
+            <Icons.chevronDown
+              className={`h-6 w-6 transform transition-transform
+            ${showGrid ? "rotate-90" : ""}
+            `}
+            />
+          </Button>
+        </div>
+      </div>
+      {showGrid && (
+        <>
+          <div className="w-screen h-[200px] mt-2 px-4    overflow-x-scroll relative z-10 flex   gap-3    ">
+            <Document
+              className={"relative w-fit  h-[200px]  flex  gap-4   "}
+              file={upload.path}
+              onLoadSuccess={onDocumentLoadSuccess}
+              loading={
+                <div className="w-screen h-[200px] flex justify-center items-center">
+                  <Icons.spinner className="animate-spin h-10 w-10 mx-auto text-[#4DA6E0]" />
+                </div>
+              }
+            >
+              {Array.from(new Array(numPages), (el, index) => (
+                <MobilePDFPage key={index} index={index} />
+              ))}
+            </Document>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 const PdfPagePreview = ({index}: {index: number}) => {
   const [loading, setLoading] = React.useState(true);
   return (
@@ -312,6 +403,36 @@ const PdfPage = ({
       {loading && (
         <Skeleton
           style={{width: containerWidth}}
+          className="aspect-[1/1.414] bg-border flex items-center justify-center"
+        >
+          {/* <Icons.loader className="h-10 w-10 text-primary animate-spin " /> */}
+        </Skeleton>
+      )}
+    </div>
+  );
+};
+
+const MobilePDFPage = ({index}: {index: number}) => {
+  const [loading, setLoading] = React.useState(true);
+
+  return (
+    <div
+      id={`page-number-${index + 1}`}
+      className="h-[200px]  overflow-hidden  "
+    >
+      <Page
+        // width={141.4}
+        height={200}
+        onLoadSuccess={() => setLoading(false)}
+        className={`shadow-lg  border rounded-lg  overflow-hidden   
+        
+        ${loading ? "hidden" : "visible"}
+        `}
+        pageNumber={index + 1}
+      />
+      {loading && (
+        <Skeleton
+          style={{width: 141.4}}
           className="aspect-[1/1.414] bg-border flex items-center justify-center"
         >
           {/* <Icons.loader className="h-10 w-10 text-primary animate-spin " /> */}

@@ -5,12 +5,12 @@ import {LinkButton} from "@/components/ui/link";
 
 const Register = () => {
   return (
-    <div className="container flex h-screen w-screen bg-card flex-col items-center">
+    <div className="container flex h-screen w-screen  flex-col items-center">
       <LinkButton
         href="/login"
         // variant="ghost"]
         variant="outline"
-        className="bg-white dark:bg-black absolute top-4 right-4 border-theme-blue text-theme-blue hover:text-theme-blue "
+        className=" absolute top-4 right-4 border-theme-blue text-theme-blue hover:text-theme-blue bg-transparent "
       >
         Log in
       </LinkButton>
@@ -24,7 +24,7 @@ const Register = () => {
           </p>
         </div>
 
-        <div className="grid gap-4 bg-card/60 px- py-4 px-4 ">
+        <div className="grid gap-4 bg-card/10 px- py-4 px-4 ">
           <RegisterForm />
 
           <p className="px-4 text-center flex items-center flex-col text-[12px] md:text-sm text-muted-foreground whitespace-nowrap">
@@ -47,7 +47,6 @@ const Register = () => {
           </p>
         </div>
       </div>
-      <Background />
     </div>
   );
 };

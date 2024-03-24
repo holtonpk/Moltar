@@ -71,18 +71,6 @@ export const UploadList = () => {
                           You don&apos;t have any chats yet when you create a
                           chat it will appear here
                         </p>
-
-                        {/* <Button
-                          onClick={() => {
-                            setNewUser(true);
-                            setShowLoginModal(true);
-                          }}
-                          className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
-                        >
-                          <span className="bg-card w-full h-full rounded-md flex items-center justify-center hover:opacity-80">
-                            Sign up
-                          </span>
-                        </Button> */}
                       </div>
                     </div>
                   ) : (
@@ -145,6 +133,72 @@ export const UploadList = () => {
   );
 };
 
+export const MobileUploadList = () => {
+  const {displayedProjects, loading, addingNewAnimation} = useProjects()!;
+  const {currentUser, setShowLoginModal, setNewUser} = useAuth()!;
+
+  return (
+    <>
+      {currentUser ? (
+        <>
+          {loading ? (
+            <div className="flex-grow  flex justify-center pt-20 ">
+              <Icons.loader className="animate-spin h-6 w-6 text-white" />
+            </div>
+          ) : (
+            <div
+              className={`flex flex-col  relative   flex-grow overflow-scroll fade-in 
+    `}
+            >
+              {displayedProjects.length === 0 ? (
+                <div className="flex-grow flex pt-10 fade-in ">
+                  <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-card border-border border">
+                    <p className="text-lg text-center text-primary">
+                      You don&apos;t have any chats yet when you create a chat
+                      it will appear here
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex justify-between items-center pl-2">
+                  <span className="text-lg font-bold text-primary">
+                    Your Chats
+                  </span>
+                </div>
+              )}
+              <div className="flex flex-col items-start gap-4  mt-2">
+                {displayedProjects.map((project: ProjectType) => (
+                  <MobileProject key={project.id} project={project} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="flex-grow flex pt-10 fade-in">
+          <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-card border-border border">
+            <p className="text-lg text-center text-primary">
+              Create an account to save your chats, projects and so much more
+            </p>
+
+            <Button
+              onClick={() => {
+                setNewUser(true);
+                setShowLoginModal(true);
+              }}
+              className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
+            >
+              <span className="bg-card w-full h-full rounded-md flex items-center justify-center hover:opacity-80">
+                Sign up
+              </span>
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
 const NewProject = ({project}: {project: ProjectType}) => {
   const {addingNewAnimation, setAddingNewAnimation} = useProjects()!;
 
@@ -190,6 +244,175 @@ const NewProject = ({project}: {project: ProjectType}) => {
         <p className=" text-left whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
           {displayName}
         </p>
+      </div>
+    </div>
+  );
+};
+
+const MobileProject = ({project}: {project: ProjectType}) => {
+  const {DeleteProject, ChangeProjectName, ChangeProjectColor} = useProjects()!;
+
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const ItemRef = React.useRef<HTMLDivElement>(null);
+  const MenuRef = React.useRef(menuOpen);
+
+  const segments = useSelectedLayoutSegments();
+
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+
+  const tagColors = ["#358EF4", "#4AAB67", "#9164F0", "#E5560A", "#ED8D16"];
+
+  const [openMenu, setOpenMenu] = React.useState(false);
+  const nameRef = React.useRef<HTMLInputElement>(null);
+
+  const [selectedColor, setSelectedColor] = React.useState<string>(
+    project?.color || ""
+  );
+
+  function onSave() {
+    const inputValue = nameRef.current?.value;
+    // Update the name if the conditions are met
+    if (project?.id && inputValue && inputValue !== project?.name) {
+      ChangeProjectName(project?.id, inputValue);
+    }
+
+    // Update the color if a color is selected and we have a project ID
+    if (selectedColor && project?.id) {
+      ChangeProjectColor(project?.id, selectedColor);
+    }
+  }
+
+  const router = useRouter();
+
+  const activeTab = segments.slice(-1)[0] === project.id;
+
+  return (
+    <div
+      ref={ItemRef}
+      className={`relative  w-full   group overflow-hidden  rounded-lg   
+    ${activeTab ? "bg-primary/10" : "bg-transparent hover:bg-primary/5"}
+
+    `}
+    >
+      <Link
+        href={"/chat/" + project.id}
+        className="z-10 relative w-full py-3 px-2  grid-cols-[18px_1fr] gap-2 grid items-start p-1"
+      >
+        <span
+          style={{backgroundColor: project.color}}
+          className={`h-4 w-4 rounded-sm mt-1
+
+        `}
+        />
+        <p className=" text-left whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
+          {project?.name}
+        </p>
+      </Link>
+
+      <div
+        className={`flex absolute right-0  pl-8 pr-2 z-20 h-full top-1/2  w-fit -translate-y-1/2   items-center justify-end opacity-0 gap-2
+
+      ${
+        activeTab
+          ? "project-hover-bg-gradient-active opacity-100"
+          : "project-hover-bg-gradient"
+      }
+      `}
+      >
+        <Button
+          onClick={() => setOpenMenu(true)}
+          variant={"ghost"}
+          className=" p-0"
+        >
+          <Icons.pencil className="h-4 w-4 " />
+        </Button>
+        <Button
+          onClick={() => setShowDeleteDialog(true)}
+          variant={"ghost"}
+          className="p-0"
+        >
+          <Icons.trash className="h-4 w-4 " />
+        </Button>
+
+        <Dialog open={openMenu} onOpenChange={setOpenMenu}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Rename this chat</DialogTitle>
+              <DialogDescription>
+                Rename your upload to something more meaningful
+              </DialogDescription>
+            </DialogHeader>
+            <Input
+              ref={nameRef}
+              className="bg-card border-border"
+              placeholder="Enter new name"
+            />
+            <div className="flex flex-col gap-2">
+              {/* <h1 className="font-bold ">Tag color</h1>
+               */}
+              <DialogTitle>Tag color</DialogTitle>
+              <DialogDescription>
+                Choose a color to tag this chat
+              </DialogDescription>
+              <div className="flex gap-2 border border-border p-2 rounded-md w-fit">
+                {tagColors.map((color, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedColor(color)}
+                    className={`h-8 w-8 rounded-full border-2 hover:border-primary  
+                ${
+                  selectedColor === color
+                    ? "border-primary"
+                    : "border-transparent"
+                }
+                
+                `}
+                    style={{backgroundColor: color}}
+                  />
+                ))}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant={"outline"} onClick={() => setOpenMenu(false)}>
+                Cancel
+              </Button>
+              <Button
+                className="bg-theme-blue hover:bg-theme-blue/60 text-white"
+                onClick={() => {
+                  onSave();
+                  setOpenMenu(false);
+                }}
+              >
+                Save
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                If you delete this upload you will be permanently deleting any
+                chats or projects associated with it.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  DeleteProject(project.id);
+                  setShowDeleteDialog(false);
+
+                  router.push("/upload");
+                }}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

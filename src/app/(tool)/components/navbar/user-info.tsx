@@ -10,7 +10,7 @@ export const UserInfo = () => {
   return (
     <>
       {currentUser ? (
-        <div className="flex flex-col gap-4 items-center border-y border-border  relative  py-4 px-2">
+        <div className="flex flex-col gap-4 items-center border-y border-border  relative  py-4 px-2 ">
           {!collapsed ? (
             <LinkButton
               href={"/settings"}

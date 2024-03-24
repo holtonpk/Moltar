@@ -195,31 +195,43 @@ input:focus {
   color: transparent;
 }
 
-.chat-box-bg-gradient {
-  /* global 94%+ browsers support */
-  background: linear-gradient(
-    180deg,
-    hsl(var(--card) / 0) 0%,
-    hsl(var(--card) / 1) 10%
-  );
-}
+@media (min-width: 768px) {
+  .chat-box-bg-gradient {
+    /* global 94%+ browsers support */
+    background: linear-gradient(
+      180deg,
+      hsl(var(--card) / 0) 0%,
+      hsl(var(--card) / 1) 10%
+    );
+  }
 
-.dark .chat-box-bg-gradient {
-  /* global 94%+ browsers support */
-  background: linear-gradient(
-    180deg,
-    rgba(58, 61, 62, 0) 0%,
-    rgba(58, 61, 62, 1) 10%
-  );
+  .dark .chat-box-bg-gradient {
+    /* global 94%+ browsers support */
+    background: linear-gradient(
+      180deg,
+      rgba(58, 61, 62, 0) 0%,
+      rgba(58, 61, 62, 1) 10%
+    );
+  }
 }
+@media (max-width: 768px) {
+  .chat-box-bg-gradient {
+    /* global 94%+ browsers support */
+    background: linear-gradient(
+      180deg,
+      hsl(var(--card) / 0) 0%,
+      hsl(var(--card) / 1) 10%
+    );
+  }
 
-.chat-box-bg-gradient {
-  /* global 94%+ browsers support */
-  background: linear-gradient(
-    180deg,
-    hsl(var(--card) / 0) 0%,
-    hsl(var(--card) / 1) 10%
-  );
+  .dark .chat-box-bg-gradient {
+    /* global 94%+ browsers support */
+    background: linear-gradient(
+      180deg,
+      rgba(36, 39, 40, 0) 0%,
+      rgba(36, 39, 40, 1) 10%
+    );
+  }
 }
 
 .blurBack {

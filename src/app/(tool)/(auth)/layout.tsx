@@ -6,15 +6,15 @@ import Image from "next/image";
 import {Icons} from "@/components/icons";
 import {ThemeProvider} from "@/components/theme-provider";
 
-// export const metadata: Metadata = constructMetadata({
-//   title: `Register - ${siteConfig.name}`,
-// });
-
 interface AuthLayoutProps {
   children: React.ReactElement;
 }
 import Link from "next/link";
-import Background from "@/components/background";
+import Background from "@/src/app/(marketing)/components/background";
+
+// export const metadata: Metadata = constructMetadata({
+//   title: `Register - Moltar`,
+// });
 
 export default function AuthLayout({children}: AuthLayoutProps) {
   return (
@@ -27,9 +27,9 @@ export default function AuthLayout({children}: AuthLayoutProps) {
         >
           <span className=" text-lg md:text-2xl  text-primary font-bold  flex items-center ">
             <div className="grid grid-cols-[32px_1fr]  gap-2 ">
-              <Icons.logoAdaptive className="h-8 w-8 " />
+              <Icons.logo className="h-8 w-8 " />
 
-              <span className="font-bold  text-3xl  leading-[32px] fade-in  bg-gradient-to-r from-theme-purple via-theme-blue to-theme-green bg-clip-text text-transparent">
+              <span className="font-bold  text-3xl  leading-[32px] fade-in  text-primary">
                 moltar.ai
               </span>
             </div>

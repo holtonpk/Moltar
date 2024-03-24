@@ -52,7 +52,7 @@ export default function Page({params}: Params) {
         </div>
       ) : (
         <ChatProvider2 projectId={params.slug}>
-          <Project project={project as ProjectType} />
+          <Project projectData={project as ProjectType} />
         </ChatProvider2>
       )}
     </>

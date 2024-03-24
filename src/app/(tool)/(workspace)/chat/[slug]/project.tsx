@@ -6,57 +6,46 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import Chat from "./chat";
-import FileView from "./file-view";
+import FileView, {FileViewMobile} from "./file-view";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons";
 import {ProjectType} from "@/types";
+import {useChat} from "@/context/chat-context2";
 
-export const Project = ({project}: {project: ProjectType}) => {
-  console.log("pp", project);
+export const Project = ({projectData}: {projectData: ProjectType}) => {
+  const {responseLoading, project} = useChat()!;
 
-  //   const [containerWidth, setContainerWidth] = React.useState<number>(0);
-
-  //   const fileViewRef = React.useRef<any>(null);
-
-  //   const calculateWidth = () => {
-  //     console.log("calculating width");
-  //     const container = containerRef.current;
-  //     if (container) {
-  //       const width = container.getBoundingClientRect().width;
-  //       setContainerWidth(width - 48);
-  //     }
-  //   };
-
-  //   React.useEffect(() => {
-  //     calculateWidth();
-
-  // const fileViewContainer = fileViewRef.current
-  //     fileViewContainer.addEventListener("resize", calculateWidth);
-  //     return () =>
-  //       fileViewContainer.removeEventListener("resize", calculateWidth);
-  //   }, []);
+  console.log("projectData", project);
 
   return (
     <>
-      <ResizablePanelGroup
-        direction="horizontal"
-        className="z-20 relative flex-grow h-full  "
-      >
-        <ResizablePanel
-          defaultSize={55}
-          className=" z-10 relative bg-primary/5 dark:bg-card overflow-hidden"
+      <div className="md:flex h-full border border-border  flex-grow hidden">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="z-20 relative flex-grow h-full  "
         >
-          <FileView upload={project.upload} />
-        </ResizablePanel>
-        <ResizableHandle withHandle className="z-30" />
-        <ResizablePanel
-          defaultSize={45}
-          className=" min-w-[450px] z-20 h-full dark:bg-card "
-        >
-          <Chat />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+          <ResizablePanel
+            defaultSize={55}
+            className=" z-10 relative bg-primary/5 dark:bg-card overflow-hidden"
+          >
+            <FileView upload={projectData.upload} />
+          </ResizablePanel>
+          <ResizableHandle withHandle className="z-30" />
+          <ResizablePanel
+            defaultSize={45}
+            className=" min-w-[450px] z-20 h-full dark:bg-card flex items-center justify-center"
+          >
+            <Chat />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+      <div className="md:hidden block  min-h-full    ">
+        {(project?.chat === null || project?.chat?.length === 0) && (
+          <FileViewMobile upload={project.upload} />
+        )}
+        <Chat />
+      </div>
     </>
   );
 };

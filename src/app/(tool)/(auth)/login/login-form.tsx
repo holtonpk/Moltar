@@ -101,7 +101,7 @@ const LoginForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           <Input
-            className="bg-card"
+            className="bg-card border border-border"
             id="email"
             placeholder="name@example.com"
             type="email"
@@ -115,7 +115,7 @@ const LoginForm = () => {
             <p className="px-1 text-xs text-red-600">{errors.email.message}</p>
           )}
           <PasswordInput
-            className="bg-card"
+            className="bg-card  border border-border"
             id="password"
             placeholder="password"
             type="password"
@@ -150,7 +150,7 @@ const LoginForm = () => {
       <Button
         onClick={googleSingIn}
         type="button"
-        className="w-full"
+        className="w-full  border border-border"
         variant="outline"
       >
         {isGoogleLoading ? (
