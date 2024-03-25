@@ -62,7 +62,7 @@ const RegisterForm = () => {
     } else {
       toast({
         title: "Something went wrong.",
-        description: "Please please try again later.",
+        description: createAccountResult?.error,
         variant: "destructive",
       });
     }

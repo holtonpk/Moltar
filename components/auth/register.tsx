@@ -39,34 +39,45 @@ const RegisterForm = () => {
     );
 
     if (createAccountResult?.success) {
+      console.log("createAccountResult ******", createAccountResult);
       setShowLoginModal(false);
+      setIsLoading(false);
+      return;
     }
-    if (createAccountResult?.error === "auth/email-already-in-use") {
-      setError("email", {
-        type: "manual",
-        message: "An account with this email already exists.",
-      });
-      toast({
-        title: "An account with this email already exists.",
-        description: "Please please check your email and try again.",
-        variant: "destructive",
-      });
-    } else if (createAccountResult?.error === "auth/invalid-email") {
-      setError("email", {
-        type: "manual",
-        message: "Please enter a valid email.",
-      });
-      toast({
-        title: "Please enter a valid email.",
-        description: "Please please check your email and try again.",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Something went wrong.",
-        description: "Please please try again later.",
-        variant: "destructive",
-      });
+    if (createAccountResult?.error) {
+      if (createAccountResult?.error === "auth/email-already-in-use") {
+        setError("email", {
+          type: "manual",
+          message: "An account with this email already exists.",
+        });
+        toast({
+          title: "An account with this email already exists.",
+          description: "Please please check your email and try again.",
+          variant: "destructive",
+        });
+      }
+      if (createAccountResult?.error === "auth/invalid-email") {
+        setError("email", {
+          type: "manual",
+          message: "Please enter a valid email.",
+        });
+        toast({
+          title: "Please enter a valid email.",
+          description: "Please please check your email and try again.",
+          variant: "destructive",
+        });
+      } else {
+        console.log(
+          "createAccountResult ======",
+          createAccountResult.error,
+          createAccountResult
+        );
+        toast({
+          title: "Something went wrong.",
+          description: createAccountResult?.error,
+          variant: "destructive",
+        });
+      }
     }
     setIsLoading(false);
   }
