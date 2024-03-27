@@ -67,7 +67,7 @@ export const UploadsProvider = ({children}: Props) => {
     return fileUrl;
   }
 
-  async function uploadFile(file: File) {
+  async function uploadFile(file: File, text: string) {
     const fileID = Math.random().toString(36).substring(7);
     // upload file to firebase storage
     const firebaseUrl = await uploadFileToFirebase(file, fileID);
@@ -76,6 +76,7 @@ export const UploadsProvider = ({children}: Props) => {
       title: file.name,
       id: fileID,
       path: firebaseUrl,
+      text: text,
     };
 
     // save upload ref to firebase firestore

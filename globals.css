@@ -245,3 +245,20 @@ input:focus {
 .zoom-75 {
   zoom: 0.75;
 }
+
+.scanBar {
+  position: absolute;
+  top: 0;
+  animation: moveUpDown 4s ease-in-out infinite;
+}
+
+@keyframes moveUpDown {
+  0%,
+  100% {
+    top: 0;
+    /* transform: translate(); */
+  }
+  50% {
+    top: calc(100% - 40px); /* Move to the bottom */
+  }
+}

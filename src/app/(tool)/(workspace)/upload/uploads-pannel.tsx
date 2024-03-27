@@ -35,14 +35,15 @@ import {
 } from "@/components/ui/dialog";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
-import {db} from "@/config/firebase";
+import {db, app} from "@/config/firebase";
 import {doc, setDoc, serverTimestamp} from "firebase/firestore";
+import {listAll, getStorage, getDownloadURL, ref} from "firebase/storage";
 import {useAuth} from "@/context/user-auth";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useNavbar} from "@/context/navbar-context";
-
 import {useUploads} from "@/context/upload-context";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
+
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const UploadsPanel = () => {
@@ -80,6 +81,10 @@ const UploadsPanel = () => {
 
   const [selectedFile, setSelectedFile] = React.useState<string | null>(null);
   const {collapsed} = useNavbar()!;
+
+  const [textView, setTextView] = React.useState(false);
+
+  const [fileDate, setFileDate] = React.useState<UploadType | null>(null);
 
   return (
     <div className="  overflow-scroll h-full items-center  pb-20   w-full absolute p-6 ">
@@ -132,11 +137,28 @@ const UploadsPanel = () => {
                     <Icons.pencil className="h-4 w-4 " />
                     Rename
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={() => {
+                      setFileDate(file);
+                      setTextView(true);
+                    }}
+                    className=" gap-2 "
+                  >
+                    <Icons.showPassword className="h-4 w-4 " />
+                    View text
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </div>
         ))}
+
+        <PDFTextScannerDialog
+          file={fileDate}
+          textView={textView}
+          setTextView={setTextView}
+        />
+
         <Dialog open={openRename} onOpenChange={setOpenRename}>
           <DialogContent>
             <DialogHeader>
@@ -194,6 +216,161 @@ const UploadsPanel = () => {
   );
 };
 export default UploadsPanel;
+
+const PDFTextScannerDialog = ({
+  file,
+  textView,
+  setTextView,
+}: {
+  file: UploadType | null;
+  textView: boolean;
+  setTextView: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  const [pdfText, setPdfText] = React.useState<string | null>(null);
+
+  async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
+    if (!file) return;
+    // Extract text from each page
+    const textPromises = [];
+    for (let i = 1; i <= numPages; i++) {
+      const loadingTask = pdfjs.getDocument({url: file.path});
+      const promise = loadingTask.promise.then((pdf) => {
+        return pdf.getPage(i).then((page) => {
+          return page.getTextContent().then((textContent) => {
+            const hasTextLayer = textContent.items.length > 0;
+            console.log("has text layer", hasTextLayer);
+            if (!hasTextLayer) return;
+            const pageText = textContent.items
+              .map((item: any) => item.str)
+              .join(" ");
+            return pageText;
+          });
+        });
+      });
+      textPromises.push(promise);
+    }
+
+    Promise.all(textPromises)
+      .then((pageTexts) => {
+        const extractedText = pageTexts.join(" ");
+        setPdfText(extractedText);
+        console.log("extractedText==========", extractedText);
+      })
+      .catch((error) => console.error("Failed to extract PDF text:", error));
+  }
+
+  const [scanning, setScanning] = React.useState(false);
+  const scanPdfForText = async () => {
+    setScanning(true);
+    await fetch("/api/convert-pdf-to-image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({fileName: file.id}),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        getTextFromJSON();
+      })
+      .catch((error) => {
+        console.error("Failed to extract PDF text:", error);
+      });
+    setScanning(false);
+  };
+
+  const getTextFromJSON = async () => {
+    try {
+      const storage = getStorage(app);
+      const folderRef = ref(storage, file.id);
+      const files = await listAll(folderRef);
+      const fileData = files.items[0];
+      const url = await getDownloadURL(fileData);
+      const response = await fetch(url);
+      const data = await response.json();
+      let text = "";
+      data.responses.forEach((response: any) => {
+        text += response.fullTextAnnotation.text;
+      });
+      setPdfText(text);
+    } catch (e) {
+      console.log("error", e);
+    }
+  };
+
+  return (
+    <Dialog open={textView} onOpenChange={setTextView}>
+      <DialogContent className="max-w-none w-fit">
+        <DialogHeader>
+          <DialogTitle>
+            We didn't detect any text in your pdf. Would you like us to scan it?
+          </DialogTitle>
+          <DialogDescription>
+            This will allow moltar to read your upload
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-2 gap-10">
+          {file && (
+            <Document
+              className={
+                "h-[400px] aspect-[1/1.4]  mx-auto rounded-lg relative  z-10 "
+              }
+              file={file.path}
+              onLoadSuccess={onDocumentLoadSuccess}
+              loading={
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <Icons.spinner className="animate-spin h-10 w-10 mx-auto text-[#4DA6E0]" />
+                </div>
+              }
+            >
+              <Page
+                height={400}
+                className={"shadow-lg h-fit border rounded-lg  p-1 "}
+                pageNumber={1}
+              />
+              {scanning && (
+                <div className="scanBar absolute  left-1/2 -translate-x-1/2 w-full h-[40px] rounded-md bg-theme-blue/60 blurBack " />
+              )}
+            </Document>
+          )}
+          <span className="bg-muted p-4 h-[400px] aspect-[1/1.4] overflow-scroll relative">
+            {pdfText}
+            {scanning && (
+              <div className="grid grid-rows-8 gap-4 w-full h-full">
+                <Skeleton className="rounded-lg bg-primary/30  w-1/2 h-full  z-20" />
+                <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+              </div>
+            )}
+          </span>
+        </div>
+        <DialogFooter>
+          <Button
+            variant={"outline"}
+            onClick={() => {
+              setPdfText(null);
+              setTextView(false);
+            }}
+          >
+            Use without text scan
+          </Button>
+          <Button
+            className="bg-theme-blue hover:bg-theme-blue/60 text-white"
+            onClick={scanPdfForText}
+          >
+            Scan For Text
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const PdfViewer = ({file}: {file: UploadType}) => {
   const [loading, setLoading] = React.useState(true);

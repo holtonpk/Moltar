@@ -46,6 +46,7 @@ const FileView = ({upload}: {upload: UploadType}) => {
       .then((pageTexts) => {
         const extractedText = pageTexts.join(" ");
         setPdfText(extractedText);
+        console.log("extractedText==========", extractedText);
       })
       .catch((error) => console.error("Failed to extract PDF text:", error));
 
