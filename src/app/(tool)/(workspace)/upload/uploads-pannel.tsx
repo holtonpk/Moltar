@@ -47,8 +47,7 @@ import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const UploadsPanel = () => {
-  const {uploadList, FileUpload, DeleteUpload, ReNameUpload, filterList} =
-    useUploads()!;
+  const {uploadList, DeleteUpload, ReNameUpload, filterList} = useUploads()!;
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
   async function createNewProject(file: UploadType) {
