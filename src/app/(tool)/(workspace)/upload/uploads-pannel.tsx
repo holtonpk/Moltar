@@ -48,7 +48,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const UploadsPanel = () => {
   const {uploadList, FileUpload, DeleteUpload, ReNameUpload, filterList} =
-    useUploads();
+    useUploads()!;
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
   async function createNewProject(file: UploadType) {
@@ -97,120 +97,132 @@ const UploadsPanel = () => {
       }
       `}
       >
-        {uploadList.map((file: UploadType) => (
-          <div
-            key={file.id}
-            className={` cursor-pointer w-full h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
-            ${filterList.includes(file.id) ? "visible" : "hidden"} `}
-          >
-            <button
-              onClick={() => goToNewProject(file)}
-              className="absolute  z-20 top-0 left-0 h-full w-full group"
-            />
-            <PdfViewer file={file} />
-            <div className="pr-6  z-30 border-t-border border-t h-fit absolute bg-card  top-full  w-[110%] pl-4 left-1/2 -translate-x-1/2  group-hover: -translate-y-full transition-transform">
-              <div className="p-2 text-primary  text-sm text-left  font- overflow-hidden text-ellipsis ">
-                {file.title}
+        {uploadList &&
+          uploadList.map((file: UploadType) => (
+            <div
+              key={file.id}
+              className={` cursor-pointer w-full h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
+            ${
+              filterList && filterList.includes(file.id) ? "visible" : "hidden"
+            } `}
+            >
+              <button
+                onClick={() => goToNewProject(file)}
+                className="absolute  z-20 top-0 left-0 h-full w-full group"
+              />
+              <PdfViewer file={file} />
+              <div className="pr-6  z-30 border-t-border border-t h-fit absolute bg-card  top-full  w-[110%] pl-4 left-1/2 -translate-x-1/2  group-hover: -translate-y-full transition-transform">
+                <div className="p-2 text-primary  text-sm text-left  font- overflow-hidden text-ellipsis ">
+                  {file.title}
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="z-30 flex items-center justify-center  hover:opacity-60 absolute top-2 right-2 rounded-md  ">
+                    <Icons.ellipsis className="h-5 w-5" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      className="text-theme-red  focus:bg-theme-red/20 focus:text-theme-red gap-2 "
+                      onClick={() => {
+                        setSelectedFile(file.id);
+                        setShowDeleteDialog(true);
+                      }}
+                    >
+                      <Icons.trash className="h-4 w-4 " />
+                      Delete
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() => {
+                        setSelectedFile(file.id);
+                        setOpenRename(true);
+                      }}
+                      className=" gap-2 "
+                    >
+                      <Icons.pencil className="h-4 w-4 " />
+                      Rename
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() => {
+                        setFileDate(file);
+                        setTextView(true);
+                      }}
+                      className=" gap-2 "
+                    >
+                      <Icons.showPassword className="h-4 w-4 " />
+                      View text
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger className="z-30 flex items-center justify-center  hover:opacity-60 absolute top-2 right-2 rounded-md  ">
-                  <Icons.ellipsis className="h-5 w-5" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    className="text-theme-red  focus:bg-theme-red/20 focus:text-theme-red gap-2 "
-                    onClick={() => {
-                      setSelectedFile(file.id);
-                      setShowDeleteDialog(true);
-                    }}
-                  >
-                    <Icons.trash className="h-4 w-4 " />
-                    Delete
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onSelect={() => {
-                      setSelectedFile(file.id);
-                      setOpenRename(true);
-                    }}
-                    className=" gap-2 "
-                  >
-                    <Icons.pencil className="h-4 w-4 " />
-                    Rename
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onSelect={() => {
-                      setFileDate(file);
-                      setTextView(true);
-                    }}
-                    className=" gap-2 "
-                  >
-                    <Icons.showPassword className="h-4 w-4 " />
-                    View text
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
-          </div>
-        ))}
+          ))}
 
         <PDFTextScannerDialog
           file={fileDate}
           textView={textView}
           setTextView={setTextView}
         />
-
-        <Dialog open={openRename} onOpenChange={setOpenRename}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Rename your upload</DialogTitle>
-              <DialogDescription>
-                Rename your upload to something more meaningful
-              </DialogDescription>
-            </DialogHeader>
-            <Input
-              ref={nameRef}
-              className="bg-card"
-              placeholder="Enter new name"
-            />
-            <DialogFooter>
-              <Button variant={"outline"} onClick={() => setOpenRename(false)}>
-                Cancel
-              </Button>
-              <Button
-                className="bg-theme-blue hover:bg-theme-blue/60 text-white"
-                onClick={() => {
-                  ReNameUpload(selectedFile, nameRef.current?.value);
-                  setOpenRename(false);
-                }}
-              >
-                Save
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                If you delete this upload you will be permanently deleting any
-                chats or projects associated with it.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  DeleteUpload(selectedFile);
-                  setShowDeleteDialog(false);
-                }}
-              >
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        {selectedFile && (
+          <>
+            <Dialog open={openRename} onOpenChange={setOpenRename}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Rename your upload</DialogTitle>
+                  <DialogDescription>
+                    Rename your upload to something more meaningful
+                  </DialogDescription>
+                </DialogHeader>
+                <Input
+                  ref={nameRef}
+                  className="bg-card"
+                  placeholder="Enter new name"
+                />
+                <DialogFooter>
+                  <Button
+                    variant={"outline"}
+                    onClick={() => setOpenRename(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-theme-blue hover:bg-theme-blue/60 text-white"
+                    onClick={() => {
+                      ReNameUpload(selectedFile, nameRef.current?.value || "");
+                      setOpenRename(false);
+                    }}
+                  >
+                    Save
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <AlertDialog
+              open={showDeleteDialog}
+              onOpenChange={setShowDeleteDialog}
+            >
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    If you delete this upload you will be permanently deleting
+                    any chats or projects associated with it.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      DeleteUpload(selectedFile);
+                      setShowDeleteDialog(false);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        )}
       </div>
     </div>
   );

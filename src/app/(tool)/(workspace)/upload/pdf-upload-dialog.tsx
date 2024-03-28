@@ -158,170 +158,136 @@ export const PdfUploadDialog = ({
   }
 
   return (
-    <Dialog open={textView} onOpenChange={setTextView}>
-      <DialogContent
-        className={`max-w-none w-fit ${
-          documentLoaded ? "visible" : "invisible"
-        }`}
-      >
-        {scanning && (
-          <DialogHeader>
-            <DialogTitle className="font-bold">
-              Scanning Your document for text
-            </DialogTitle>
-            <DialogDescription>
-              Please don&apos;t refresh the page
-            </DialogDescription>
-          </DialogHeader>
-        )}
-        <div className={`grid  gap-10 items-center grid-cols-2 `}>
-          {file && (
-            <Document
-              className={`h-[400px] aspect-[1/1.4]  mx-auto rounded-lg relative  z-10 
+    <>
+      {file && (
+        <Dialog open={textView} onOpenChange={setTextView}>
+          <DialogContent
+            className={`max-w-none w-fit ${
+              documentLoaded ? "visible" : "invisible"
+            }`}
+          >
+            {scanning && (
+              <DialogHeader>
+                <DialogTitle className="font-bold">
+                  Scanning Your document for text
+                </DialogTitle>
+                <DialogDescription>
+                  Please don&apos;t refresh the page
+                </DialogDescription>
+              </DialogHeader>
+            )}
+            <div className={`grid  gap-10 items-center grid-cols-2 `}>
+              {file && (
+                <Document
+                  className={`h-[400px] aspect-[1/1.4]  mx-auto rounded-lg relative  z-10 
 
                 `}
-              file={file.path}
-              onLoadSuccess={onDocumentLoadSuccess}
-              loading={
-                <Skeleton className="h-[400px] aspect-[1/1.4] absolute z-30 bg-primary/40"></Skeleton>
-              }
-            >
-              {/* <Skeleton className="h-[400px] aspect-[1/1.4] absolute z-30 bg-primary/40"></Skeleton> */}
-              {documentLoaded && (
-                <Page
-                  height={400}
-                  className={"shadow-lg h-fit border rounded-lg  p-1 "}
-                  pageNumber={currentPage}
-                />
+                  file={file.path}
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  loading={
+                    <Skeleton className="h-[400px] aspect-[1/1.4] absolute z-30 bg-primary/40"></Skeleton>
+                  }
+                >
+                  {/* <Skeleton className="h-[400px] aspect-[1/1.4] absolute z-30 bg-primary/40"></Skeleton> */}
+                  {documentLoaded && (
+                    <Page
+                      height={400}
+                      className={"shadow-lg h-fit border rounded-lg  p-1 "}
+                      pageNumber={currentPage}
+                    />
+                  )}
+                  {scanning && (
+                    <div className="scanBar absolute  left-1/2 -translate-x-1/2 w-[110%] h-[40px] rounded-md bg-theme-blue/80 blurBack " />
+                  )}
+                  {documentLoaded && !scanning && (
+                    <div className="z-20 absolute bottom-4 left-1/2 -translate-x-1/2 w-fit bg-car  flex items-center gap-4">
+                      <Button
+                        onClick={() => {
+                          if (currentPage > 1) setCurrentPage(currentPage - 1);
+                        }}
+                        variant={"outline"}
+                        size="sm"
+                        className="p-1"
+                      >
+                        <Icons.chevronLeft className="h-5 w-5" />
+                      </Button>
+                      <div className="p-2 border border-border rounded-md bg-card">
+                        {currentPage}/{numPages}
+                      </div>
+                      <Button
+                        onClick={() => {
+                          if (currentPage < numPages)
+                            setCurrentPage(currentPage + 1);
+                        }}
+                        variant={"outline"}
+                        size="sm"
+                        className="p-1"
+                      >
+                        <Icons.chevronRight className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  )}
+                </Document>
               )}
-              {scanning && (
-                <div className="scanBar absolute  left-1/2 -translate-x-1/2 w-[110%] h-[40px] rounded-md bg-theme-blue/80 blurBack " />
-              )}
-              {documentLoaded && !scanning && (
-                <div className="z-20 absolute bottom-4 left-1/2 -translate-x-1/2 w-fit bg-car  flex items-center gap-4">
+              {recommendScan ? (
+                <>
+                  {scanning ? (
+                    <span className="bg-muted p-4 h-[400px] aspect-[1/1.4] overflow-scroll relative mt-4 rounded-lg ">
+                      <div className="grid grid-rows-8 gap-4 w-full h-full">
+                        <Skeleton className="rounded-lg bg-primary/30  w-1/2 h-full  z-20" />
+                        <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                        <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                        <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                        <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                        <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                        <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                        <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                        <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
+                      </div>
+                    </span>
+                  ) : (
+                    <div className="flex flex-col items-start  ">
+                      <DialogHeader className="font-bold">
+                        We didn&apos;t find any text in your pdf. Would you like
+                        us to scan it?
+                      </DialogHeader>
+                      <DialogDescription>
+                        This will allow moltar to read your upload
+                      </DialogDescription>
+                      <Button
+                        className="bg-theme-blue hover:bg-theme-blue/60 text-white mt-4"
+                        onClick={scanPdfForText}
+                      >
+                        <Icons.scan className="h-5 w-5 mr-3" />
+                        Scan document
+                      </Button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="flex flex-col items-start  ">
+                  <DialogHeader className="font-bold">
+                    Successfully
+                    {scanSuccess ? " scanned " : " uploaded "}
+                    👍
+                  </DialogHeader>
+                  <DialogDescription>
+                    Your file will be in the upload panel. You can click on it
+                    to anytime start a project
+                  </DialogDescription>
                   <Button
-                    onClick={() => {
-                      if (currentPage > 1) setCurrentPage(currentPage - 1);
-                    }}
-                    variant={"outline"}
-                    size="sm"
-                    className="p-1"
+                    className="bg-theme-blue hover:bg-theme-blue/60 text-white mt-4"
+                    onClick={() => goToNewProject(file)}
                   >
-                    <Icons.chevronLeft className="h-5 w-5" />
-                  </Button>
-                  <div className="p-2 border border-border rounded-md bg-card">
-                    {currentPage}/{numPages}
-                  </div>
-                  <Button
-                    onClick={() => {
-                      if (currentPage < numPages)
-                        setCurrentPage(currentPage + 1);
-                    }}
-                    variant={"outline"}
-                    size="sm"
-                    className="p-1"
-                  >
+                    Start a new project
                     <Icons.chevronRight className="h-5 w-5" />
                   </Button>
                 </div>
               )}
-            </Document>
-          )}
-          {recommendScan ? (
-            <>
-              {scanning ? (
-                <span className="bg-muted p-4 h-[400px] aspect-[1/1.4] overflow-scroll relative mt-4 rounded-lg ">
-                  <div className="grid grid-rows-8 gap-4 w-full h-full">
-                    <Skeleton className="rounded-lg bg-primary/30  w-1/2 h-full  z-20" />
-                    <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                    <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                    <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                    <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                    <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                    <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                    <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                    <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                  </div>
-                </span>
-              ) : (
-                <div className="flex flex-col items-start  ">
-                  <DialogHeader className="font-bold">
-                    We didn&apos;t find any text in your pdf. Would you like us
-                    to scan it?
-                  </DialogHeader>
-                  <DialogDescription>
-                    This will allow moltar to read your upload
-                  </DialogDescription>
-                  <Button
-                    className="bg-theme-blue hover:bg-theme-blue/60 text-white mt-4"
-                    onClick={scanPdfForText}
-                  >
-                    <Icons.scan className="h-5 w-5 mr-3" />
-                    Scan document
-                  </Button>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="flex flex-col items-start  ">
-              <DialogHeader className="font-bold">
-                Successfully
-                {scanSuccess ? " scanned " : " uploaded "}
-                👍
-              </DialogHeader>
-              <DialogDescription>
-                Your file will be in the upload panel. You can click on it to
-                anytime start a project
-              </DialogDescription>
-              <Button
-                className="bg-theme-blue hover:bg-theme-blue/60 text-white mt-4"
-                onClick={() => goToNewProject(file)}
-              >
-                Start a new project
-                <Icons.chevronRight className="h-5 w-5" />
-              </Button>
             </div>
-          )}
-        </div>
-        {/* {recommendScan ? (
-          <DialogFooter>
-            <Button
-              variant={"outline"}
-              onClick={() => {
-                setPdfText(null);
-                setTextView(false);
-              }}
-            >
-              Use without text scan
-            </Button>
-            <Button
-              className="bg-theme-blue hover:bg-theme-blue/60 text-white"
-              onClick={scanPdfForText}
-            >
-              Scan For Text
-            </Button>
-          </DialogFooter>
-        ) : (
-          <DialogFooter>
-            <Button
-              variant={"outline"}
-              onClick={() => {
-                setPdfText(null);
-                setTextView(false);
-              }}
-            >
-              Close
-            </Button>
-            <Button
-              className="bg-theme-blue hover:bg-theme-blue/60 text-white"
-              onClick={scanPdfForText}
-            >
-              Start a new project
-              <Icons.chevronRight className="h-5 w-5" />
-            </Button>
-          </DialogFooter>
-        )} */}
-      </DialogContent>
-    </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 };
