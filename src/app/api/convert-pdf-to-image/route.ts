@@ -9,6 +9,10 @@ export async function POST(req: Request) {
     const vision = require("@google-cloud/vision").v1;
 
     // Creates a client
+    console.log(
+      "env $$$ ",
+      process.env.NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT_KEY
+    );
     const client = new vision.ImageAnnotatorClient({
       projectId: "moltar-bc665",
       credentials: JSON.parse(
