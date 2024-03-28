@@ -46,13 +46,7 @@ export const Uploads = () => {
 
   return (
     <>
-      {uploadedFile && showDialog && (
-        <PdfUploadDialog
-          file={uploadedFile}
-          textView={showDialog}
-          setTextView={setShowDialog}
-        />
-      )}
+      {uploadedFile && showDialog && <PdfUploadDialog file={uploadedFile} />}
       <div className=" flex flex-col items-center max-h-full h-full relative ">
         {uploadList && uploadList?.length > 0 && (
           <>
@@ -262,13 +256,22 @@ const FileDrop = ({
   dragContainer: React.RefObject<HTMLDivElement>;
 }) => {
   const [dragging, setDragging] = React.useState(false);
-  const {uploadFile, setUploadedFile, setShowDialog} = useUploads()!;
+  const {
+    uploadFile,
+    setShowDialog,
+    isLoadingUpload,
+    setIsLoadingUpload,
+    setUploadedFile,
+  } = useUploads()!;
+
+  const [uploadedFileLocal, setUploadedFileLocal] = React.useState<File | null>(
+    null
+  );
 
   const [dropError, setDropError] = React.useState(false);
   const {toast} = useToast();
 
   const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
-  const [activeUpload, setActiveUpload] = React.useState<File | null>(null);
 
   const handleDragOver = useCallback((e: DragEvent) => {
     console.log("dragging");
@@ -291,6 +294,8 @@ const FileDrop = ({
       const pdfFiles = files.filter(
         (file: File) => file.type === "application/pdf"
       );
+      setUploadedFileLocal(pdfFiles[0]);
+      setIsLoadingUpload(true);
 
       setUploadQueue(pdfFiles);
       for (let file of pdfFiles) {
@@ -302,14 +307,11 @@ const FileDrop = ({
             variant: "destructive",
           });
         } else {
-          setActiveUpload(file);
           const fileData = await uploadFile(file);
           setUploadedFile(fileData);
           setShowDialog(true);
         }
-        setUploadQueue((prev) => prev.filter((f) => f !== file));
       }
-      setActiveUpload(null);
     },
     [uploadFile, toast, setShowDialog, setUploadedFile]
   );
@@ -346,17 +348,16 @@ const FileDrop = ({
         </div>
       </div>
 
-      <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-        {uploadQueue.map((file, i) => (
-          <div
-            key={i}
-            className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
-          >
+      {uploadedFileLocal && isLoadingUpload && (
+        <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
+          <div className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue ">
             <Icons.spinner className="h-5 w-5 animate-spin text-white" />
-            <span className="text-white font-bold">{file.name}</span>
+            <span className="text-white font-bold">
+              {uploadedFileLocal.name}
+            </span>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </>
   );
 };

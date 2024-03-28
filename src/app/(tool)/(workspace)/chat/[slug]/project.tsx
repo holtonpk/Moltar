@@ -16,7 +16,7 @@ import {useChat} from "@/context/chat-context2";
 export const Project = ({projectData}: {projectData: ProjectType}) => {
   const {responseLoading, project} = useChat()!;
 
-  console.log("projectData", project);
+  console.log("projectData 22222", project);
 
   return (
     <>
@@ -42,7 +42,7 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
       </div>
       <div className="md:hidden block  min-h-full    ">
         {(project?.chat === null || project?.chat?.length === 0) && (
-          <FileViewMobile upload={project.upload} />
+          <FileViewMobile upload={projectData.upload} />
         )}
         <Chat />
       </div>

@@ -4,6 +4,7 @@ import React, {useContext, createContext, useEffect, useState} from "react";
 import {
   doc,
   getDocs,
+  getDoc,
   onSnapshot,
   setDoc,
   query,
@@ -52,23 +53,46 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
   useEffect(() => {
-    const q = query(
-      collection(db, `users/${currentUser?.uid || unSubscribedUserId}/projects`)
-    );
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const projects = querySnapshot.docs.map((doc) => doc.data());
-      const savedProjects = projects as ProjectType[];
-      const currentProject = savedProjects.find(
-        (p: ProjectType) => p.id === projectId
+    const fetchData = async () => {
+      const q = query(
+        collection(
+          db,
+          `users/${currentUser?.uid || unSubscribedUserId}/projects`
+        )
       );
-      setProject(currentProject as ProjectType);
-      setChat(currentProject?.chat || null);
-      setTotalProjects(projects.length);
-    });
 
-    // Cleanup this component
-    return () => unsubscribe();
+      const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+        const projects = querySnapshot.docs.map((doc) => doc.data());
+        const savedProjects = projects as ProjectType[];
+        const currentProject = savedProjects.find(
+          (p: ProjectType) => p.id === projectId
+        );
+
+        if (currentProject) {
+          const uploadRef = doc(
+            db,
+            `users/${currentUser?.uid || unSubscribedUserId}/uploads`,
+            currentProject.uploadId
+          );
+          const uploadSnap = await getDoc(uploadRef);
+          const upload = uploadSnap.data();
+
+          const projectData = {
+            ...currentProject,
+            upload: upload,
+          };
+
+          setProject(projectData as ProjectType);
+          setChat(currentProject.chat || null);
+          setTotalProjects(projects.length);
+        }
+      });
+
+      // Cleanup this component
+      return () => unsubscribe();
+    };
+
+    fetchData();
   }, []);
 
   // Save project to local storage whenever it updates
@@ -127,13 +151,17 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
   }, [prompt]);
 
   const fetchAiResponse = async (prompt: string) => {
+    console.log(
+      "fetching ai response",
+      `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text : ${pdfText}`
+    );
     const response = await fetch("/api/openai", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text : ${pdfText}`,
+        prompt: `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text  : ${pdfText}`,
       }),
     })
       .then((res) => res.json())

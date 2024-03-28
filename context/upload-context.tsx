@@ -2,24 +2,27 @@
 
 import React, {useContext, createContext, useState, useEffect} from "react";
 
-import {UploadType} from "@/types";
+import {UploadType, LocalUploadType} from "@/types";
 import {
   getStorage,
   ref,
   getDownloadURL,
   uploadBytesResumable,
   deleteObject,
+  listAll,
 } from "firebase/storage";
 
 import {app} from "@/config/firebase";
 import {
   doc,
+  where,
   getDocs,
   onSnapshot,
   setDoc,
   query,
   collection,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import {db} from "@/config/firebase";
@@ -31,16 +34,18 @@ type UploadContextType = {
   resetFilter: () => void;
   setUploadList: React.Dispatch<React.SetStateAction<UploadType[] | undefined>>;
   loading: boolean;
-  uploadFile: (file: File) => Promise<UploadType>;
-  FileUpload: (event: any) => void;
+  uploadFile: (file: File) => Promise<LocalUploadType>;
+  // FileUpload: (event: any) => void;
   DeleteUpload: (fileId: string) => void;
   ReNameUpload: (fileId: string, name: string) => void;
   FileDrop: (files: File[]) => void;
   FilterUploads: (search: string) => void;
-  uploadedFile: UploadType | null;
-  setUploadedFile: React.Dispatch<React.SetStateAction<UploadType | null>>;
+  uploadedFile: LocalUploadType | null;
+  setUploadedFile: React.Dispatch<React.SetStateAction<LocalUploadType | null>>;
   showDialog: boolean;
   setShowDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  isLoadingUpload: boolean;
+  setIsLoadingUpload: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const UploadsContext = createContext<UploadContextType | null>(null);
@@ -58,10 +63,11 @@ export const UploadsProvider = ({children}: Props) => {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [filterList, setFilterList] = useState<string[]>();
 
-  const [uploadedFile, setUploadedFile] = React.useState<UploadType | null>(
-    null
-  );
+  const [uploadedFile, setUploadedFile] =
+    React.useState<LocalUploadType | null>(null);
   const [showDialog, setShowDialog] = React.useState(false);
+
+  const [isLoadingUpload, setIsLoadingUpload] = React.useState(false);
 
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
@@ -90,26 +96,36 @@ export const UploadsProvider = ({children}: Props) => {
     return fileUrl;
   }
 
-  async function uploadFile(file: File) {
-    const fileID = Math.random().toString(36).substring(7);
-    // upload file to firebase storage
-    const firebaseUrl = await uploadFileToFirebase(file, fileID);
+  const [uploadData, setUploadData] = useState<any>();
 
-    const upload: UploadType = {
-      title: file.name,
-      id: fileID,
-      path: firebaseUrl,
-    };
+  // useEffect(() => {
+  //   if (!isLoadingUpload && uploadData) {
+  //     saveToFirebase(uploadData!);
+  //     setUploadData(null);
+  //   }
+  // }, [isLoadingUpload]);
 
-    // save upload ref to firebase firestore
+  async function saveToFirebase(file: UploadType) {
     const docRef = doc(
       db,
       `users/${
         currentUser?.uid || unSubscribedUserId || unSubscribedUserId
       }/uploads`,
-      fileID
+      file.id
     );
-    await setDoc(docRef, upload);
+    await setDoc(docRef, file, {merge: true});
+  }
+
+  async function uploadFile(file: File) {
+    const fileID = Math.random().toString(36).substring(7);
+    // upload file to firebase storage
+    const firebaseUrl = await uploadFileToFirebase(file, fileID);
+    const upload = {
+      title: file.name,
+      id: fileID,
+      path: firebaseUrl,
+    };
+    setUploadData(upload);
     return upload;
   }
 
@@ -123,11 +139,11 @@ export const UploadsProvider = ({children}: Props) => {
     setUploadList([...(uploadList || []), ...newFiles]);
   }
 
-  async function FileUpload(event: any) {
-    const file = event.target.files[0];
-    const newFile = await uploadFile(file);
-    setUploadList([...(uploadList || []), newFile]);
-  }
+  // async function FileUpload(event: any) {
+  //   const file = event.target.files[0];
+  //   const newFile = await uploadFile(file);
+  //   setUploadList([...(uploadList || []), newFile]);
+  // }
 
   const ReNameUpload = (fileId: string, name: string) => {
     // renmame file field in firebase storage
@@ -143,6 +159,26 @@ export const UploadsProvider = ({children}: Props) => {
     const storage = getStorage(app);
     const fileRef = ref(storage, fileId);
     await deleteObject(fileRef);
+
+    const folderRef = ref(storage, fileId);
+    const files = await listAll(folderRef);
+    files.items.forEach(async (file) => {
+      await deleteObject(file);
+    });
+  }
+
+  async function DeleteAllProjectsWithUpload(fileId: string) {
+    const q = query(
+      collection(
+        db,
+        `users/${currentUser?.uid || unSubscribedUserId}/projects`
+      ),
+      where("uploadId", "==", fileId)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
   }
 
   async function DeleteUpload(fileId: string) {
@@ -153,6 +189,7 @@ export const UploadsProvider = ({children}: Props) => {
     );
     await deleteDoc(docRef);
     await DeleteUploadFromFirebase(fileId);
+    await DeleteAllProjectsWithUpload(fileId);
   }
 
   const FilterUploads = (search: string) => {
@@ -186,7 +223,7 @@ export const UploadsProvider = ({children}: Props) => {
     setUploadList,
     loading,
     uploadFile,
-    FileUpload,
+    // FileUpload,
     DeleteUpload,
     ReNameUpload,
     FileDrop,
@@ -195,6 +232,8 @@ export const UploadsProvider = ({children}: Props) => {
     setUploadedFile,
     showDialog,
     setShowDialog,
+    isLoadingUpload,
+    setIsLoadingUpload,
   };
 
   return (

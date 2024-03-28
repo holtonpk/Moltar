@@ -29,14 +29,27 @@ export default function Page({params}: Params) {
         projectId
       );
       const docSnap = await getDoc(docRef);
-      console.log("Document data: ======", docSnap.data());
+      const projectData = docSnap.data() as ProjectType;
+      const uploadRef = doc(
+        db,
+        `users/${currentUser?.uid || unSubscribedUserId}/uploads`,
+        projectData.uploadId
+      );
+      const uploadSnap = await getDoc(uploadRef);
+      const upload = uploadSnap.data();
+      const projectLocal = {
+        ...projectData,
+        upload: upload,
+      } as ProjectType;
 
-      setProject(docSnap.data() as ProjectType);
+      setProject(projectLocal);
       setLoading(false);
     };
 
     fetchProject(params.slug);
   }, [params.slug, unSubscribedUserId, currentUser?.uid]);
+
+  console.log("project 111111", project);
 
   return (
     <>

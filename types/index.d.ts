@@ -4,6 +4,13 @@ export type UploadType = {
   title: string;
   id: string;
   path: string;
+  text: string;
+};
+
+export type LocalUploadType = {
+  title: string;
+  id: string;
+  path: string;
 };
 
 export interface ProjectType {

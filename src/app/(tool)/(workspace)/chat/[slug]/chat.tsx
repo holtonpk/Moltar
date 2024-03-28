@@ -25,7 +25,7 @@ import {useProjects} from "@/context/projects-context";
 import {toast} from "@/components/ui/use-toast";
 import "./chat-style.css";
 const Chat = () => {
-  const {responseLoading, project} = useChat()!;
+  const {responseLoading, project, pdfText} = useChat()!;
 
   // useEffect(() => {
   //   setChat(chat);

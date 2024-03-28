@@ -24,32 +24,10 @@ const FileView = ({upload}: {upload: UploadType}) => {
 
   const [docLoading, setDocLoading] = React.useState<boolean>(true);
 
+  console.log("loading document =============>", upload);
+
   async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
-    // Extract text from each page
-    const textPromises = [];
-    for (let i = 1; i <= numPages; i++) {
-      const loadingTask = pdfjs.getDocument({url: upload.path});
-      const promise = loadingTask.promise.then((pdf) => {
-        return pdf.getPage(i).then((page) => {
-          return page.getTextContent().then((textContent) => {
-            const pageText = textContent.items
-              .map((item: any) => item.str)
-              .join(" ");
-            return pageText;
-          });
-        });
-      });
-      textPromises.push(promise);
-    }
-
-    Promise.all(textPromises)
-      .then((pageTexts) => {
-        const extractedText = pageTexts.join(" ");
-        setPdfText(extractedText);
-        console.log("extractedText==========", extractedText);
-      })
-      .catch((error) => console.error("Failed to extract PDF text:", error));
-
+    setPdfText(upload.text);
     setNumPages(numPages);
     setDocLoading(false);
   }
@@ -265,6 +243,7 @@ const FileView = ({upload}: {upload: UploadType}) => {
 export default FileView;
 
 export const FileViewMobile = ({upload}: {upload: UploadType}) => {
+  console.log("99999999 =============>", upload);
   const {pdfText, setPdfText} = useChat()!;
   const [numPages, setNumPages] = React.useState<number>(1);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -273,29 +252,7 @@ export const FileViewMobile = ({upload}: {upload: UploadType}) => {
 
   async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
     // Extract text from each page
-    const textPromises = [];
-    for (let i = 1; i <= numPages; i++) {
-      const loadingTask = pdfjs.getDocument({url: upload.path});
-      const promise = loadingTask.promise.then((pdf) => {
-        return pdf.getPage(i).then((page) => {
-          return page.getTextContent().then((textContent) => {
-            const pageText = textContent.items
-              .map((item: any) => item.str)
-              .join(" ");
-            return pageText;
-          });
-        });
-      });
-      textPromises.push(promise);
-    }
-
-    Promise.all(textPromises)
-      .then((pageTexts) => {
-        const extractedText = pageTexts.join(" ");
-        setPdfText(extractedText);
-      })
-      .catch((error) => console.error("Failed to extract PDF text:", error));
-
+    setPdfText(upload.text);
     setNumPages(numPages);
     setDocLoading(false);
     console.log("setting loading to", docLoading);
