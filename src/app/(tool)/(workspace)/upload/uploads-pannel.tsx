@@ -261,6 +261,7 @@ const PDFTextScannerDialog = ({
 
   const [scanning, setScanning] = React.useState(false);
   const scanPdfForText = async () => {
+    if (!file) return;
     setScanning(true);
     await fetch("/api/convert-pdf-to-image", {
       method: "POST",
@@ -280,6 +281,7 @@ const PDFTextScannerDialog = ({
   };
 
   const getTextFromJSON = async () => {
+    if (!file) return;
     try {
       const storage = getStorage(app);
       const folderRef = ref(storage, file.id);
@@ -303,7 +305,8 @@ const PDFTextScannerDialog = ({
       <DialogContent className="max-w-none w-fit">
         <DialogHeader>
           <DialogTitle>
-            We didn't detect any text in your pdf. Would you like us to scan it?
+            We didn&apos;t detect any text in your pdf. Would you like us to
+            scan it?
           </DialogTitle>
           <DialogDescription>
             This will allow moltar to read your upload

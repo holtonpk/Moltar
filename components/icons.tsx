@@ -14,6 +14,7 @@ import {
   File,
   Pencil,
   FileText,
+  ScanText,
   Mail,
   HelpCircle,
   Image,
@@ -138,6 +139,7 @@ import {
 //   export type XIcon = LucideIcon;
 
 export const Icons = {
+  scan: ScanText,
   bookText: BookText,
   loader: Loader,
   stack: Layers3,

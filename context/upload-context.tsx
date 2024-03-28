@@ -25,7 +25,25 @@ import {
 import {db} from "@/config/firebase";
 import {useAuth} from "@/context/user-auth";
 
-const UploadsContext = createContext<any | null>(null);
+type UploadContextType = {
+  filterList: string[] | undefined;
+  uploadList: UploadType[] | undefined;
+  resetFilter: () => void;
+  setUploadList: React.Dispatch<React.SetStateAction<UploadType[] | undefined>>;
+  loading: boolean;
+  uploadFile: (file: File) => Promise<UploadType>;
+  FileUpload: (event: any) => void;
+  DeleteUpload: (fileId: string) => void;
+  ReNameUpload: (fileId: string, name: string) => void;
+  FileDrop: (files: File[]) => void;
+  FilterUploads: (search: string) => void;
+  uploadedFile: UploadType | null;
+  setUploadedFile: React.Dispatch<React.SetStateAction<UploadType | null>>;
+  showDialog: boolean;
+  setShowDialog: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const UploadsContext = createContext<UploadContextType | null>(null);
 
 export function useUploads() {
   return useContext(UploadsContext);
@@ -39,6 +57,11 @@ export const UploadsProvider = ({children}: Props) => {
   const [uploadList, setUploadList] = React.useState<UploadType[]>();
   const [loading, setLoading] = React.useState<boolean>(true);
   const [filterList, setFilterList] = useState<string[]>();
+
+  const [uploadedFile, setUploadedFile] = React.useState<UploadType | null>(
+    null
+  );
+  const [showDialog, setShowDialog] = React.useState(false);
 
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
@@ -67,7 +90,7 @@ export const UploadsProvider = ({children}: Props) => {
     return fileUrl;
   }
 
-  async function uploadFile(file: File, text: string) {
+  async function uploadFile(file: File) {
     const fileID = Math.random().toString(36).substring(7);
     // upload file to firebase storage
     const firebaseUrl = await uploadFileToFirebase(file, fileID);
@@ -76,7 +99,6 @@ export const UploadsProvider = ({children}: Props) => {
       title: file.name,
       id: fileID,
       path: firebaseUrl,
-      text: text,
     };
 
     // save upload ref to firebase firestore
@@ -169,6 +191,10 @@ export const UploadsProvider = ({children}: Props) => {
     ReNameUpload,
     FileDrop,
     FilterUploads,
+    uploadedFile,
+    setUploadedFile,
+    showDialog,
+    setShowDialog,
   };
 
   return (

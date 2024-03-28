@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 
 // import credintials from "./moltar-bc665-0fdafd009593.json";
-export async function POST(req) {
+export async function POST(req: Request) {
   const requestData = await req.json();
   const fileName = requestData.fileName;
   try {
@@ -12,7 +12,7 @@ export async function POST(req) {
     const client = new vision.ImageAnnotatorClient({
       projectId: "moltar-bc665",
       credentials: JSON.parse(
-        process.env.NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT_KEY
+        process.env.NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT_KEY as string
       ),
     });
 
@@ -63,7 +63,7 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error("Error:", error);
-    return NextResponse.json({message: error.message});
+    return NextResponse.json({message: error});
   }
 }
 

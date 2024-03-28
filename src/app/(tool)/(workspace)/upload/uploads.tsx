@@ -9,7 +9,23 @@ import {useToast} from "@/components/ui/use-toast";
 import {useAuth} from "@/context/user-auth";
 import {Toast} from "@/components/ui/toast";
 import {set} from "zod";
-
+import {UploadType} from "@/types";
+import {Document, Page, pdfjs} from "react-pdf";
+import {PdfUploadDialog} from "./pdf-upload-dialog";
+import {Skeleton} from "@/components/ui/skeleton";
+import {useRouter} from "next/navigation";
+import {doc, setDoc, serverTimestamp} from "firebase/firestore";
+import {db, app} from "@/config/firebase";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {on} from "events";
 //  these need to be moved to a types file
 
 export const Uploads = () => {
@@ -17,124 +33,69 @@ export const Uploads = () => {
 
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
 
-  const {uploadList, setUploadList, loading, filterList, resetFilter} =
-    useUploads();
+  const {
+    uploadList,
+    loading,
+    filterList,
+    uploadedFile,
+    showDialog,
+    setShowDialog,
+  } = useUploads()!;
 
   const dragContainer = React.useRef<HTMLDivElement>(null);
 
   return (
-    <div className=" flex flex-col items-center max-h-full h-full relative ">
-      {uploadList && uploadList?.length > 0 && (
-        <>
-          {/* <MobileUploadHeader /> */}
-          <UploadHeader />
-        </>
+    <>
+      {uploadedFile && showDialog && (
+        <PdfUploadDialog
+          file={uploadedFile}
+          textView={showDialog}
+          setTextView={setShowDialog}
+        />
       )}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center h-full w-full ">
-          <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
-        </div>
-      ) : (
-        <div ref={dragContainer} className="h-full relative w-full max-w-full ">
-          <FileDrop dragContainer={dragContainer} />
-          {!uploadList || uploadList.length === 0 ? (
-            <EmptyUploadList />
-          ) : (
-            <>
-              {filterList?.length === 0 && (
-                <h1 className="p-6 text-theme-blue w-full text-center">
-                  No uploads found
-                </h1>
-              )}
-              <UploadsPanel />
-            </>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-const MobileUploadHeader = () => {
-  const {uploadFile, FilterUploads, resetFilter} = useUploads();
-  const {toast} = useToast();
-
-  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // if search value is not empty, resetFilter
-
-    FilterUploads(e.target.value);
-
-    // if search value is empty, resetFilter
-    if (e.target.value === "") {
-      resetFilter();
-    }
-  };
-
-  const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
-
-  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const files = Array.from(event.target.files); // Convert FileList to an array
-      setUploadQueue(files); // Set the initial queue
-
-      for (let file of files) {
-        if (file.size > 10000000) {
-          toast({
-            title: `${file.name} is too large`,
-            description: "Please upload a file less than 10MB",
-            variant: "destructive",
-          });
-        } else {
-          await uploadFile(file); // Upload the file
-        }
-        // Remove the uploaded file from the queue
-        setUploadQueue((currentQueue) =>
-          currentQueue.filter((f) => f !== file)
-        );
-      }
-    }
-  };
-
-  return (
-    <div className="md:hidden flex w-full bg-card dark:bg-[#3A3D3E]  py-3  items-center justify-between px-4 gap-4 h-28">
-      {/* <Input
-        onChange={onSearch}
-        className="w-full bg-card focus-visible:ring-theme-blue dark:focus-visible:ring-offset-[#3A3D3E] dark:border-[#3A3D3E]"
-        placeholder="Search uploads"
-      /> */}
-      <input
-        multiple
-        id="selectedFile"
-        type="file"
-        accept=".pdf"
-        onChange={onFileChange}
-        style={{display: "none"}}
-        className="bg-theme-blue hover:bg-theme-blue/60 text-white"
-      />
-
-      <Button
-        onClick={() => document.getElementById("selectedFile")?.click()}
-        className="bg-theme-blue hover:bg-theme-blue/60 text-white"
-      >
-        <Icons.add className="h-5 w-5" />
-        New Upload
-      </Button>
-      <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-        {uploadQueue.map((file, i) => (
-          <div
-            key={i}
-            className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
-          >
-            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
-            <span className="text-white font-bold">{file.name}</span>
+      <div className=" flex flex-col items-center max-h-full h-full relative ">
+        {uploadList && uploadList?.length > 0 && (
+          <>
+            {/* <MobileUploadHeader /> */}
+            <UploadHeader />
+          </>
+        )}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center h-full w-full ">
+            <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
           </div>
-        ))}
+        ) : (
+          <div
+            ref={dragContainer}
+            className="h-full relative w-full max-w-full "
+          >
+            <FileDrop dragContainer={dragContainer} />
+            {!uploadList || uploadList.length === 0 ? (
+              <EmptyUploadList />
+            ) : (
+              <>
+                {filterList?.length === 0 && (
+                  <h1 className="p-6 text-theme-blue w-full text-center">
+                    No uploads found
+                  </h1>
+                )}
+                <UploadsPanel />
+              </>
+            )}
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 };
-
 const UploadHeader = () => {
-  const {uploadFile, FilterUploads, resetFilter} = useUploads();
+  const {
+    uploadFile,
+    FilterUploads,
+    resetFilter,
+    setUploadedFile,
+    setShowDialog,
+  } = useUploads()!;
   const {toast} = useToast();
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,6 +116,7 @@ const UploadHeader = () => {
       const files = Array.from(event.target.files); // Convert FileList to an array
       setUploadQueue(files); // Set the initial queue
 
+      console.log("files========>", files);
       for (let file of files) {
         if (file.size > 10000000) {
           toast({
@@ -163,14 +125,22 @@ const UploadHeader = () => {
             variant: "destructive",
           });
         } else {
-          await uploadFile(file); // Upload the file
+          const fileData = await uploadFile(file); // Upload the file to firebase
+          setUploadedFile(fileData);
+          setShowDialog(true);
+          setUploadQueue((currentQueue) =>
+            currentQueue.filter((f) => f !== file)
+          );
         }
-        // Remove the uploaded file from the queue
-        setUploadQueue((currentQueue) =>
-          currentQueue.filter((f) => f !== file)
-        );
       }
     }
+  };
+
+  const dummyFile = {
+    id: "4ym68it",
+    title: "Jacobs-DeathAndLifeOfGreatAmericanCities-Excerpts.pdf",
+    // path: "https://firebasestorage.googleapis.com/v0/b/moltar-bc665.appspot.com/o/4ym68it?alt=media&token=7afe9e3e-67a4-40a9-9030-b186fef1b16b",
+    path: "https://firebasestorage.googleapis.com/v0/b/moltar-bc665.appspot.com/o/1lrebg?alt=media&token=dc8de7a3-b209-49c8-bb78-e0e4d0037e3f",
   };
 
   return (
@@ -182,7 +152,7 @@ const UploadHeader = () => {
       />
       <input
         multiple
-        id="selectedFile"
+        id="newUploadInput"
         type="file"
         accept=".pdf"
         onChange={onFileChange}
@@ -191,7 +161,7 @@ const UploadHeader = () => {
       />
 
       <Button
-        onClick={() => document.getElementById("selectedFile")?.click()}
+        onClick={() => document.getElementById("newUploadInput")?.click()}
         className="bg-theme-blue hover:bg-theme-blue/60 text-white"
       >
         <Icons.add className="h-5 w-5" />
@@ -213,7 +183,7 @@ const UploadHeader = () => {
 };
 
 const EmptyUploadList = () => {
-  const {uploadFile} = useUploads();
+  const {uploadFile, setUploadedFile, setShowDialog} = useUploads()!;
   const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
   const {toast} = useToast();
 
@@ -230,7 +200,9 @@ const EmptyUploadList = () => {
             variant: "destructive",
           });
         } else {
-          await uploadFile(file); // Upload the file
+          const fileData = await uploadFile(file);
+          setUploadedFile(fileData);
+          setShowDialog(true);
         }
         // Remove the uploaded file from the queue
         setUploadQueue((currentQueue) =>
@@ -243,9 +215,6 @@ const EmptyUploadList = () => {
   return (
     <div className="flex flex-col w-full gap-4 items-center pt-2 justify-center   h-full p-6 shadow-2xl  relative z-10">
       <div className="h-fit w-fit flex flex-col items-center   p-8 px-20 rounded-lg border border-border dark:border-white/10  dark:bg-white/5 shadow-lg">
-        {/* <div className="text-3xl font-bold capitalize text-center text-theme-blued">
-          The easy way to simplify <br /> your reading
-        </div> */}
         <div className="w-[80%] p-6  border-border  rounded-lg bgs-[rgb(25,118,210,.2)] flex flex-col gap-2 items-center justify-center">
           <div className="flex items-center justify-center p-6 rounded-lg bg-[rgb(25,118,210,.2)]">
             <Icons.uploadCloud className="h-20 w-20 text-theme-blue" />
@@ -254,12 +223,6 @@ const EmptyUploadList = () => {
             Drag & Drop your .pdf Files
           </h1>
           <span>or</span>
-          {/* <Button
-            onClick={() => document.getElementById("selectedFile")?.click()}
-            className="text-primary font-bold  rounded-full py-2 px-6 bg-theme-blue hover:bg-theme-blue hover:opacity-80 shadow-lg"
-          >
-            Click to browse
-          </Button> */}
           <Button
             onClick={() => document.getElementById("selectedFile")?.click()}
             className="text-primary text-sm bg-transparent  w-full bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue p-[2px]"
@@ -299,7 +262,7 @@ const FileDrop = ({
   dragContainer: React.RefObject<HTMLDivElement>;
 }) => {
   const [dragging, setDragging] = React.useState(false);
-  const {uploadFile} = useUploads();
+  const {uploadFile, setUploadedFile, setShowDialog} = useUploads()!;
 
   const [dropError, setDropError] = React.useState(false);
   const {toast} = useToast();
@@ -340,13 +303,15 @@ const FileDrop = ({
           });
         } else {
           setActiveUpload(file);
-          await uploadFile(file);
+          const fileData = await uploadFile(file);
+          setUploadedFile(fileData);
+          setShowDialog(true);
         }
         setUploadQueue((prev) => prev.filter((f) => f !== file));
       }
       setActiveUpload(null);
     },
-    [uploadFile, toast]
+    [uploadFile, toast, setShowDialog, setUploadedFile]
   );
 
   useEffect(() => {
