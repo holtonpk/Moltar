@@ -52,23 +52,9 @@ export default function Page({params}: Params) {
   console.log("project 111111", project);
 
   return (
-    <>
-      {loading ? (
-        <div className="flex">
-          <div className="w-[55%] flex flex-col justify-between gap-4 items-center pt-6">
-            <Skeleton className="gap-4 flex-grow bg-primary/40   w-[80%]" />
-
-            <Skeleton className="h-20 bg-primary/40 w-full  rounded-none" />
-          </div>
-
-          <Skeleton className="h-screen bg-primary/40 w-[45%] rounded-none" />
-        </div>
-      ) : (
-        <ChatProvider2 projectId={params.slug}>
-          <Project projectData={project as ProjectType} />
-        </ChatProvider2>
-      )}
-    </>
+    <ChatProvider2 projectId={params.slug}>
+      <Project projectData={project as ProjectType} />
+    </ChatProvider2>
   );
 }
 

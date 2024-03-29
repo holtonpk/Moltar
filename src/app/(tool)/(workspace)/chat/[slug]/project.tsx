@@ -6,6 +6,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import Chat from "./chat";
+import {Skeleton} from "@/components/ui/skeleton";
 import FileView, {FileViewMobile} from "./file-view";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -29,7 +30,7 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
             defaultSize={55}
             className=" z-10 relative bg-primary/5 dark:bg-card overflow-hidden"
           >
-            <FileView upload={projectData.upload} />
+            <FileView upload={projectData?.upload} />
           </ResizablePanel>
           <ResizableHandle withHandle className="z-30" />
           <ResizablePanel
@@ -42,7 +43,13 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
       </div>
       <div className="md:hidden block  min-h-full    ">
         {(project?.chat === null || project?.chat?.length === 0) && (
-          <FileViewMobile upload={projectData.upload} />
+          <>
+            {projectData ? (
+              <FileViewMobile upload={projectData.upload} />
+            ) : (
+              <> </>
+            )}
+          </>
         )}
         <Chat />
       </div>
