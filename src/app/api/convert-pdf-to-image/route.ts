@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {PDFDocument, PDFPage} from "pdf-lib";
 
-export const maxDuration = 1000 * 60 * 10; // 5 minutes
+export const maxDuration = 5; // 5 minutes
 
 // import credintials from "./moltar-bc665-0fdafd009593.json";
 export async function POST(req: Request) {
