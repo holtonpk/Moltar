@@ -120,6 +120,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error:", error);
-    return NextResponse.json({message: error.message});
+    return NextResponse.json({message: error});
   }
 }
