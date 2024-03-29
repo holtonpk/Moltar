@@ -80,6 +80,54 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
   const [scanning, setScanning] = React.useState(false);
 
   const [scanSuccess, setScanSuccess] = React.useState(false);
+
+  // const pdfToText = async (fileName: string) => {
+  //   const vision = require("@google-cloud/vision").v1;
+
+  //   // Creates a client
+  //   const client = new vision.ImageAnnotatorClient({
+  //     projectId: "moltar-bc665",
+  //     credentials: JSON.parse(
+  //       process.env.NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT_KEY as string
+  //     ),
+  //   });
+  //   const bucketName = "moltar-bc665.appspot.com";
+  //   const outputPrefix = "scanned-documents";
+  //   const gcsSourceUri = `gs://${bucketName}/${fileName}`;
+  //   const gcsDestinationUri = `gs://${bucketName}/${fileName}/`;
+
+  //   const inputConfig = {
+  //     // Supported mime_types are: 'application/pdf' and 'image/tiff'
+  //     mimeType: "application/pdf",
+  //     gcsSource: {
+  //       uri: gcsSourceUri,
+  //     },
+  //   };
+  //   const outputConfig = {
+  //     gcsDestination: {
+  //       uri: gcsDestinationUri,
+  //     },
+  //   };
+  //   const features = [{type: "DOCUMENT_TEXT_DETECTION"}];
+  //   const request = {
+  //     requests: [
+  //       {
+  //         inputConfig: inputConfig,
+  //         features: features,
+  //         outputConfig: outputConfig,
+  //       },
+  //     ],
+  //   };
+
+  //   const [operation] = await client.asyncBatchAnnotateFiles(request);
+  //   const [filesResponse] = await operation.promise();
+  //   const destinationUri =
+  //     filesResponse.responses[0].outputConfig.gcsDestination.uri;
+  //   console.log("Json saved to: " + destinationUri);
+
+  //   return destinationUri;
+  // };
+
   const scanPdfForText = async () => {
     if (!file) return;
     setScanning(true);
@@ -95,8 +143,9 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
         getTextFromJSON();
       })
       .catch((error) => {
-        console.error("Failed to extract PDF text:", error);
+        console.error("Failed to extract PDF ==== text:", error);
       });
+
     setScanning(false);
     setRecommendScan(false);
     setScanSuccess(true);
