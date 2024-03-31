@@ -54,7 +54,13 @@ const UploadsPanel = () => {
     const id = Math.random().toString(36).substring(7);
 
     await setDoc(
-      doc(db, `users/${currentUser?.uid || unSubscribedUserId}/projects`, id),
+      doc(
+        db,
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/projects`,
+        id
+      ),
       {
         id: id,
         uploadId: file.id,

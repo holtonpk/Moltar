@@ -25,14 +25,18 @@ export default function Page({params}: Params) {
     const fetchProject = async (projectId: string) => {
       const docRef = doc(
         db,
-        `users/${currentUser?.uid || unSubscribedUserId}/projects`,
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/projects`,
         projectId
       );
       const docSnap = await getDoc(docRef);
       const projectData = docSnap.data() as ProjectType;
       const uploadRef = doc(
         db,
-        `users/${currentUser?.uid || unSubscribedUserId}/uploads`,
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/uploads`,
         projectData.uploadId
       );
       const uploadSnap = await getDoc(uploadRef);

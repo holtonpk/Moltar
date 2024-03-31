@@ -73,7 +73,12 @@ export const UploadsProvider = ({children}: Props) => {
 
   useEffect(() => {
     const q = query(
-      collection(db, `users/${currentUser?.uid || unSubscribedUserId}/uploads`)
+      collection(
+        db,
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/uploads`
+      )
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const uploads = querySnapshot.docs.map((doc) => doc.data());
@@ -109,7 +114,9 @@ export const UploadsProvider = ({children}: Props) => {
     const docRef = doc(
       db,
       `users/${
-        currentUser?.uid || unSubscribedUserId || unSubscribedUserId
+        currentUser?.uid
+          ? currentUser?.uid
+          : unSubscribedUserId || unSubscribedUserId
       }/uploads`,
       file.id
     );
@@ -149,7 +156,9 @@ export const UploadsProvider = ({children}: Props) => {
     // renmame file field in firebase storage
     const docRef = doc(
       db,
-      `users/${currentUser?.uid || unSubscribedUserId}/uploads`,
+      `users/${
+        currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+      }/uploads`,
       fileId
     );
     setDoc(docRef, {title: name}, {merge: true});
@@ -171,7 +180,9 @@ export const UploadsProvider = ({children}: Props) => {
     const q = query(
       collection(
         db,
-        `users/${currentUser?.uid || unSubscribedUserId}/projects`
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/projects`
       ),
       where("uploadId", "==", fileId)
     );
@@ -184,7 +195,9 @@ export const UploadsProvider = ({children}: Props) => {
   async function DeleteUpload(fileId: string) {
     const docRef = doc(
       db,
-      `users/${currentUser?.uid || unSubscribedUserId}/uploads`,
+      `users/${
+        currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+      }/uploads`,
       fileId
     );
     await deleteDoc(docRef);

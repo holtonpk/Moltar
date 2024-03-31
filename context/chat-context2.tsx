@@ -57,7 +57,9 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
       const q = query(
         collection(
           db,
-          `users/${currentUser?.uid || unSubscribedUserId}/projects`
+          `users/${
+            currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+          }/projects`
         )
       );
 
@@ -71,7 +73,9 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
         if (currentProject) {
           const uploadRef = doc(
             db,
-            `users/${currentUser?.uid || unSubscribedUserId}/uploads`,
+            `users/${
+              currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+            }/uploads`,
             currentProject.uploadId
           );
           const uploadSnap = await getDoc(uploadRef);
@@ -100,7 +104,9 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
     const saveProject = () => {
       const projectRef = doc(
         db,
-        `users/${currentUser?.uid || unSubscribedUserId}/projects`,
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/projects`,
         projectId
       );
       setDoc(projectRef, project, {merge: true}).then(() => {
@@ -219,7 +225,9 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
     //  update the project name in firestore
     const projectRef = doc(
       db,
-      `users/${currentUser?.uid || unSubscribedUserId}/projects`,
+      `users/${
+        currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+      }/projects`,
       projectId
     );
     await setDoc(projectRef, {name: newName}, {merge: true}).then(() => {
@@ -231,7 +239,9 @@ export const ChatProvider2 = ({children, projectId}: Props) => {
     //  update the project color in firestore
     const projectRef = doc(
       db,
-      `users/${currentUser?.uid || unSubscribedUserId}/projects`,
+      `users/${
+        currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+      }/projects`,
       projectId
     );
     await setDoc(projectRef, {color: color}, {merge: true}).then(() => {

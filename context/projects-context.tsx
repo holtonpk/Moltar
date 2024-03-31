@@ -103,7 +103,9 @@ export const ProjectsProvider = ({children}: Props) => {
     //  update the project name in firestore
     const projectRef = doc(
       db,
-      `users/${currentUser?.uid || unSubscribedUserId}/projects`,
+      `users/${
+        currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+      }/projects`,
       id
     );
     await setDoc(projectRef, {name: newName}, {merge: true}).then(() => {
@@ -115,7 +117,9 @@ export const ProjectsProvider = ({children}: Props) => {
     //  update the project color in firestore
     const projectRef = doc(
       db,
-      `users/${currentUser?.uid || unSubscribedUserId}/projects`,
+      `users/${
+        currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+      }/projects`,
       id
     );
     await setDoc(projectRef, {color: color}, {merge: true}).then(() => {
@@ -126,7 +130,13 @@ export const ProjectsProvider = ({children}: Props) => {
   //  delete the project from firestore
   async function DeleteProject(id: string) {
     await deleteDoc(
-      doc(db, `users/${currentUser?.uid || unSubscribedUserId}/projects`, id)
+      doc(
+        db,
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/projects`,
+        id
+      )
     ).then(() => {
       console.log("Document successfully deleted!");
     });
