@@ -107,7 +107,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
           localStorage.getItem("unSubscribedUserId") as string
         );
       else {
-        // create a random 12 digit id
         const uId = Math.random().toString(36).substring(2, 14);
         localStorage.setItem("unSubscribedUserId", uId);
       }
