@@ -73,25 +73,26 @@ export const UploadsProvider = ({children}: Props) => {
 
   useEffect(() => {
     console.log("unsub", currentUser?.uid, unSubscribedUserId);
-    const q = query(
-      collection(
-        db,
-        `users/${
-          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
-        }/uploads`
-      )
-    );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const uploads = querySnapshot.docs.map((doc) => doc.data());
-      const savedProjects = uploads as UploadType[];
-      setLoading(false);
-      setUploadList(savedProjects);
-      setFilterList(savedProjects.map((upload: UploadType) => upload.id));
-    });
-
+    if (currentUser || unSubscribedUserId) {
+      const q = query(
+        collection(
+          db,
+          `users/${
+            currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+          }/uploads`
+        )
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const uploads = querySnapshot.docs.map((doc) => doc.data());
+        const savedProjects = uploads as UploadType[];
+        setLoading(false);
+        setUploadList(savedProjects);
+        setFilterList(savedProjects.map((upload: UploadType) => upload.id));
+      });
+      return () => unsubscribe();
+    }
     // Cleanup this component
-    return () => unsubscribe();
-  }, [currentUser]); // Empty dependency array ensures effect runs only once
+  }, [currentUser, unSubscribedUserId]); // Empty dependency array ensures effect runs only once
 
   async function uploadFileToFirebase(file: File, fileID: string) {
     const storage = getStorage(app);
