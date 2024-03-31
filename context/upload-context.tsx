@@ -72,6 +72,7 @@ export const UploadsProvider = ({children}: Props) => {
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
   useEffect(() => {
+    console.log("unsub", currentUser?.uid, unSubscribedUserId);
     const q = query(
       collection(
         db,
