@@ -63,11 +63,13 @@ export const ProjectsProvider = ({children}: Props) => {
   const displayedProjectsRef = useRef<ProjectType[]>([]);
 
   useEffect(() => {
-    console.log("fetching projects", currentUser?.uid, unSubscribedUserId);
+    // console.log("fetching projects", currentUser?.uid, unSubscribedUserId);
     const q = query(
       collection(
         db,
-        `users/${currentUser?.uid || unSubscribedUserId}/projects`
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/projects`
       ),
       orderBy("createdAt", "desc")
     );
