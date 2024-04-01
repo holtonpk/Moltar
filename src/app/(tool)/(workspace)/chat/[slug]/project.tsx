@@ -12,7 +12,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons";
 import {ProjectType} from "@/types";
-import {useChat} from "@/context/chat-context2";
+import {useChat} from "@/context/chat-context";
 
 export const Project = ({projectData}: {projectData: ProjectType}) => {
   const {responseLoading, project} = useChat()!;
@@ -41,7 +41,7 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-      <div className="md:hidden block  min-h-full    ">
+      <div className="md:hidden block  min-h-full   ">
         {(project?.chat === null || project?.chat?.length === 0) && (
           <>
             {projectData ? (

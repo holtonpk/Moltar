@@ -13,7 +13,9 @@ import {LinkButton} from "@/components/ui/link";
 import {UploadType} from "@/types";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
 import {Skeleton} from "@/components/ui/skeleton";
-import {useChat} from "@/context/chat-context2";
+import {useChat} from "@/context/chat-context";
+import {Expand} from "lucide-react";
+import exp from "constants";
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const FileView = ({upload}: {upload: UploadType}) => {
@@ -238,7 +240,6 @@ const FileView = ({upload}: {upload: UploadType}) => {
 export default FileView;
 
 export const FileViewMobile = ({upload}: {upload: UploadType}) => {
-  console.log("99999999 =============>", upload);
   const {pdfText, setPdfText} = useChat()!;
   const [numPages, setNumPages] = React.useState<number>(1);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -252,25 +253,28 @@ export const FileViewMobile = ({upload}: {upload: UploadType}) => {
     setDocLoading(false);
     console.log("setting loading to", docLoading);
   }
+  const [selectedPage, setSelectedPage] = React.useState<number>(1);
+
+  const [showExpandedView, setShowExpandedView] = React.useState(false);
 
   return (
-    <div className="flex flex-col  items-center justify-center h-fit  py-4 w-full   bg-primary/5   relative ">
-      <div className="w-full flex items-center h-fit justify-center ">
-        <LinkButton
-          href={"/upload"}
-          variant="ghost"
-          className=" z-20 text-theme-blue hover:text-theme-blue/60 absolute left-4 p-0 "
-        >
-          <Icons.chevronLeft className="h-6 w-6" />
-        </LinkButton>
-        <div className="flex items-center justify-between w-fit  gap-4 px-[56px]">
-          <span className="w-full overflow-hidden text-ellipsis">
-            {upload.title}
-          </span>
+    <>
+      <div className="flex flex-col  items-center justify-center h-fit  py-4 w-full   bg-primary/5   relative ">
+        <div className=" px-2 grid grid-cols-[36px_1fr] items-center h-fit justify-center relative z-10">
+          <LinkButton
+            href={"/upload"}
+            variant="ghost"
+            className=" z-20 text-theme-blue hover:text-theme-blue/60 p-0 "
+          >
+            <Icons.chevronLeft className="h-6 w-6" />
+          </LinkButton>
+          <div className="flex items-center justify-between w-full overflow-hidden  gap-4  ">
+            <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap ">
+              {upload.title}
+            </span>
+          </div>
         </div>
-      </div>
 
-      <>
         <div className="w-screen h-[200px] mt-4 px-4    overflow-x-scroll relative z-10 flex   gap-3    ">
           <Document
             className={"relative w-fit  h-[200px]  flex  gap-4   "}
@@ -283,12 +287,76 @@ export const FileViewMobile = ({upload}: {upload: UploadType}) => {
             }
           >
             {Array.from(new Array(numPages), (el, index) => (
-              <MobilePDFPage key={index} index={index} />
+              <MobilePDFPage
+                key={index}
+                index={index}
+                setSelectedPage={setSelectedPage}
+                setShowExpandedView={setShowExpandedView}
+              />
             ))}
           </Document>
         </div>
-      </>
-    </div>
+      </div>
+
+      {showExpandedView && (
+        <div className="fixed h-screen w-screen  z-40 top-0 left-0  flex flex-col justify-center items-center">
+          <Document
+            className={"relative w-fit  h-[400px]  flex  gap-4  z-20 "}
+            file={upload.path}
+            onLoadSuccess={onDocumentLoadSuccess}
+            loading={
+              <div className="w-screen h-[400px] flex justify-center items-center">
+                <Icons.spinner className="animate-spin h-10 w-10 mx-auto text-[#4DA6E0]" />
+              </div>
+            }
+          >
+            <Button
+              onClick={() => setShowExpandedView(false)}
+              className="absolute -top-5 -right-5 z-30 aspect-square p-1 rounded-full  bg-theme-blue hover:bg-theme-blue/70"
+            >
+              <Icons.close className="h-5 w-5" />
+            </Button>
+            <Page
+              // width={141.4}
+              height={400}
+              // onLoadSuccess={() => setLoading(false)}
+              className={`shadow-lg  border rounded-lg  overflow-hidden   
+  
+
+  `}
+              pageNumber={selectedPage}
+            />
+          </Document>
+          <div className="flex w-fit gap-4 items-center bg-card p-4 border rounded-md relative z-20 mt-4">
+            <Button
+              className="bg-theme-blue hover:bg-theme-blue/70"
+              onClick={() => {
+                if (selectedPage === 1) return;
+                setSelectedPage(selectedPage - 1);
+              }}
+            >
+              <Icons.chevronLeft className="h-5 w-5" />
+            </Button>
+            <span className="font-bold">
+              {selectedPage} of {numPages}
+            </span>
+            <Button
+              className="bg-theme-blue hover:bg-theme-blue/70"
+              onClick={() => {
+                if (selectedPage === numPages) return;
+                setSelectedPage(selectedPage + 1);
+              }}
+            >
+              <Icons.chevronRight className="h-5 w-5" />
+            </Button>
+          </div>
+          <button
+            onClick={() => setShowExpandedView(false)}
+            className="z-10 absolute bg-primary/20 w-full h-full top-0 left-0 blurBack"
+          />
+        </div>
+      )}
+    </>
   );
 };
 
@@ -348,11 +416,23 @@ const PdfPage = ({
   );
 };
 
-const MobilePDFPage = ({index}: {index: number}) => {
+const MobilePDFPage = ({
+  index,
+  setSelectedPage,
+  setShowExpandedView,
+}: {
+  index: number;
+  setSelectedPage: (page: number) => void;
+  setShowExpandedView: (value: boolean) => void;
+}) => {
   const [loading, setLoading] = React.useState(true);
 
   return (
-    <div
+    <button
+      onClick={() => {
+        setShowExpandedView(true);
+        setSelectedPage(index + 1);
+      }}
       id={`page-number-${index + 1}`}
       className="h-[200px]  overflow-hidden  "
     >
@@ -374,6 +454,6 @@ const MobilePDFPage = ({index}: {index: number}) => {
           {/* <Icons.loader className="h-10 w-10 text-primary animate-spin " /> */}
         </Skeleton>
       )}
-    </div>
+    </button>
   );
 };

@@ -44,7 +44,7 @@ interface ChatContextType {
   setPdfText: (text: string) => void;
 }
 
-export const ChatProvider2 = ({children, projectId}: Props) => {
+export const ChatProvider = ({children, projectId}: Props) => {
   const [totalProjects, setTotalProjects] = useState<number>();
   const [project, setProject] = useState<ProjectType | null>(null);
   const [chat, setChat] = useState<ChatLog[] | null>(null);

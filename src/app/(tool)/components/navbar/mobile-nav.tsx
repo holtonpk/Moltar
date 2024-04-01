@@ -15,17 +15,20 @@ import {MobileUploadList} from "./upload-list";
 import {UserInfo} from "./user-info";
 import {useToast} from "@/components/ui/use-toast";
 import {useUploads} from "@/context/upload-context";
-
+import {useSelectedLayoutSegment} from "next/navigation";
+import {useChat} from "@/context/chat-context";
 const MobileNav = () => {
   const [openMenu, setOpenMenu] = React.useState(false);
-
-  const Instuction = "Select an upload to start a chat";
 
   const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
 
   const {toast} = useToast();
 
-  const {uploadFile} = useUploads()!;
+  const {uploadFile, uploadList} = useUploads()!;
+
+  // const {project} = useChat()!;
+
+  const segment = useSelectedLayoutSegment();
 
   const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -50,8 +53,32 @@ const MobileNav = () => {
     }
   };
 
+  type InstructionType = {
+    segment: string;
+    instruction: string;
+  };
+
+  const Instructions: InstructionType[] = [
+    {
+      segment: "upload",
+      instruction: "Select an upload to start a chat",
+    },
+  ];
+
+  const configInstruction = () => {
+    if (segment === "upload") {
+      if (uploadList && uploadList.length > 0) {
+        return "Select an upload to start a chat";
+      } else {
+        return "Upload a file to start a chat";
+      }
+    } else if (segment === "chat") {
+      return "Start chatting with Moltar";
+    }
+  };
+
   return (
-    <div className="md:hidden w-full h-fit px-4 py-2  bg-card dark:bg-[#3A3D3E] flex justify-between items-center">
+    <div className="md:hidden w-full h-fit px-4 py-4  bg-card border-b dark:bg-[#3A3D3E] grid grid-cols-[36px_1fr] items-center">
       <Sheet open={openMenu} onOpenChange={setOpenMenu}>
         <SheetTrigger asChild>
           <Button
@@ -76,9 +103,11 @@ const MobileNav = () => {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      <span className="text-sm font-bold ">{Instuction}</span>
+      <span className="text-sm font-bold w-full justify-center flex">
+        {configInstruction()}
+      </span>
 
-      <input
+      {/* <input
         multiple
         id="selectedFile"
         type="file"
@@ -93,7 +122,7 @@ const MobileNav = () => {
         className="aspect-square h-fit bg-transparent text-primary hover:bg-transparent hover:opacity-70"
       >
         <Icons.upload className="h-6 w-6" />
-      </Button>
+      </Button> */}
     </div>
   );
 };

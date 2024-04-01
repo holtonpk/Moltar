@@ -207,22 +207,25 @@ const EmptyUploadList = () => {
   };
 
   return (
-    <div className="flex flex-col w-full gap-4 items-center pt-2 justify-center   h-full p-6 shadow-2xl  relative z-10">
-      <div className="h-fit w-fit flex flex-col items-center   p-8 px-20 rounded-lg border border-border dark:border-white/10  dark:bg-white/5 shadow-lg">
-        <div className="w-[80%] p-6  border-border  rounded-lg bgs-[rgb(25,118,210,.2)] flex flex-col gap-2 items-center justify-center">
+    <div className="flex flex-col w-full gap-4 items-center pt-2 md:justify-center   h-full p-6 shadow-2xl  relative z-10">
+      <div className="mt-36 md:mt-0 h-fit w-fit flex flex-col items-center  p-6 md:p-8 md:px-20 rounded-lg border border-border dark:border-white/10  dark:bg-white/5 shadow-lg">
+        <div className="w-[80%] p-3 md:p-6  border-border  rounded-lg bgs-[rgb(25,118,210,.2)] flex flex-col gap-2 items-center justify-center">
           <div className="flex items-center justify-center p-6 rounded-lg bg-[rgb(25,118,210,.2)]">
             <Icons.uploadCloud className="h-20 w-20 text-theme-blue" />
           </div>
-          <h1 className="text- text-2xl font-bold mt-2 whitespace-nowrap">
-            Drag & Drop your .pdf Files
+          <h1 className="text- text-2xl font-bold mt-2 whitespace-nowrap md:block hidden ">
+            Drag & Drop your PDF Files
           </h1>
-          <span>or</span>
+          <h1 className="text- text-2xl font-bold mt-2 whitespace-nowrap md:hidden text-center ">
+            Upload your PDF files <br /> to get started
+          </h1>
+          <span className="md:block hidden">or</span>
           <Button
             onClick={() => document.getElementById("selectedFile")?.click()}
             className="text-primary text-sm bg-transparent  w-full bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue p-[2px]"
           >
             <span className=" bg-card hover:bg-card/80 text-primary w-full h-full rounded-md flex items-center justify-center hover:opacity-90">
-              Click to browse
+              Click to upload
             </span>
           </Button>
           <input

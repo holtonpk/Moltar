@@ -3,7 +3,7 @@
 import React, {use} from "react";
 import {Project} from "./project";
 import {ProjectType} from "@/types";
-import {ChatProvider2} from "@/context/chat-context2";
+import {ChatProvider} from "@/context/chat-context";
 import {db} from "@/config/firebase";
 import {doc, getDoc} from "firebase/firestore";
 import {useAuth} from "@/context/user-auth";
@@ -56,9 +56,9 @@ export default function Page({params}: Params) {
   console.log("project 111111", project);
 
   return (
-    <ChatProvider2 projectId={params.slug}>
+    <ChatProvider projectId={params.slug}>
       <Project projectData={project as ProjectType} />
-    </ChatProvider2>
+    </ChatProvider>
   );
 }
 

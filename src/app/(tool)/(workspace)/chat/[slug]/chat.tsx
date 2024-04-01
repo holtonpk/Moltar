@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {db} from "@/config/firebase";
 import {doc, setDoc, serverTimestamp} from "firebase/firestore";
-import {useChat} from "@/context/chat-context2";
+import {useChat} from "@/context/chat-context";
 import {ChatLog, UploadType} from "@/types";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/context/user-auth";
@@ -56,7 +56,7 @@ const Chat = () => {
     <>
       {!project?.chat || project.chat?.length === 0 ? (
         <div className="flex flex-col  items-center justify-center mt-4 md:mt-0  flex-grow  w-full  relative  z-10 ">
-          <div className="px-4 ">
+          <div className="px-4 w-[95%] min-w-[300px] md:w-fit">
             <div className=" flex-col gap-2 items-center mt-auto hidden md:flex">
               <h2 className="font-bold mt-auto text-theme-blue">
                 Enter your prompt here

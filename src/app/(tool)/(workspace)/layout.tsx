@@ -19,7 +19,6 @@ const Workspace = ({children}: {children: React.ReactNode}) => {
               <Navbar />
               <div className="md:flex-grow w-full bg-card overflow-hidden   relative h-screen flex-col flex  ">
                 <MobileNav />
-
                 {children}
               </div>
               <AuthModal />
