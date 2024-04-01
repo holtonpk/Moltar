@@ -29,7 +29,7 @@ import {on} from "events";
 //  these need to be moved to a types file
 
 export const Uploads = () => {
-  const {currentUser} = useAuth()!;
+  const {currentUser, unSubscribedUserId} = useAuth()!;
 
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
 
@@ -49,6 +49,7 @@ export const Uploads = () => {
 
   return (
     <>
+      <h1>{unSubscribedUserId}</h1>
       {uploadedFile && showDialog && <PdfUploadDialog file={uploadedFile} />}
       <div className=" flex flex-col items-center max-h-full h-full relative ">
         {uploadList && uploadList?.length > 0 && <UploadHeader />}
