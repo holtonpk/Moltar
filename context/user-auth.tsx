@@ -111,7 +111,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         localStorage.setItem("unSubscribedUserId", uId);
       }
     }
-  }, [currentUser]);
+  }, [rerender]);
 
   // convert unSubscribedUserId to a user
 
@@ -449,12 +449,13 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
           // userPlan: Plans[decodedToken?.claims?.stripeRole],
           welcome_intro: userData?.welcome_intro,
         });
+      } else {
+        setRerender(true);
       }
       setLoading(false);
     });
-
     return unsubscribe;
-  }, [rerender]);
+  }, []);
 
   const value = {
     currentUser,
