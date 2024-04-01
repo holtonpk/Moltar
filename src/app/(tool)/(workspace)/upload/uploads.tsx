@@ -49,7 +49,6 @@ export const Uploads = () => {
 
   return (
     <>
-      <h1>{unSubscribedUserId}</h1>
       {uploadedFile && showDialog && <PdfUploadDialog file={uploadedFile} />}
       <div className=" flex flex-col items-center max-h-full h-full relative ">
         {uploadList && uploadList?.length > 0 && <UploadHeader />}
