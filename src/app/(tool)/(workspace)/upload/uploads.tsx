@@ -54,7 +54,7 @@ export const Uploads = () => {
       <div className=" flex flex-col items-center max-h-full h-full relative ">
         {uploadList && uploadList?.length > 0 && <UploadHeader />}
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-full w-full ">
+          <div className="flex flex-col items-center justify-center h-full w-full b-b">
             <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
           </div>
         ) : (
