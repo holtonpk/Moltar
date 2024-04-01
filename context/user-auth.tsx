@@ -111,7 +111,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         localStorage.setItem("unSubscribedUserId", uId);
       }
     }
-  }, [rerender]);
+  }, [rerender, currentUser]);
 
   // convert unSubscribedUserId to a user
 

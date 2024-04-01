@@ -7,25 +7,9 @@ import UploadsPanel from "./uploads-pannel";
 import {useUploads} from "@/context/upload-context";
 import {useToast} from "@/components/ui/use-toast";
 import {useAuth} from "@/context/user-auth";
-import {Toast} from "@/components/ui/toast";
-import {set} from "zod";
-import {UploadType} from "@/types";
-import {Document, Page, pdfjs} from "react-pdf";
+
 import {PdfUploadDialog} from "./pdf-upload-dialog";
-import {Skeleton} from "@/components/ui/skeleton";
-import {useRouter} from "next/navigation";
-import {doc, setDoc, serverTimestamp} from "firebase/firestore";
-import {db, app} from "@/config/firebase";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {on} from "events";
+
 //  these need to be moved to a types file
 
 export const Uploads = () => {
@@ -54,7 +38,7 @@ export const Uploads = () => {
       <div className=" flex flex-col items-center max-h-full h-full relative ">
         {uploadList && uploadList?.length > 0 && <UploadHeader />}
         {loading ? (
-          <div className="flex flex-col items-center justify-center h-full w-full b-b">
+          <div className="flex flex-col items-center justify-center h-full w-full ">
             <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
           </div>
         ) : (
