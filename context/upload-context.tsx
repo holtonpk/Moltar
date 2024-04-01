@@ -46,6 +46,8 @@ type UploadContextType = {
   setShowDialog: React.Dispatch<React.SetStateAction<boolean>>;
   isLoadingUpload: boolean;
   setIsLoadingUpload: React.Dispatch<React.SetStateAction<boolean>>;
+  uploadedFileLocal: File | null;
+  setUploadedFileLocal: React.Dispatch<React.SetStateAction<File | null>>;
 };
 
 const UploadsContext = createContext<UploadContextType | null>(null);
@@ -70,6 +72,10 @@ export const UploadsProvider = ({children}: Props) => {
   const [isLoadingUpload, setIsLoadingUpload] = React.useState(false);
 
   const {currentUser, unSubscribedUserId} = useAuth()!;
+
+  const [uploadedFileLocal, setUploadedFileLocal] = React.useState<File | null>(
+    null
+  );
 
   useEffect(() => {
     console.log("unsub", currentUser?.uid, unSubscribedUserId);
@@ -249,6 +255,8 @@ export const UploadsProvider = ({children}: Props) => {
     setShowDialog,
     isLoadingUpload,
     setIsLoadingUpload,
+    uploadedFileLocal,
+    setUploadedFileLocal,
   };
 
   return (

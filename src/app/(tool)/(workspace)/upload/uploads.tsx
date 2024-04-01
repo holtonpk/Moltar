@@ -40,6 +40,9 @@ export const Uploads = () => {
     uploadedFile,
     showDialog,
     setShowDialog,
+    uploadedFileLocal,
+    setUploadedFileLocal,
+    isLoadingUpload,
   } = useUploads()!;
 
   const dragContainer = React.useRef<HTMLDivElement>(null);
@@ -48,12 +51,7 @@ export const Uploads = () => {
     <>
       {uploadedFile && showDialog && <PdfUploadDialog file={uploadedFile} />}
       <div className=" flex flex-col items-center max-h-full h-full relative ">
-        {uploadList && uploadList?.length > 0 && (
-          <>
-            {/* <MobileUploadHeader /> */}
-            <UploadHeader />
-          </>
-        )}
+        {uploadList && uploadList?.length > 0 && <UploadHeader />}
         {loading ? (
           <div className="flex flex-col items-center justify-center h-full w-full ">
             <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" />
@@ -79,6 +77,17 @@ export const Uploads = () => {
           </div>
         )}
       </div>
+      {/* {true && ( */}
+      {uploadedFileLocal && isLoadingUpload && (
+        <div className="w-[95%] right-1/2 translate-x-1/2 md:-translate-x-0 md:w-fit z-40 md:right-4 md:bottom-4 bottom-4 absolute flex flex-col items-end gap-4">
+          <div className="h-fit p-4 px-6 w-fit grid grid-cols-[20px_1fr] items-center gap-4 rounded-full  bg-theme-blue ">
+            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
+            <span className="text-white font-bold">
+              {uploadedFileLocal.name}
+            </span>
+          </div>
+        </div>
+      )}
     </>
   );
 };
@@ -89,6 +98,8 @@ const UploadHeader = () => {
     resetFilter,
     setUploadedFile,
     setShowDialog,
+    setUploadedFileLocal,
+    setIsLoadingUpload,
   } = useUploads()!;
   const {toast} = useToast();
 
@@ -103,14 +114,11 @@ const UploadHeader = () => {
     }
   };
 
-  const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
-
   const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const files = Array.from(event.target.files); // Convert FileList to an array
-      setUploadQueue(files); // Set the initial queue
-
-      console.log("files========>", files);
+      setUploadedFileLocal(files[0]);
+      setIsLoadingUpload(true);
       for (let file of files) {
         if (file.size > 10000000) {
           toast({
@@ -122,9 +130,6 @@ const UploadHeader = () => {
           const fileData = await uploadFile(file); // Upload the file to firebase
           setUploadedFile(fileData);
           setShowDialog(true);
-          setUploadQueue((currentQueue) =>
-            currentQueue.filter((f) => f !== file)
-          );
         }
       }
     }
@@ -161,17 +166,6 @@ const UploadHeader = () => {
         <Icons.add className="h-5 w-5" />
         New Upload
       </Button>
-      <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-        {uploadQueue.map((file, i) => (
-          <div
-            key={i}
-            className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
-          >
-            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
-            <span className="text-white font-bold">{file.name}</span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
@@ -237,6 +231,7 @@ const EmptyUploadList = () => {
             style={{display: "none"}}
           />
         </div>
+
         <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
           {uploadQueue.map((file, i) => (
             <div
@@ -265,16 +260,12 @@ const FileDrop = ({
     isLoadingUpload,
     setIsLoadingUpload,
     setUploadedFile,
+    uploadedFileLocal,
+    setUploadedFileLocal,
   } = useUploads()!;
-
-  const [uploadedFileLocal, setUploadedFileLocal] = React.useState<File | null>(
-    null
-  );
 
   const [dropError, setDropError] = React.useState(false);
   const {toast} = useToast();
-
-  const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
 
   const handleDragOver = useCallback((e: DragEvent) => {
     console.log("dragging");
@@ -300,7 +291,6 @@ const FileDrop = ({
       setUploadedFileLocal(pdfFiles[0]);
       setIsLoadingUpload(true);
 
-      setUploadQueue(pdfFiles);
       for (let file of pdfFiles) {
         // get the total words in the pdf file
         if (file.size > 10000000) {
@@ -350,17 +340,6 @@ const FileDrop = ({
           </div>
         </div>
       </div>
-
-      {uploadedFileLocal && isLoadingUpload && (
-        <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-          <div className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue ">
-            <Icons.spinner className="h-5 w-5 animate-spin text-white" />
-            <span className="text-white font-bold">
-              {uploadedFileLocal.name}
-            </span>
-          </div>
-        </div>
-      )}
     </>
   );
 };

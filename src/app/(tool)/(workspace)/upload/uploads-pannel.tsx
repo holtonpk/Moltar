@@ -42,12 +42,19 @@ import {useAuth} from "@/context/user-auth";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useNavbar} from "@/context/navbar-context";
 import {useUploads} from "@/context/upload-context";
+import {useToast} from "@/components/ui/use-toast";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
-
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const UploadsPanel = () => {
-  const {uploadList, DeleteUpload, ReNameUpload, filterList} = useUploads()!;
+  const {
+    uploadList,
+    DeleteUpload,
+    ReNameUpload,
+    filterList,
+    setUploadedFileLocal,
+    setIsLoadingUpload,
+  } = useUploads()!;
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
   async function createNewProject(file: UploadType) {
@@ -90,9 +97,55 @@ const UploadsPanel = () => {
   const [textView, setTextView] = React.useState(false);
 
   const [fileDate, setFileDate] = React.useState<UploadType | null>(null);
+  const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
+  const {uploadFile, setUploadedFile, setShowDialog} = useUploads()!;
+  const {toast} = useToast();
+
+  const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = Array.from(event.target.files); // Convert FileList to an array
+      setUploadQueue(files); // Set the initial queue
+      setUploadedFileLocal(files[0]);
+      setIsLoadingUpload(true);
+
+      for (let file of files) {
+        if (file.size > 10000000) {
+          toast({
+            title: `${file.name} is too large`,
+            description: "Please upload a file less than 10MB",
+            variant: "destructive",
+          });
+        } else {
+          const fileData = await uploadFile(file); // Upload the file to firebase
+          setUploadedFile(fileData);
+          setShowDialog(true);
+          setUploadQueue((currentQueue) =>
+            currentQueue.filter((f) => f !== file)
+          );
+        }
+      }
+    }
+  };
 
   return (
     <div className="  overflow-scroll h-full items-center  pb-20   w-full absolute p-6 ">
+      <input
+        multiple
+        id="newUploadInputMobile"
+        type="file"
+        accept=".pdf"
+        onChange={onFileChange}
+        style={{display: "none"}}
+        className="bg-theme-blue hover:bg-theme-blue/60 text-white"
+      />
+      <Button
+        onClick={() => document.getElementById("newUploadInputMobile")?.click()}
+        className="bg-theme-blue hover:bg-theme-blue/60 text-white  w-full mb-4  rounded-full aspect-square md:hidden "
+      >
+        <Icons.add className="h-4 w-4" />
+        Add File
+      </Button>
+
       <div
         className={`grid  items-center w-fit mx-auto h-fit gap-4   pb-6
       ${

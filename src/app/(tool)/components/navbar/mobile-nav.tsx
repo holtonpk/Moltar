@@ -103,7 +103,7 @@ const MobileNav = () => {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      <span className="text-sm font-bold w-full justify-center flex">
+      <span className="text-sm font-bold w-full justify-center flex capitalize">
         {configInstruction()}
       </span>
 

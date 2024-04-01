@@ -113,6 +113,7 @@ export async function GET() {
 
     const [operation] = await client.asyncBatchAnnotateFiles(request);
     const [filesResponse] = await operation.promise();
+
     const destinationUri =
       filesResponse.responses[0].outputConfig.gcsDestination.uri;
     console.log("Json saved to: " + destinationUri);

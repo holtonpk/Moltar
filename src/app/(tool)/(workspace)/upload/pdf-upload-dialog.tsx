@@ -81,57 +81,10 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
 
   const [scanSuccess, setScanSuccess] = React.useState(false);
 
-  // const pdfToText = async (fileName: string) => {
-  //   const vision = require("@google-cloud/vision").v1;
-
-  //   // Creates a client
-  //   const client = new vision.ImageAnnotatorClient({
-  //     projectId: "moltar-bc665",
-  //     credentials: JSON.parse(
-  //       process.env.NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT_KEY as string
-  //     ),
-  //   });
-  //   const bucketName = "moltar-bc665.appspot.com";
-  //   const outputPrefix = "scanned-documents";
-  //   const gcsSourceUri = `gs://${bucketName}/${fileName}`;
-  //   const gcsDestinationUri = `gs://${bucketName}/${fileName}/`;
-
-  //   const inputConfig = {
-  //     // Supported mime_types are: 'application/pdf' and 'image/tiff'
-  //     mimeType: "application/pdf",
-  //     gcsSource: {
-  //       uri: gcsSourceUri,
-  //     },
-  //   };
-  //   const outputConfig = {
-  //     gcsDestination: {
-  //       uri: gcsDestinationUri,
-  //     },
-  //   };
-  //   const features = [{type: "DOCUMENT_TEXT_DETECTION"}];
-  //   const request = {
-  //     requests: [
-  //       {
-  //         inputConfig: inputConfig,
-  //         features: features,
-  //         outputConfig: outputConfig,
-  //       },
-  //     ],
-  //   };
-
-  //   const [operation] = await client.asyncBatchAnnotateFiles(request);
-  //   const [filesResponse] = await operation.promise();
-  //   const destinationUri =
-  //     filesResponse.responses[0].outputConfig.gcsDestination.uri;
-  //   console.log("Json saved to: " + destinationUri);
-
-  //   return destinationUri;
-  // };
-
   const scanPdfForText = async () => {
     if (!file) return;
     setScanning(true);
-    await fetch("/api/convert-pdf-to-image", {
+    await fetch("/api/convert-pdf-to-text", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -240,17 +193,9 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
 
           <Dialog open={showDialogLocal} onOpenChange={handleCloseDialog}>
             <DialogContent className={`max-w-none w-fit `}>
-              {scanning && (
-                <DialogHeader>
-                  <DialogTitle className="font-bold">
-                    Scanning Your document for text
-                  </DialogTitle>
-                  <DialogDescription>
-                    Please don&apos;t refresh the page
-                  </DialogDescription>
-                </DialogHeader>
-              )}
-              <div className={`grid  gap-10 items-center md:grid-cols-2 `}>
+              <div
+                className={`flex  gap-10 items-center md:flex-row flex-col `}
+              >
                 {file && (
                   <Document
                     className={`h-[400px] aspect-[1/1.4]  mx-auto rounded-lg relative  z-10 
@@ -307,22 +252,21 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                 {recommendScan ? (
                   <>
                     {scanning ? (
-                      <span className="bg-muted p-4 h-[400px] aspect-[1/1.4] overflow-scroll relative mt-4 rounded-lg ">
-                        <div className="grid grid-rows-8 gap-4 w-full h-full">
-                          <Skeleton className="rounded-lg bg-primary/30  w-1/2 h-full  z-20" />
-                          <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                          <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                          <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                          <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                          <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                          <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                          <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                          <Skeleton className="rounded-lg bg-primary/30  w-full h-full  z-20" />
-                        </div>
-                      </span>
+                      <div className="flex flex-col items-center  md:items-start min-w-[400px] ">
+                        <DialogHeader className="font-bold text-lg ">
+                          Scanning Your Document for text
+                        </DialogHeader>
+                        <DialogDescription>
+                          This will only take a few minutes
+                        </DialogDescription>
+                        <Button className="bg-theme-blue hover:bg-theme-blue text-white mt-4 ">
+                          <Icons.spinner className="h-5 w-5 mr-3 animate-spin" />
+                          Scanning document
+                        </Button>
+                      </div>
                     ) : (
-                      <div className="flex flex-col items-start  ">
-                        <DialogHeader className="font-bold">
+                      <div className="flex flex-col items-center  md:items-start min-w-[400px] ">
+                        <DialogHeader className="font-bold text-lg ">
                           We didn&apos;t find any text in your pdf. Would you
                           like us to scan it?
                         </DialogHeader>
@@ -340,13 +284,13 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                     )}
                   </>
                 ) : (
-                  <div className="flex flex-col items-start  ">
-                    <DialogHeader className="font-bold">
+                  <div className="flex flex-col items-center  md:items-start min-w-[400px]  ">
+                    <DialogHeader className="font-bold  text-lg ">
                       Successfully
                       {scanSuccess ? " scanned " : " uploaded "}
                       👍
                     </DialogHeader>
-                    <DialogDescription>
+                    <DialogDescription className="text-center md:text-left">
                       Your file will be in the upload panel. You can click on it
                       to anytime start a project
                     </DialogDescription>
