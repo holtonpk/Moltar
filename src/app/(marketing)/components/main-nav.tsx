@@ -35,9 +35,10 @@ export default function Nav() {
 
   return (
     <div
-      className={clsx(`sticky inset-x-0 top-0 z-30 w-full transition-all`, {
-        "border-order border-b bg-card/75 backdrop-blur-lg": scrolled,
-        "border-order border-b bg-background":
+      className={clsx(`relative inset-x-0 top-0 z-30 w-full transition-all`, {
+        "border-order border-b dark:border-none bg-background/5 blurBack":
+          scrolled,
+        "border-order border-b  dark:border-none  bg-background":
           segment && !transparentHeaderSegments.has(segment),
       })}
     >
