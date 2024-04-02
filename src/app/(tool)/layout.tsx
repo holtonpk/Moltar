@@ -5,5 +5,9 @@ interface AuthLayoutProps {
 }
 
 export default function Layout({children}: AuthLayoutProps) {
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <AuthProvider>
+      <div className="max-h-screen overflow-hidden">{children}</div>
+    </AuthProvider>
+  );
 }

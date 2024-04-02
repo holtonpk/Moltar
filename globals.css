@@ -262,3 +262,60 @@ input:focus {
     top: calc(100% - 40px); /* Move to the bottom */
   }
 }
+
+.cred-carousel-animation {
+  animation: cred-carousel 300s linear infinite;
+}
+
+@keyframes cred-carousel {
+  0% {
+    transform: translate(0%, -50%);
+  }
+  100% {
+    transform: translate(-80%, -50%);
+  }
+}
+/* .cred-carousel-animation2 {
+  animation: cred-carousel2 40s linear infinite;
+  animation-delay: 10s;
+}
+
+@keyframes cred-carousel2 {
+  0% {
+    transform: translate(100%, -50%);
+  }
+  100% {
+    transform: translate(-100%, -50%);
+  }
+} */
+
+.cred-carousel-animation3 {
+  animation: cred-carousel3 40s linear 1;
+}
+
+@keyframes cred-carousel3 {
+  0% {
+    transform: translate(0%, -50%);
+  }
+  100% {
+    transform: translate(-100%, -50%);
+    display: hidden;
+  }
+}
+
+.cred-edge-grad-left {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    270deg,
+    hsl(var(--background) / 0) 0%,
+    hsl(var(--background) / 1) 90%
+  );
+}
+.cred-edge-grad-right {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    90deg,
+    hsl(var(--background) / 0) 0%,
+    hsl(var(--background) / 1) 90%
+  );
+}

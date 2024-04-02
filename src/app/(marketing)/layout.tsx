@@ -13,7 +13,7 @@ export default async function MarketingLayout({
 }: MarketingLayoutProps) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen h-fit  flex-col">
         <Nav />
         <MobileNav />
         <main className="flex-1 z-10">{children}</main>

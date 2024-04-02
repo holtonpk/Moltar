@@ -1,6 +1,6 @@
 import HeroText from "@/src/app/(marketing)/hero-text";
 import {constructMetadata} from "@/lib/utils";
-
+import Credibility from "@/src/app/(marketing)/credibility";
 export const metadata = constructMetadata({
   title: "Moltar",
   description: "Upload and ask away, Moltar will do the rest!",
@@ -9,12 +9,13 @@ export const metadata = constructMetadata({
 
 export default async function IndexPage() {
   return (
-    <div className="pb-10">
+    <div className="pb-10  ">
       <div className="container">
-        <section className="  pt-6 md:container  md:mt-10  ">
+        <div className="  pt-6 md:container  md:mt-10  ">
           <HeroText />
-        </section>
+        </div>
       </div>
+      <Credibility />
     </div>
   );
 }
