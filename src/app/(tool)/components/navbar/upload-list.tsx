@@ -54,7 +54,7 @@ export const UploadList = () => {
           ) : (
             <>
               {collapsed ? (
-                <div className="flex flex-col items-start mx-auto w-6 flex-grow  gap-4  overflow-hidden">
+                <div className="flex flex-col items-start mx-auto w-6 flex-grow  gap-4 z-50 overflow-hidden">
                   {displayedProjects.map((project) => (
                     <CollapsedProject key={project.id} project={project} />
                   ))}
@@ -234,14 +234,14 @@ const NewProject = ({project}: {project: ProjectType}) => {
 
     `}
     >
-      <div className="z-10 relative w-full py-3 px-2 grid-cols-[18px_1fr] gap-2 grid items-start p-1">
+      <div className="z-10 relative w-full py-3 px-2  grid-cols-[10px_1fr] gap-2 grid items-center p-1">
         <span
           style={{backgroundColor: project.color}}
-          className={`h-4 w-4 rounded-sm mt-1
+          className={`h-3 w-3 rounded-sm 
 
-        `}
+    `}
         />
-        <p className=" text-left whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
+        <p className=" text-left text-[12px] whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
           {displayName}
         </p>
       </div>
@@ -496,21 +496,21 @@ const Project = ({project}: {project: ProjectType}) => {
     >
       <Link
         href={"/chat/" + project.id}
-        className="z-10 relative w-full py-3 px-2  grid-cols-[18px_1fr] gap-2 grid items-start p-1"
+        className="z-10 relative w-full py-3 px-2  grid-cols-[10px_1fr] gap-2 grid items-center p-1"
       >
         <span
           style={{backgroundColor: project.color}}
-          className={`h-4 w-4 rounded-sm mt-1
+          className={`h-3 w-3 rounded-sm 
 
         `}
         />
-        <p className=" text-left whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
+        <p className=" text-left text-[12px] whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
           {project?.name}
         </p>
       </Link>
 
       <div
-        className={`flex absolute right-0  px-4 z-20 h-full top-1/2  w-16 -translate-y-1/2   items-center justify-end
+        className={`flex absolute right-0  px-2 z-20 h-full top-1/2  w-10 -translate-y-1/2   items-center justify-end
       ${hovered ? "opacity-100" : "opacity-0"}
       ${
         activeTab
@@ -523,17 +523,17 @@ const Project = ({project}: {project: ProjectType}) => {
           <DropdownMenuTrigger>
             <Icons.ellipsis className="h-4 w-4 text-primary" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="border-border dark:border-gray-500 l">
+          <DropdownMenuContent className="border-border bg-card ">
             <DropdownMenuItem
               onSelect={() => setOpenMenu(true)}
-              className=" gap-2 "
+              className=" gap-2 cursor-pointer focus:bg-primary/20"
             >
               <Icons.pencil className="h-4 w-4 " />
               Rename
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() => setShowDeleteDialog(true)}
-              className="text-theme-red  focus:bg-theme-red/20 focus:text-theme-red gap-2 "
+              className="text-theme-red cursor-pointer focus:bg-theme-red/20 focus:text-theme-red gap-2 "
             >
               <Icons.trash className="h-4 w-4 " />
               Delete

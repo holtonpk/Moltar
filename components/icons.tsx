@@ -134,11 +134,13 @@ import {
   Layers3,
   Loader,
   BookText,
+  Save,
 } from "lucide-react";
 
 //   export type XIcon = LucideIcon;
 
 export const Icons = {
+  save: Save,
   scan: ScanText,
   bookText: BookText,
   loader: Loader,

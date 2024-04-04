@@ -10,7 +10,7 @@ import {Slider} from "@/components/ui/slider";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {LinkButton} from "@/components/ui/link";
-import {UploadType} from "@/types";
+import {PDFUpload} from "@/types";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useChat} from "@/context/chat-context";
@@ -18,8 +18,7 @@ import {Expand} from "lucide-react";
 import exp from "constants";
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-const FileView = ({upload}: {upload: UploadType}) => {
-  const {pdfText, setPdfText} = useChat()!;
+const PdfFileView = ({upload}: {upload: PDFUpload}) => {
   const [numPages, setNumPages] = React.useState<number>();
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -29,7 +28,6 @@ const FileView = ({upload}: {upload: UploadType}) => {
   const [pdfLoading, setPdfLoading] = React.useState<boolean>(true);
 
   async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
-    setPdfText(upload.text);
     setNumPages(numPages);
     setPdfLoading(false);
   }
@@ -237,10 +235,9 @@ const FileView = ({upload}: {upload: UploadType}) => {
   );
 };
 
-export default FileView;
+export default PdfFileView;
 
-export const FileViewMobile = ({upload}: {upload: UploadType}) => {
-  const {pdfText, setPdfText} = useChat()!;
+export const PdfFileViewMobile = ({upload}: {upload: PDFUpload}) => {
   const [numPages, setNumPages] = React.useState<number>(1);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
 
@@ -248,7 +245,6 @@ export const FileViewMobile = ({upload}: {upload: UploadType}) => {
 
   async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
     // Extract text from each page
-    setPdfText(upload.text);
     setNumPages(numPages);
     setDocLoading(false);
     console.log("setting loading to", docLoading);

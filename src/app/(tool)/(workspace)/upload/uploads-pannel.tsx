@@ -4,7 +4,8 @@ import {useRouter} from "next/navigation";
 import {Icons} from "@/components/icons";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {UploadType, ProjectType} from "@/types";
+import {UploadType, ProjectType, UrlScrapeUpload, PDFUpload} from "@/types";
+import {uploadTypes} from "@/config/data";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -81,6 +82,7 @@ const UploadsPanel = () => {
   }
 
   const router = useRouter();
+
   async function goToNewProject(file: UploadType) {
     const projectId = await createNewProject(file);
     router.push(`/chat/${projectId}`);
@@ -91,7 +93,9 @@ const UploadsPanel = () => {
 
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
 
-  const [selectedFile, setSelectedFile] = React.useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = React.useState<
+    UrlScrapeUpload | PDFUpload | null
+  >(null);
   const {collapsed} = useNavbar()!;
 
   const [textView, setTextView] = React.useState(false);
@@ -127,83 +131,99 @@ const UploadsPanel = () => {
     }
   };
 
-  return (
-    <div className="  overflow-scroll h-full items-center  pb-20   w-full absolute p-6 ">
-      <input
-        multiple
-        id="newUploadInputMobile"
-        type="file"
-        accept=".pdf"
-        onChange={onFileChange}
-        style={{display: "none"}}
-        className="bg-theme-blue hover:bg-theme-blue/60 text-white"
-      />
-      <Button
-        onClick={() => document.getElementById("newUploadInputMobile")?.click()}
-        className="bg-theme-blue hover:bg-theme-blue/60 text-white  w-full mb-4  rounded-full aspect-square md:hidden "
-      >
-        <Icons.add className="h-4 w-4" />
-        Add File
-      </Button>
+  const pdfUploads = uploadList?.filter(
+    (file) => file.type === "pdf"
+  ) as PDFUpload[];
+  const urlUploads = uploadList?.filter(
+    (file) => file.type === "url"
+  ) as UrlScrapeUpload[];
 
-      <div
-        className={`grid  items-center w-fit mx-auto h-fit gap-4   pb-6
+  return (
+    <UploadPanelProvider
+      setSelectedFile={setSelectedFile}
+      selectedFile={selectedFile}
+      goToNewProject={goToNewProject}
+      setShowDeleteDialog={setShowDeleteDialog}
+      setOpenRename={setOpenRename}
+    >
+      <div className="  overflow-scroll h-full items-center  pb-20   w-full absolute p-6 ">
+        <input
+          multiple
+          id="newUploadInputMobile"
+          type="file"
+          accept=".pdf"
+          onChange={onFileChange}
+          style={{display: "none"}}
+          className="bg-theme-blue hover:bg-theme-blue/60 text-white"
+        />
+        <Button
+          onClick={() =>
+            document.getElementById("newUploadInputMobile")?.click()
+          }
+          className="bg-theme-blue hover:bg-theme-blue/60 text-white  w-full mb-4  rounded-full aspect-square md:hidden "
+        >
+          <Icons.add className="h-4 w-4" />
+          Add File
+        </Button>
+
+        {urlUploads && urlUploads.length > 0 && (
+          <div className="flex flex-col gap-6">
+            <h1 className="font-bold text-lg w-full text-center pb-2 border-b border-b-border md:text-left ">
+              Websites
+            </h1>
+
+            <div
+              className={`grid  items-center w-fit mx-auto h-fit gap-4   pb-6
+      ${
+        collapsed
+          ? "md:grid-cols-4 grid-cols-1 "
+          : "md:grid-cols-3 grid-cols-1 "
+      }
+      `}
+            >
+              {urlUploads.map((file: UrlScrapeUpload) => (
+                <div
+                  key={file.id}
+                  className={` cursor-pointer w-full h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
+            ${
+              filterList && filterList.includes(file.id) ? "visible" : "hidden"
+            } `}
+                >
+                  <UrlUpload file={file} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {pdfUploads && pdfUploads.length > 0 && (
+          <div className="flex flex-col gap-6">
+            <h1 className="font-bold text-lg w-full text-center pb-2 border-b border-b-border md:text-left ">
+              PDFs
+            </h1>
+            <div
+              className={`grid  items-center w-fit mx-auto h-fit gap-4   pb-6
       ${
         collapsed
           ? "md:grid-cols-6 grid-cols-2 "
           : "md:grid-cols-5 grid-cols-2 "
       }
       `}
-      >
-        {uploadList &&
-          uploadList.map((file: UploadType) => (
-            <div
-              key={file.id}
-              className={` cursor-pointer w-full h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
+            >
+              {pdfUploads.map((file: PDFUpload) => (
+                <div
+                  key={file.id}
+                  className={` cursor-pointer w-full h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
             ${
               filterList && filterList.includes(file.id) ? "visible" : "hidden"
             } `}
-            >
-              <button
-                onClick={() => goToNewProject(file)}
-                className="absolute  z-20 top-0 left-0 h-full w-full group"
-              />
-              <PdfViewer file={file} />
-              <div className="pr-6  z-30 border-t-border border-t h-fit absolute bg-card  top-full  w-[110%] pl-4 left-1/2 -translate-x-1/2  group-hover: -translate-y-full transition-transform">
-                <div className="p-2 text-primary  text-sm text-left  font- overflow-hidden text-ellipsis ">
-                  {file.title}
+                >
+                  <PdfUpload file={file} />
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="z-30 flex items-center justify-center  hover:opacity-60 absolute top-2 right-2 rounded-md  ">
-                    <Icons.ellipsis className="h-5 w-5" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem
-                      className="text-theme-red  focus:bg-theme-red/20 focus:text-theme-red gap-2 "
-                      onClick={() => {
-                        setSelectedFile(file.id);
-                        setShowDeleteDialog(true);
-                      }}
-                    >
-                      <Icons.trash className="h-4 w-4 " />
-                      Delete
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={() => {
-                        setSelectedFile(file.id);
-                        setOpenRename(true);
-                      }}
-                      className=" gap-2 "
-                    >
-                      <Icons.pencil className="h-4 w-4 " />
-                      Rename
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+              ))}
             </div>
-          ))}
-
+          </div>
+        )}
         {selectedFile && (
           <>
             <Dialog open={openRename} onOpenChange={setOpenRename}>
@@ -229,7 +249,10 @@ const UploadsPanel = () => {
                   <Button
                     className="bg-theme-blue hover:bg-theme-blue/60 text-white"
                     onClick={() => {
-                      ReNameUpload(selectedFile, nameRef.current?.value || "");
+                      ReNameUpload(
+                        selectedFile.id,
+                        nameRef.current?.value || ""
+                      );
                       setOpenRename(false);
                     }}
                   >
@@ -255,7 +278,7 @@ const UploadsPanel = () => {
                   <Button
                     variant="destructive"
                     onClick={() => {
-                      DeleteUpload(selectedFile);
+                      DeleteUpload(selectedFile.id, selectedFile.type);
                       setShowDeleteDialog(false);
                     }}
                   >
@@ -267,18 +290,93 @@ const UploadsPanel = () => {
           </>
         )}
       </div>
-    </div>
+    </UploadPanelProvider>
   );
 };
 export default UploadsPanel;
 
-const PdfViewer = ({file}: {file: UploadType}) => {
-  const [loading, setLoading] = React.useState(true);
+const UrlUpload = ({file}: {file: UrlScrapeUpload}) => {
+  const {goToNewProject, setSelectedFile, setShowDeleteDialog, setOpenRename} =
+    React.useContext(UploadPanelContext)!;
 
-  const documentRef = React.useRef<HTMLDivElement>(null);
+  const Icon = uploadTypes.find((type) => type.value === file.type)?.icon;
 
   return (
     <>
+      {/* {Icon && (
+        <div className=" absolute z-30 top-0 left-0 p-1 bg-muted/80 rounded-br-md ">
+          <Icon className="h-6 w-6" />
+        </div>
+      )} */}
+      <button
+        onClick={() => goToNewProject(file)}
+        className="absolute z-20 top-0 left-0 h-full w-full group"
+      />
+      <div className="grid grid-cols-[24px_1fr] gap-1 relative  group mx-auto rounded-t-lg overflow-x-hidden text-ellipsis   max-w-full  z-10 bg-theme-blue/20 whitespace-nowrap p-2 pr-6">
+        <img src={file.fav} className="h-6 w-6 rounded-md" />
+        <span className="w-full overflow-hidden text-ellipsis">{file.url}</span>
+      </div>
+      <div className="pr-6 z-20   border-t-border border-t h-fit  bg-card  top-full  w-full  relative  group-hover:  transition-transform">
+        <div
+          onClick={() => goToNewProject(file)}
+          className="p-2 text-primary  text-sm text-left  font- overflow-hidden text-ellipsis relative z-10 "
+        >
+          {file.title}
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="z-50 flex items-center justify-center hover:opacity-60 absolute top-2 right-0 rounded-md  ">
+            <Icons.ellipsis className="h-5 w-5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="border-border bg-card">
+            <DropdownMenuItem
+              onSelect={() => {
+                setSelectedFile(file);
+                setOpenRename(true);
+              }}
+              className=" gap-2 cursor-pointer focus:bg-primary/20"
+            >
+              <Icons.pencil className="h-4 w-4 " />
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-theme-red cursor-pointer focus:bg-theme-red/20 focus:text-theme-red gap-2 "
+              onClick={() => {
+                setSelectedFile(file);
+                setShowDeleteDialog(true);
+              }}
+            >
+              <Icons.trash className="h-4 w-4 " />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
+  );
+};
+
+const PdfUpload = ({file}: {file: PDFUpload}) => {
+  const [loading, setLoading] = React.useState(true);
+
+  const documentRef = React.useRef<HTMLDivElement>(null);
+  const {uploadFile, setUploadedFile, setShowDialog} = useUploads()!;
+
+  const {goToNewProject, setSelectedFile, setShowDeleteDialog, setOpenRename} =
+    React.useContext(UploadPanelContext)!;
+  const Icon = uploadTypes.find((type) => type.value === file.type)?.icon;
+
+  return (
+    <>
+      {/* {Icon && (
+        <div className=" absolute z-30 top-0 left-0 p-1 bg-muted/80 rounded-br-md ">
+          <Icon className="h-6 w-6" />
+        </div>
+      )} */}
+      <button
+        onClick={() => goToNewProject(file)}
+        className="absolute  z-20 top-0 left-0 h-full w-full group"
+      />
+
       <Document
         ref={documentRef}
         className={
@@ -288,9 +386,6 @@ const PdfViewer = ({file}: {file: UploadType}) => {
         file={file.path}
         onLoadError={(error) => console.log("Inside Error", error)}
         loading={
-          // <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500 w-full h-full">
-          //   <Icons.spinner className="animate-spin h-10 w-10 mx-auto text-[#4DA6E0]" />
-          // </div>
           <Skeleton className="rounded-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  w-full h-full" />
         }
       >
@@ -300,16 +395,97 @@ const PdfViewer = ({file}: {file: UploadType}) => {
           className={`rounded-lg overflow-hidden p-1 border-2 border-border   absolute top-1/2  left-1/2 -translate-y-1/2 -translate-x-1/2  pointer-events-none 
         ${loading ? "hidden" : "visible"}
         `}
-          // loading={
-          //   <Skeleton className="rounded-lg   w-[190px] h-[242px] " />
-          // }
           pageNumber={1}
         />
       </Document>
-      {/* <div className="relative  group mx-auto rounded-lg   w-[190px] h-[242px]  z-10 "></div> */}
       {loading && (
         <Skeleton className="rounded-lg bg-primary/30  w-[190px] h-[242px] absolute top-1/2  left-1/2 -translate-y-1/2 -translate-x-1/2 z-20" />
       )}
+
+      <div className="pr-6  z-30 border-t-border border-t h-fit absolute bg-card  top-full  w-[110%] pl-4 left-1/2 -translate-x-1/2  group-hover: -translate-y-full transition-transform">
+        <div
+          onClick={() => goToNewProject(file)}
+          className="p-2 text-primary  text-sm text-left  font- overflow-hidden text-ellipsis "
+        >
+          {file.title}
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="z-30 flex items-center justify-center  hover:opacity-60 absolute top-2 right-2 rounded-md  ">
+            <Icons.ellipsis className="h-5 w-5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="border-border bg-card">
+            <DropdownMenuItem
+              onSelect={() => {
+                setSelectedFile(file);
+                setOpenRename(true);
+              }}
+              className=" gap-2 cursor-pointer focus:bg-primary/20"
+            >
+              <Icons.pencil className="h-4 w-4 " />
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-theme-red cursor-pointer focus:bg-theme-red/20 focus:text-theme-red gap-2 "
+              onClick={() => {
+                setSelectedFile(file);
+                setShowDeleteDialog(true);
+              }}
+            >
+              <Icons.trash className="h-4 w-4 " />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </>
+  );
+};
+
+type UploadPanelContextType = {
+  selectedFile: UrlScrapeUpload | PDFUpload | null;
+  setSelectedFile: React.Dispatch<
+    React.SetStateAction<UrlScrapeUpload | PDFUpload | null>
+  >;
+  goToNewProject: (file: UploadType) => void;
+  setShowDeleteDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenRename: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const UploadPanelContext = React.createContext<UploadPanelContextType | null>(
+  null
+);
+
+interface UploadPanelProviderProps {
+  children: React.ReactNode;
+  setSelectedFile: React.Dispatch<
+    React.SetStateAction<UrlScrapeUpload | PDFUpload | null>
+  >;
+  selectedFile: UrlScrapeUpload | PDFUpload | null;
+  goToNewProject: (file: UploadType) => void;
+  setShowDeleteDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenRename: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// Provider component
+export const UploadPanelProvider = ({
+  children,
+  selectedFile,
+  setSelectedFile,
+  goToNewProject,
+  setShowDeleteDialog,
+  setOpenRename,
+}: UploadPanelProviderProps) => {
+  return (
+    <UploadPanelContext.Provider
+      value={{
+        selectedFile,
+        setSelectedFile,
+        goToNewProject,
+        setShowDeleteDialog,
+        setOpenRename,
+      }}
+    >
+      {children}
+    </UploadPanelContext.Provider>
   );
 };

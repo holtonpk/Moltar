@@ -36,7 +36,7 @@ type UploadContextType = {
   loading: boolean;
   uploadFile: (file: File) => Promise<LocalUploadType>;
   // FileUpload: (event: any) => void;
-  DeleteUpload: (fileId: string) => void;
+  DeleteUpload: (fileId: string, fileType: string) => void;
   ReNameUpload: (fileId: string, name: string) => void;
   FileDrop: (files: File[]) => void;
   FilterUploads: (search: string) => void;
@@ -48,6 +48,8 @@ type UploadContextType = {
   setIsLoadingUpload: React.Dispatch<React.SetStateAction<boolean>>;
   uploadedFileLocal: File | null;
   setUploadedFileLocal: React.Dispatch<React.SetStateAction<File | null>>;
+  uploadProgress: number;
+  setUploadProgress: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const UploadsContext = createContext<UploadContextType | null>(null);
@@ -70,6 +72,7 @@ export const UploadsProvider = ({children}: Props) => {
   const [showDialog, setShowDialog] = React.useState(false);
 
   const [isLoadingUpload, setIsLoadingUpload] = React.useState(false);
+  const [uploadProgress, setUploadProgress] = React.useState(0);
 
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
@@ -100,16 +103,42 @@ export const UploadsProvider = ({children}: Props) => {
     // Cleanup this component
   }, [currentUser, unSubscribedUserId]); // Empty dependency array ensures effect runs only once
 
+  // import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
   async function uploadFileToFirebase(file: File, fileID: string) {
     const storage = getStorage(app);
     const fileRef = ref(storage, fileID);
-    // upload file
-    await uploadBytesResumable(fileRef, file);
+
+    // Start the file upload
+    const uploadTask = uploadBytesResumable(fileRef, file);
+
+    // Listen for state changes, errors, and completion of the upload.
+    await new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Get the upload progress as a percentage
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          setUploadProgress(progress);
+        },
+        (error) => {
+          // Handle unsuccessful uploads
+          reject(error);
+        },
+        () => {
+          // Handle successful uploads on complete
+          resolve(uploadTask.snapshot);
+        }
+      );
+    });
+
     const fileUrl = await getDownloadURL(fileRef);
     return fileUrl;
   }
 
-  const [uploadData, setUploadData] = useState<any>();
+  const [uploadData, setUploadData] = useState<UploadType>();
 
   // useEffect(() => {
   //   if (!isLoadingUpload && uploadData) {
@@ -139,8 +168,9 @@ export const UploadsProvider = ({children}: Props) => {
       title: file.name,
       id: fileID,
       path: firebaseUrl,
+      type: "pdf",
     };
-    setUploadData(upload);
+    setUploadData(upload as UploadType);
     return upload;
   }
 
@@ -200,7 +230,7 @@ export const UploadsProvider = ({children}: Props) => {
     });
   }
 
-  async function DeleteUpload(fileId: string) {
+  async function DeleteUpload(fileId: string, fileType: string) {
     const docRef = doc(
       db,
       `users/${
@@ -209,7 +239,9 @@ export const UploadsProvider = ({children}: Props) => {
       fileId
     );
     await deleteDoc(docRef);
-    await DeleteUploadFromFirebase(fileId);
+    if (fileType === "pdf") {
+      await DeleteUploadFromFirebase(fileId);
+    }
     await DeleteAllProjectsWithUpload(fileId);
   }
 
@@ -257,6 +289,8 @@ export const UploadsProvider = ({children}: Props) => {
     setIsLoadingUpload,
     uploadedFileLocal,
     setUploadedFileLocal,
+    uploadProgress,
+    setUploadProgress,
   };
 
   return (

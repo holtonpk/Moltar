@@ -1,9 +1,23 @@
 import {Timestamp, FieldValue} from "firebase/firestore";
 import {User as FirebaseUser} from "firebase/auth";
-export type UploadType = {
-  title: string;
+import {uploadTypes} from "@/config/data";
+
+export type UploadType = PDFUpload | UrlScrapeUpload;
+
+export type PDFUpload = {
+  type: (typeof uploadTypes)[number]["value"];
   id: string;
+  title: string;
   path: string;
+  text: string;
+};
+
+export type UrlScrapeUpload = {
+  type: (typeof uploadTypes)[number]["value"];
+  id: string;
+  title: string;
+  fav: string;
+  url: string;
   text: string;
 };
 
@@ -62,3 +76,10 @@ export interface PlansType {
   PRODUCT_TRACK_LIMIT: ToolAccessConfig;
   DAILY_PRODUCT_SEARCH_LIMIT: ToolAccessConfig;
 }
+
+export type ScrapeResult = {
+  success: boolean;
+  text: string;
+  title: string;
+  favicon: string;
+};

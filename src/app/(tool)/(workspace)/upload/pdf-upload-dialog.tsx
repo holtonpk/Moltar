@@ -2,6 +2,7 @@ import React, {useEffect} from "react";
 import {Document, Page, pdfjs} from "react-pdf";
 import {useRouter} from "next/navigation";
 import {doc, setDoc, serverTimestamp} from "firebase/firestore";
+import {db, app} from "@/config/firebase";
 import {Icons} from "@/components/icons";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -17,7 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
-import {db, app} from "@/config/firebase";
 import {listAll, getStorage, getDownloadURL, ref} from "firebase/storage";
 import {useAuth} from "@/context/user-auth";
 import {Skeleton} from "@/components/ui/skeleton";

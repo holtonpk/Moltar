@@ -25,7 +25,7 @@ import {useProjects} from "@/context/projects-context";
 import {toast} from "@/components/ui/use-toast";
 import "./chat-style.css";
 const Chat = () => {
-  const {responseLoading, project, pdfText} = useChat()!;
+  const {responseLoading, project} = useChat()!;
 
   // useEffect(() => {
   //   setChat(chat);
@@ -165,28 +165,29 @@ const Header = () => {
   }
 
   return (
-    <div className=" w-full p-4     h-fit  z-30 relative border-b border-border dark:border-none dark:border-white  bg-primary/5 md:bg-card md:dark:bg-[#444748] ">
-      <Button
-        className="absolute left-4 top-1/2 -translate-y-1/2"
-        variant={"ghost"}
+    <div className=" w-full p-4 flex justify-center items-center    h-16  z-30 relative border-b border-border dark:border-none dark:border-white  bg-primary/5 md:bg-card md:dark:bg-[#444748] ">
+      <button
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-primary hover:opacity-60"
         onClick={goToNewProject}
       >
         <Icons.chevronLeft className="h-6 w-6 text-primary" />
-      </Button>
-
-      <button
-        onClick={() => setOpenMenu(true)}
-        className="flex w-fit gap-2 items-center mx-auto justify-center hover:opacity-60"
-      >
-        <div
-          className="h-4 w-4 rounded-full"
-          style={{backgroundColor: openProject?.color || "#358EF4"}}
-        />
-
-        <h1 className="font-bold  whitespace-nowrap capitalize ">
-          {openProject?.name || "no name"}
-        </h1>
       </button>
+
+      {openProject?.name && (
+        <button
+          onClick={() => setOpenMenu(true)}
+          className="grid grid-cols-[16px_1fr] w-fit gap-2 items-center mx-auto justify-center hover:opacity-60 text-fade-in "
+        >
+          <div
+            className="h-4 w-4 rounded-full"
+            style={{backgroundColor: openProject?.color || "#358EF4"}}
+          />
+
+          <h1 className="font-bold  whitespace-nowrap capitalize ">
+            {openProject?.name}
+          </h1>
+        </button>
+      )}
       <Dialog open={openMenu} onOpenChange={setOpenMenu}>
         <DialogContent>
           <DialogHeader>

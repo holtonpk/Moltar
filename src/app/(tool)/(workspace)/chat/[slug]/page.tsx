@@ -23,6 +23,7 @@ export default function Page({params}: Params) {
 
   React.useEffect(() => {
     const fetchProject = async (projectId: string) => {
+      console.log("fethcing ******");
       const docRef = doc(
         db,
         `users/${
@@ -32,6 +33,7 @@ export default function Page({params}: Params) {
       );
       const docSnap = await getDoc(docRef);
       const projectData = docSnap.data() as ProjectType;
+      console.log("projectData ====", projectData);
       const uploadRef = doc(
         db,
         `users/${
@@ -41,6 +43,8 @@ export default function Page({params}: Params) {
       );
       const uploadSnap = await getDoc(uploadRef);
       const upload = uploadSnap.data();
+      console.log("uploadData=====", upload);
+
       const projectLocal = {
         ...projectData,
         upload: upload,
@@ -53,7 +57,7 @@ export default function Page({params}: Params) {
     fetchProject(params.slug);
   }, [params.slug, unSubscribedUserId, currentUser?.uid]);
 
-  console.log("project 111111", project);
+  console.log("project 111111", params.slug, project);
 
   return (
     <ChatProvider projectId={params.slug}>

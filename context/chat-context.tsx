@@ -40,15 +40,12 @@ interface ChatContextType {
   responseRendering: boolean;
   animatedMessage: string;
   responseLoading: boolean;
-  pdfText: string;
-  setPdfText: (text: string) => void;
 }
 
 export const ChatProvider = ({children, projectId}: Props) => {
   const [totalProjects, setTotalProjects] = useState<number>();
   const [project, setProject] = useState<ProjectType | null>(null);
   const [chat, setChat] = useState<ChatLog[] | null>(null);
-  const [pdfText, setPdfText] = React.useState("");
 
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
@@ -159,7 +156,8 @@ export const ChatProvider = ({children, projectId}: Props) => {
   const fetchAiResponse = async (prompt: string) => {
     console.log(
       "fetching ai response",
-      `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text : ${pdfText}`
+      // `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text : ${project?.upload.text}`
+      `${prompt} based on the following text: ${project?.upload.text}`
     );
     const response = await fetch("/api/openai", {
       method: "POST",
@@ -167,7 +165,8 @@ export const ChatProvider = ({children, projectId}: Props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text  : ${pdfText}`,
+        // prompt: `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text  : ${project?.upload.text}`,
+        prompt: `Respond to the following with a formatted response. ${prompt} based on the following text: ${project?.upload.text}`,
       }),
     })
       .then((res) => res.json())
@@ -214,12 +213,12 @@ export const ChatProvider = ({children, projectId}: Props) => {
     }
   }, [aiResponse, animatedMessage, responseLoading]);
 
-  const generateNewProject = (prompt: string) => {
-    const name = generateProjectName(prompt);
+  async function generateNewProject(prompt: string) {
+    const name = await generateProjectName(prompt);
     const color = generateTagColor();
     ChangeProjectName(name);
     ChangeProjectColor(color);
-  };
+  }
 
   async function ChangeProjectName(newName: string) {
     //  update the project name in firestore
@@ -249,10 +248,20 @@ export const ChatProvider = ({children, projectId}: Props) => {
     });
   }
 
-  const generateProjectName = (prompt: string) => {
+  async function generateProjectName(prompt: string) {
     // this will be on the server to generate a relevant name
-    return `${project?.upload.title.slice(0, 10)} - ${prompt.slice(0, 10)}`;
-  };
+    const response = await fetch("/api/openai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: `Generate a short, descriptive name (40 characters max) for a chat session that is based on the given prompt '${prompt}' and relates to the project ${project?.upload.text}. The name should be concise, memorable, and accurately reflect the discussion's focus on the project. It should engage the target audience of college students and highlight key aspects of the conversation related to the project's theme or goal. don't put it in quotes`,
+      }),
+    }).then((res) => res.json());
+
+    return response.response;
+  }
 
   const generateTagColor = () => {
     const tagColors = ["#358EF4", "#4AAB67", "#9164F0", "#E5560A", "#ED8D16"];
@@ -274,8 +283,6 @@ export const ChatProvider = ({children, projectId}: Props) => {
     responseRendering,
     animatedMessage,
     responseLoading,
-    pdfText,
-    setPdfText,
   };
 
   return <ChatContext.Provider value={values}>{children}</ChatContext.Provider>;

@@ -7,11 +7,12 @@ import {
 } from "@/components/ui/resizable";
 import Chat from "./chat";
 import {Skeleton} from "@/components/ui/skeleton";
-import FileView, {FileViewMobile} from "./file-view";
+import PdfFileView, {PdfFileViewMobile} from "./pdf-file-view";
+import UrlTextView, {UrlTextViewMobile} from "./url-text-view";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons";
-import {ProjectType} from "@/types";
+import {ProjectType, PDFUpload, UrlScrapeUpload} from "@/types";
 import {useChat} from "@/context/chat-context";
 
 export const Project = ({projectData}: {projectData: ProjectType}) => {
@@ -30,7 +31,19 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
             defaultSize={55}
             className=" z-10 relative bg-primary/5 dark:bg-card overflow-hidden"
           >
-            <FileView upload={projectData?.upload} />
+            {projectData && (
+              <>
+                {projectData.upload.type === "pdf" && (
+                  <PdfFileView upload={projectData?.upload as PDFUpload} />
+                )}
+                {projectData.upload.type === "url" && (
+                  <UrlTextView
+                    upload={projectData?.upload as UrlScrapeUpload}
+                    projectId={projectData.id}
+                  />
+                )}
+              </>
+            )}
           </ResizablePanel>
           <ResizableHandle withHandle className="z-30" />
           <ResizablePanel
@@ -44,10 +57,13 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
       <div className="md:hidden block  min-h-full   ">
         {(project?.chat === null || project?.chat?.length === 0) && (
           <>
-            {projectData ? (
-              <FileViewMobile upload={projectData.upload} />
-            ) : (
-              <> </>
+            {projectData.upload.type === "pdf" && (
+              <PdfFileViewMobile upload={projectData.upload as PDFUpload} />
+            )}
+            {projectData.upload.type === "url" && (
+              <UrlTextViewMobile
+                upload={projectData.upload as UrlScrapeUpload}
+              />
             )}
           </>
         )}

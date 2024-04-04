@@ -319,3 +319,16 @@ input:focus {
     hsl(var(--background) / 1) 90%
   );
 }
+
+.text-fade-in {
+  animation: text-fade-in 1s ease-in-out;
+}
+
+@keyframes text-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
