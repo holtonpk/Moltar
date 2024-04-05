@@ -6,7 +6,7 @@ const Credibility = () => {
     <>
       <div className="w-full bg-background/20  blurBack p-4 border-y dark:border-none h-[200px] mt-10 sm:block hidden">
         <h1 className="font-bold text-center text-xl capitalize">
-          Trust by students at the
+          Trusted by students at the
           <span className="text-theme-blue"> top universities</span>
         </h1>
         <div className="h-full absolute w-40 left-0 top-1/2 -translate-y-1/2  z-20 cred-edge-grad-left" />
@@ -30,7 +30,7 @@ const Credibility = () => {
       </div>
       <div className="w-full bg-background/20  blurBack p-4 border-y dark:border-none h-fits mt-10 sm:hidden ">
         <h1 className="font-bold text-center text-xl capitalize">
-          Trust by students at the
+          Trusted by students at the
           <span className="text-theme-blue"> top universities</span>
         </h1>
 
