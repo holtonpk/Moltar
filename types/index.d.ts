@@ -2,7 +2,7 @@ import {Timestamp, FieldValue} from "firebase/firestore";
 import {User as FirebaseUser} from "firebase/auth";
 import {uploadTypes} from "@/config/data";
 
-export type UploadType = PDFUpload | UrlScrapeUpload;
+export type UploadType = PDFUpload | UrlScrapeUpload | YoutubeScrapeUpload;
 
 export type PDFUpload = {
   type: (typeof uploadTypes)[number]["value"];
@@ -17,6 +17,15 @@ export type UrlScrapeUpload = {
   id: string;
   title: string;
   fav: string;
+  url: string;
+  text: string;
+};
+
+export type YoutubeScrapeUpload = {
+  type: (typeof uploadTypes)[number]["value"];
+  id: string;
+  title: string;
+  thumbnail: string;
   url: string;
   text: string;
 };
@@ -77,9 +86,17 @@ export interface PlansType {
   DAILY_PRODUCT_SEARCH_LIMIT: ToolAccessConfig;
 }
 
-export type ScrapeResult = {
+export type UrlScrapeResult = {
   success: boolean;
   text: string;
   title: string;
   favicon: string;
+};
+
+export type YoutubeScrapeResult = {
+  success: boolean;
+  id: string;
+  text: string;
+  title: string;
+  thumbnail: string;
 };

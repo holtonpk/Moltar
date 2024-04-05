@@ -9,10 +9,16 @@ import Chat from "./chat";
 import {Skeleton} from "@/components/ui/skeleton";
 import PdfFileView, {PdfFileViewMobile} from "./pdf-file-view";
 import UrlTextView, {UrlTextViewMobile} from "./url-text-view";
+import YoutubeVideoView, {YoutubeVideoViewMobile} from "./youtube-video-view";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons";
-import {ProjectType, PDFUpload, UrlScrapeUpload} from "@/types";
+import {
+  ProjectType,
+  PDFUpload,
+  UrlScrapeUpload,
+  YoutubeScrapeUpload,
+} from "@/types";
 import {useChat} from "@/context/chat-context";
 
 export const Project = ({projectData}: {projectData: ProjectType}) => {
@@ -42,6 +48,11 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
                     projectId={projectData.id}
                   />
                 )}
+                {projectData.upload.type === "youtube" && (
+                  <YoutubeVideoView
+                    upload={projectData?.upload as YoutubeScrapeUpload}
+                  />
+                )}
               </>
             )}
           </ResizablePanel>
@@ -63,6 +74,11 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
             {projectData.upload.type === "url" && (
               <UrlTextViewMobile
                 upload={projectData.upload as UrlScrapeUpload}
+              />
+            )}
+            {projectData.upload.type === "youtube" && (
+              <YoutubeVideoViewMobile
+                upload={projectData.upload as YoutubeScrapeUpload}
               />
             )}
           </>

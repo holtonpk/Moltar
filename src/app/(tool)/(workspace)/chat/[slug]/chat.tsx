@@ -176,14 +176,14 @@ const Header = () => {
       {openProject?.name && (
         <button
           onClick={() => setOpenMenu(true)}
-          className="grid grid-cols-[16px_1fr] w-fit gap-2 items-center mx-auto justify-center hover:opacity-60 text-fade-in "
+          className="grid grid-cols-[16px_1fr] px-[30px] w-fit gap-2 items-center mx-auto justify-center hover:opacity-60 text-fade-in "
         >
           <div
             className="h-4 w-4 rounded-full"
             style={{backgroundColor: openProject?.color || "#358EF4"}}
           />
 
-          <h1 className="font-bold  whitespace-nowrap capitalize ">
+          <h1 className="font-bold  whitespace-nowrap capitalize w-full overflow-hidden text-ellipsis ">
             {openProject?.name}
           </h1>
         </button>
