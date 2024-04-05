@@ -43,6 +43,7 @@ const ProgressBlue = React.forwardRef<
     />
   </ProgressPrimitive.Root>
 ));
-Progress.displayName = ProgressPrimitive.Root.displayName;
+
+ProgressBlue.displayName = ProgressPrimitive.Root.displayName;
 
 export {Progress, ProgressBlue};
