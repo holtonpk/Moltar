@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {Icons} from "@/components/icons";
 
 export const UploadOptions = ({
@@ -22,13 +22,13 @@ export const UploadOptions = ({
       <DropdownMenuTrigger className="z-50 flex items-center justify-center hover:opacity-60 absolute top-2 right-0 rounded-md  ">
         <Icons.ellipsis className="h-5 w-5" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="border-border bg-card">
+      <DropdownMenuContent className="border-border bg-card border">
         <DropdownMenuItem
           onSelect={() => {
             setSelectedFile(file);
             setOpenRename(true);
           }}
-          className=" gap-2 cursor-pointer focus:bg-primary/20"
+          className=" gap-2 cursor-pointer focus:bg-primary/20 "
         >
           <Icons.pencil className="h-4 w-4 " />
           Rename
