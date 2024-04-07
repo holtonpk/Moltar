@@ -159,7 +159,7 @@ const UploadsPanel = () => {
           >
             <>
               {[...urlUploads].reverse().map((file: UrlScrapeUpload) => (
-                <UrlUpload file={file} filterList={filterList} />
+                <UrlUpload file={file} filterList={filterList} key={file.id} />
               ))}
             </>
           </UploadRow>
