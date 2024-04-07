@@ -523,7 +523,7 @@ const Project = ({project}: {project: ProjectType}) => {
           <DropdownMenuTrigger>
             <Icons.ellipsis className="h-4 w-4 text-primary" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="border-border bg-card ">
+          <DropdownMenuContent className="border-border  ">
             <DropdownMenuItem
               onSelect={() => setOpenMenu(true)}
               className=" gap-2 cursor-pointer focus:bg-primary/20"

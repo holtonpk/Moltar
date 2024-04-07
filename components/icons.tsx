@@ -135,11 +135,15 @@ import {
   Loader,
   BookText,
   Save,
+  ArrowLeftToLineIcon,
+  ListFilterIcon,
 } from "lucide-react";
 
 //   export type XIcon = LucideIcon;
 
 export const Icons = {
+  filter: ListFilterIcon,
+  arrowLeft: ArrowLeftToLine,
   save: Save,
   scan: ScanText,
   bookText: BookText,
@@ -225,7 +229,6 @@ export const Icons = {
   volume: Volume,
   volumeX: VolumeX,
   rotate: RotateCw,
-  filter: ListFilter,
   collection: Group,
   calendar: Calendar,
   dashboard: LayoutDashboard,

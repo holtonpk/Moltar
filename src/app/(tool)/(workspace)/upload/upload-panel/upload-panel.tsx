@@ -49,6 +49,8 @@ import {YoutubeUpload} from "./upload types /youtube";
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
+import {Link, Youtube, FileText} from "lucide-react";
+
 const UploadsPanel = () => {
   const {uploadList, DeleteUpload, ReNameUpload, filterList} = useUploads()!;
   const {currentUser, unSubscribedUserId} = useAuth()!;
@@ -114,60 +116,54 @@ const UploadsPanel = () => {
       setShowDeleteDialog={setShowDeleteDialog}
       setOpenRename={setOpenRename}
     >
-      <div className="  overflow-scroll h-full items-center  pb-20   w-full absolute ">
-        {urlUploads && urlUploads.length > 0 && (
-          <UploadRow title="Websites" collapsed={collapsed}>
-            <>
-              {[...urlUploads].reverse().map((file: UrlScrapeUpload) => (
-                <div
-                  key={file.id}
-                  className={` cursor-pointer w-[400px] h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
-            ${
-              filterList && filterList.includes(file.id) ? "visible" : "hidden"
-            } `}
-                >
-                  <UrlUpload file={file} />
-                </div>
-              ))}
-            </>
-          </UploadRow>
-        )}
+      <div className="   h-fit items-center  pb-20  bg-background  w-full absolute -top-2 ">
         {youtubeUploads && youtubeUploads.length > 0 && (
-          <UploadRow title="Youtube Videos" collapsed={collapsed}>
+          <UploadRow
+            title="Youtube Videos"
+            Icon={Youtube}
+            color="253,12,8"
+            collapsed={collapsed}
+          >
             <>
               {[...youtubeUploads]
                 .reverse()
                 .map((file: YoutubeScrapeUpload) => (
-                  <div
+                  <YoutubeUpload
+                    file={file}
+                    filterList={filterList}
                     key={file.id}
-                    className={` w-[250px] h-fit cursor-pointer   overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
-            ${
-              filterList && filterList.includes(file.id) ? "visible" : "visible"
-            } `}
-                  >
-                    <YoutubeUpload file={file} />
-                  </div>
+                  />
                 ))}
             </>
           </UploadRow>
         )}
 
         {pdfUploads && pdfUploads.length > 0 && (
-          <UploadRow title="PDFs" collapsed={collapsed}>
+          <UploadRow
+            title="PDFs"
+            Icon={FileText}
+            color="145,100,240"
+            collapsed={collapsed}
+          >
             {[...pdfUploads].reverse().map((file: PDFUpload) => (
-              <div
-                key={file.id}
-                className={` cursor-pointer w-full h-fit overflow-hidden relative group border-border hover:border-theme-blue border-4 rounded-lg bg-border
-            ${
-              filterList && filterList.includes(file.id) ? "visible" : "hidden"
-            } `}
-              >
-                <PdfUpload file={file} />
-              </div>
+              <PdfUpload file={file} filterList={filterList} key={file.id} />
             ))}
           </UploadRow>
         )}
-
+        {urlUploads && urlUploads.length > 0 && (
+          <UploadRow
+            title="Websites"
+            Icon={Link}
+            color="53,142,244"
+            collapsed={collapsed}
+          >
+            <>
+              {[...urlUploads].reverse().map((file: UrlScrapeUpload) => (
+                <UrlUpload file={file} filterList={filterList} />
+              ))}
+            </>
+          </UploadRow>
+        )}
         {selectedFile && (
           <>
             <Dialog open={openRename} onOpenChange={setOpenRename}>

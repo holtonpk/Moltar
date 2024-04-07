@@ -18,6 +18,7 @@ export const FileInput = ({
     setUploadedFile,
     uploadedFileLocal,
     setUploadedFileLocal,
+    cancelUpload,
   } = useUploads()!;
 
   const [dropError, setDropError] = useState(false);
@@ -46,6 +47,7 @@ export const FileInput = ({
         (file: File) => file.type === "application/pdf"
       );
       setUploadedFileLocal(pdfFiles[0]);
+      cancelUpload.current = false;
       setIsLoadingUpload(true);
       setIsOpen(false);
 
@@ -88,6 +90,8 @@ export const FileInput = ({
     if (event.target.files && event.target.files.length > 0) {
       const files = Array.from(event.target.files); // Convert FileList to an array
       setUploadedFileLocal(files[0]);
+      cancelUpload.current = false;
+
       setIsLoadingUpload(true);
       setIsOpen(false);
 

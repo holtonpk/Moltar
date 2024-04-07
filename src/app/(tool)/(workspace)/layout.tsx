@@ -17,7 +17,7 @@ const Workspace = ({children}: {children: React.ReactNode}) => {
           <UploadsProvider>
             <ProjectsProvider>
               <Navbar />
-              <div className="md:flex-grow w-full bg-card overflow-hidden   relative h-screen flex-col flex  ">
+              <div className="md:flex-grow w-full  overflow-hidden   relative h-screen flex-col flex  ">
                 <MobileNav />
                 {children}
               </div>

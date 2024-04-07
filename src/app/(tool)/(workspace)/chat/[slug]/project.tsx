@@ -11,6 +11,12 @@ import PdfFileView, {PdfFileViewMobile} from "./pdf-file-view";
 import UrlTextView, {UrlTextViewMobile} from "./url-text-view";
 import YoutubeVideoView, {YoutubeVideoViewMobile} from "./youtube-video-view";
 import {Button} from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons";
 import {
@@ -20,50 +26,86 @@ import {
   YoutubeScrapeUpload,
 } from "@/types";
 import {useChat} from "@/context/chat-context";
+import {circIn} from "framer-motion";
 
 export const Project = ({projectData}: {projectData: ProjectType}) => {
   const {responseLoading, project} = useChat()!;
 
-  console.log("projectData 22222", project);
+  const [expandedChat, setExpandedChat] = React.useState(false);
+
+  const container = React.useRef<HTMLDivElement>(null);
 
   return (
     <>
-      <div className="md:flex h-full border border-border  flex-grow hidden">
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="z-20 relative flex-grow h-full  "
-        >
-          <ResizablePanel
-            defaultSize={55}
-            className=" z-10 relative bg-primary/5 dark:bg-card overflow-hidden"
+      <div className="md:flex h-full border border-border  bg-primary/5 dark:bg-background flex-grow hidden">
+        <div ref={container} className="z-20 relative flex-grow h-full flex ">
+          <div
+            className={`transition-all relative duration-300  ${
+              expandedChat ? "w-[0%] " : " w-[55%]"
+            }`}
           >
-            {projectData && (
-              <>
-                {projectData.upload.type === "pdf" && (
-                  <PdfFileView upload={projectData?.upload as PDFUpload} />
+            {container.current?.clientWidth && (
+              <div
+                style={{width: container.current?.clientWidth * 0.55}}
+                className={`z-10   h-full  absolute  overflow-hidden    
+          `}
+              >
+                {projectData && (
+                  <>
+                    {projectData.upload.type === "pdf" && (
+                      <PdfFileView upload={projectData?.upload as PDFUpload} />
+                    )}
+                    {projectData.upload.type === "url" && (
+                      <UrlTextView
+                        upload={projectData?.upload as UrlScrapeUpload}
+                        projectId={projectData.id}
+                      />
+                    )}
+                    {projectData.upload.type === "youtube" && (
+                      <YoutubeVideoView
+                        upload={projectData?.upload as YoutubeScrapeUpload}
+                      />
+                    )}
+                  </>
                 )}
-                {projectData.upload.type === "url" && (
-                  <UrlTextView
-                    upload={projectData?.upload as UrlScrapeUpload}
-                    projectId={projectData.id}
-                  />
-                )}
-                {projectData.upload.type === "youtube" && (
-                  <YoutubeVideoView
-                    upload={projectData?.upload as YoutubeScrapeUpload}
-                  />
-                )}
-              </>
+              </div>
             )}
-          </ResizablePanel>
-          <ResizableHandle withHandle className="z-30" />
-          <ResizablePanel
-            defaultSize={45}
-            className=" min-w-[450px] z-20 h-full dark:bg-card flex items-center justify-center"
-          >
-            <Chat />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+          </div>
+          {container.current?.clientWidth && (
+            <div
+              style={{
+                width: !expandedChat
+                  ? container.current?.clientWidth * 0.45
+                  : "100%",
+              }}
+              className={`py-2 flex bg-[#F3F3F3] dark:bg-background relative pl-4 flex-grow transition-transform duration-300
+
+            `}
+            >
+              <div className="absolute top-1/2 -translate-y-1/2 left-2 z-30  -translate-x-1/2 ">
+                <button
+                  onClick={() => setExpandedChat(!expandedChat)}
+                  className={`relative group
+              
+              `}
+                >
+                  <div
+                    className={` ${expandedChat ? "transform rotate-180" : ""}`}
+                  >
+                    <HoverIcon />
+                  </div>
+                  <span className="expand-hover-animation opacity-0  pointer-events-none z-40 shadow-md absolute whitespace-nowrap top-1/2 -translate-y-1/2 left-full bg-background  rounded-md p-2 text-sm">
+                    <Icons.chevronLeft className="h-6 w-6 absolute left-0 -translate-x-1/2 fill-background text-background" />
+                    {!expandedChat ? <p>Hide Upload</p> : <p>Show Upload</p>}
+                  </span>
+                </button>
+              </div>
+              <div className="w-full rounded-l-lg z-20 h-full  bg-card border border-border border-r-0  flex items-center justify-center relative overflow-hidden">
+                <Chat />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <div className="md:hidden block  min-h-full   ">
         {(project?.chat === null || project?.chat?.length === 0) && (
@@ -86,6 +128,49 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
         <Chat />
       </div>
     </>
+  );
+};
+
+const HoverIcon: React.FC = () => {
+  return (
+    <svg
+      width="40"
+      height="40"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g
+        id="vertical-bar"
+        fill="none"
+        // stroke="black"
+        className="stroke-primary/30"
+        strokeWidth="15"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <line x1="50" y1="20" x2="50" y2="80" />
+      </g>
+      <g
+        id="chevron-left"
+        fill="none"
+        className="stroke-primary"
+        strokeWidth="15"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0"
+      >
+        <polyline points="50,20 40,50 50,80" />
+      </g>
+
+      <style jsx>{`
+        svg:hover #vertical-bar {
+          opacity: 0;
+        }
+        svg:hover #chevron-left {
+          opacity: 1;
+        }
+      `}</style>
+    </svg>
   );
 };
 

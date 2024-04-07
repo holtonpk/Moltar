@@ -36,45 +36,67 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
   const [numPages, setNumPages] = React.useState<number>(1);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
 
-  const {setIsLoadingUpload, setShowDialog} = useUploads()!;
+  const {setIsLoadingUpload, setShowDialog, setUploadProgress, cancelUpload} =
+    useUploads()!;
 
   async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
     if (!file) return;
-    // Extract text from each page
-    const textPromises = [];
-    for (let i = 1; i <= numPages; i++) {
-      const loadingTask = pdfjs.getDocument({url: file.path});
-      const promise = await loadingTask.promise.then((pdf) => {
-        return pdf.getPage(i).then((page) => {
-          return page.getTextContent().then((textContent) => {
-            const hasTextLayer = textContent.items.length > 0;
-            if (!hasTextLayer) {
-              setRecommendScan(true);
-              return;
-            }
-            const pageText = textContent.items
-              .map((item: any) => item.str)
-              .join(" ");
-            return pageText;
-          });
-        });
-      });
-      textPromises.push(promise);
-    }
+
+    // Function to check if the operation should proceed
+    const checkCancellation = () => {
+      if (cancelUpload.current) {
+        throw new Error("Operation cancelled");
+      }
+    };
 
     try {
-      const pageTexts = await Promise.all(textPromises);
-      const extractedText = pageTexts.join(" ");
+      const textPromises = [];
+      for (let i = 1; i <= numPages; i++) {
+        checkCancellation(); // Check if we should continue before starting the next operation
 
+        const loadingTask = pdfjs.getDocument({url: file.path});
+        const promise = loadingTask.promise.then(async (pdf) => {
+          checkCancellation(); // Check again after loading the document
+
+          const page = await pdf.getPage(i);
+          checkCancellation(); // Check before getting the text content
+
+          const textContent = await page.getTextContent();
+          checkCancellation(); // Check after getting the text content
+
+          const hasTextLayer = textContent.items.length > 0;
+          console.log("hasTextLayer", hasTextLayer);
+          setUploadProgress(30 + (i / numPages) * 70);
+
+          if (!hasTextLayer) {
+            setRecommendScan(true);
+            return;
+          }
+
+          return textContent.items.map((item: any) => item.str).join(" ");
+        });
+        textPromises.push(promise);
+      }
+
+      const pageTexts = await Promise.all(textPromises);
+      checkCancellation(); // Check before processing the result
+
+      const extractedText = pageTexts.join(" ");
       await setFileText(extractedText);
+
       console.log("extractedText==========", extractedText);
-    } catch (error) {
-      console.error("Failed to extract PDF text:", error);
+    } catch (error: any) {
+      if (error.message !== "Operation cancelled") {
+        console.error("Failed to extract PDF text:", error);
+      }
+    } finally {
+      if (!cancelUpload.current) {
+        setDocumentLoaded(true);
+        setShowDialog(true);
+        setShowDialogLocal(true);
+        setNumPages(numPages);
+      }
     }
-    setDocumentLoaded(true);
-    setShowDialog(true);
-    setShowDialogLocal(true);
-    setNumPages(numPages);
   }
 
   const [scanning, setScanning] = React.useState(false);
@@ -98,7 +120,6 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
       .catch((error) => {
         console.error("Failed to extract PDF ==== text:", error);
       });
-
     setScanning(false);
     setRecommendScan(false);
     setScanSuccess(true);
@@ -192,19 +213,17 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
           />
 
           <Dialog open={showDialogLocal} onOpenChange={handleCloseDialog}>
-            <DialogContent className={`max-w-none w-fit `}>
-              <div
-                className={`flex  gap-10 items-center md:flex-row flex-col `}
-              >
+            <DialogContent className={`max-w-none w-fit  `}>
+              <div className={`flex  gap-10 items-center  flex-col `}>
                 {file && (
                   <Document
-                    className={`h-[400px] aspect-[1/1.4]  mx-auto rounded-lg relative  z-10 
+                    className={`h-[400px]   mx-auto rounded-lg relative  z-10
 
-                `}
+                  `}
                     file={file.path}
                     onLoadSuccess={onDocumentLoadSuccess2}
                     loading={
-                      <Skeleton className="h-[400px] aspect-[1/1.4] absolute z-30 bg-primary/40"></Skeleton>
+                      <Skeleton className="h-[400px] aspect-[1/1.4]  z-30 bg-primary/40"></Skeleton>
                     }
                   >
                     {/* <Skeleton className="h-[400px] aspect-[1/1.4] absolute z-30 bg-primary/40"></Skeleton> */}
@@ -252,7 +271,7 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                 {recommendScan ? (
                   <>
                     {scanning ? (
-                      <div className="flex flex-col items-center  md:items-start min-w-[400px] ">
+                      <div className="flex flex-col items-center   [300px] ">
                         <DialogHeader className="font-bold text-lg ">
                           Scanning Your Document for text
                         </DialogHeader>
@@ -265,7 +284,7 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                         </Button>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center  md:items-start min-w-[400px] ">
+                      <div className="flex flex-col items-center   w-[300px] ">
                         <DialogHeader className="font-bold text-lg ">
                           We didn&apos;t find any text in your pdf. Would you
                           like us to scan it?
@@ -284,13 +303,13 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                     )}
                   </>
                 ) : (
-                  <div className="flex flex-col items-center  md:items-start min-w-[400px]  ">
+                  <div className="flex flex-col items-center   w-[300px]   ">
                     <DialogHeader className="font-bold  text-lg ">
                       Successfully
                       {scanSuccess ? " scanned " : " uploaded "}
                       👍
                     </DialogHeader>
-                    <DialogDescription className="text-center md:text-left">
+                    <DialogDescription className="text-center ">
                       Your file will be in the upload panel. You can click on it
                       to anytime start a project
                     </DialogDescription>

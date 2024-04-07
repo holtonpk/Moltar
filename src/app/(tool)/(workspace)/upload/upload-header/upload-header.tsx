@@ -62,29 +62,38 @@ export const UploadHeader = ({
   };
 
   return (
-    <div className=" w-full bg-card dark:bg-[#3A3D3E]  py-3 flex border-b dark:border-none items-center justify-between px-4 gap-4">
-      <Input
-        onChange={onSearch}
-        className="w-full bg-card hidden md:flex focus-visible:ring-theme-blue dark:focus-visible:ring-offset-[#3A3D3E] dark:border-[#3A3D3E]"
-        placeholder="Search uploads"
-      />
-      <input
-        multiple
-        id="newUploadInput"
-        type="file"
-        accept=".pdf"
-        onChange={onFileChange}
-        style={{display: "none"}}
-        className="bg-theme-blue hover:bg-theme-blue/60 text-white"
-      />
+    <div className="w-full p-2 rounded-md bg-transparent pb-0 z-20">
+      <div className=" w-full     py-3 flex  items-center justify-between  gap-4">
+        <Input
+          onChange={onSearch}
+          className="w-full bg-card shadow-sm hidden md:flex focus-visible:ring-theme-blue dark:focus-visible:ring-offset-[#3A3D3E] dark:border-[#3A3D3E]"
+          placeholder="Search uploads"
+        />
+        <input
+          multiple
+          id="newUploadInput"
+          type="file"
+          accept=".pdf"
+          onChange={onFileChange}
+          style={{display: "none"}}
+          className="bg-theme-blue hover:bg-theme-blue/60 text-white"
+        />
+        {/* <Button
+          onClick={() => setShowUploadDialog(true)}
+          className="bg-theme-green hover:bg-theme-green/60 text-white w-full  md:w-fit"
+        >
+          <Icons.filter className="h-5 w-5 mr-2" />
+          Filter
+        </Button> */}
 
-      <Button
-        onClick={() => setShowUploadDialog(true)}
-        className="bg-theme-blue hover:bg-theme-blue/60 text-white w-full  md:w-fit"
-      >
-        <Icons.add className="h-5 w-5" />
-        New Upload
-      </Button>
+        <Button
+          onClick={() => setShowUploadDialog(true)}
+          className="bg-theme-blue hover:bg-theme-blue/60 text-white w-full  md:w-fit"
+        >
+          <Icons.add className="h-5 w-5 mr-2" />
+          New Upload
+        </Button>
+      </div>
     </div>
   );
 };

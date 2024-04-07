@@ -122,7 +122,7 @@ export const EmptyUploadList = () => {
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 items-center  pt-20   h-full p-6 shadow-2xl  relative z-10">
+      <div className="flex bg-card flex-col w-full gap-4 items-center  pt-20   h-full p-6 shadow-2xl  relative z-10">
         <div className="  border-border md:w-fit  rounded-lg  flex flex-col w-full   gap-6 items-center bg-card">
           <span className="font-bold text-3xl md:text-5xl mb-6 ">
             Let&apos;s get started!

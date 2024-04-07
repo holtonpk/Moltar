@@ -50,6 +50,7 @@ type UploadContextType = {
   setUploadedFileLocal: React.Dispatch<React.SetStateAction<File | null>>;
   uploadProgress: number;
   setUploadProgress: React.Dispatch<React.SetStateAction<number>>;
+  cancelUpload: React.MutableRefObject<boolean>;
 };
 
 const UploadsContext = createContext<UploadContextType | null>(null);
@@ -80,8 +81,10 @@ export const UploadsProvider = ({children}: Props) => {
     null
   );
 
+  // const [cancelUpload, setCancelUpload] = React.useState(false);
+  const cancelUpload = React.useRef(false);
+
   useEffect(() => {
-    console.log("unsub", currentUser?.uid, unSubscribedUserId);
     if (currentUser || unSubscribedUserId) {
       const q = query(
         collection(
@@ -105,40 +108,60 @@ export const UploadsProvider = ({children}: Props) => {
 
   // import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-  async function uploadFileToFirebase(file: File, fileID: string) {
-    const storage = getStorage(app);
-    const fileRef = ref(storage, fileID);
+  async function uploadFile(file: File) {
+    try {
+      const fileID = Math.random().toString(36).substring(7);
+      const storage = getStorage(app);
+      const fileRef = ref(storage, fileID);
+      const uploadTask = uploadBytesResumable(fileRef, file);
 
-    // Start the file upload
-    const uploadTask = uploadBytesResumable(fileRef, file);
+      // Wait for the upload to complete
+      await new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
 
-    // Listen for state changes, errors, and completion of the upload.
-    await new Promise((resolve, reject) => {
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          // Get the upload progress as a percentage
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          setUploadProgress(progress);
-        },
-        (error) => {
-          // Handle unsuccessful uploads
-          reject(error);
-        },
-        () => {
-          // Handle successful uploads on complete
-          resolve(uploadTask.snapshot);
-        }
-      );
-    });
+            setUploadProgress(progress - 70);
 
-    const fileUrl = await getDownloadURL(fileRef);
-    return fileUrl;
+            switch (snapshot.state) {
+              case "paused":
+                console.log("Upload is paused");
+                break;
+              case "running":
+                console.log("Upload is running");
+                break;
+            }
+          },
+          (error) => {
+            reject(error);
+          },
+          () => {
+            resolve(uploadTask.snapshot.ref);
+          }
+        );
+      });
+
+      // Get download URL and return the upload object
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+      const upload = {
+        title: file.name,
+        id: fileID,
+        path: downloadURL,
+        type: "pdf",
+      };
+
+      // setUploadData(upload as UploadType);
+      return upload;
+    } catch (error) {
+      console.error("Upload failed:", error);
+      throw error; // Rethrow the error after logging it
+    }
   }
 
-  const [uploadData, setUploadData] = useState<UploadType>();
+  // const [uploadData, setUploadData] = useState<UploadType>();
 
   // useEffect(() => {
   //   if (!isLoadingUpload && uploadData) {
@@ -160,19 +183,13 @@ export const UploadsProvider = ({children}: Props) => {
     await setDoc(docRef, file, {merge: true});
   }
 
-  async function uploadFile(file: File) {
-    const fileID = Math.random().toString(36).substring(7);
-    // upload file to firebase storage
-    const firebaseUrl = await uploadFileToFirebase(file, fileID);
-    const upload = {
-      title: file.name,
-      id: fileID,
-      path: firebaseUrl,
-      type: "pdf",
-    };
-    setUploadData(upload as UploadType);
-    return upload;
-  }
+  // async function uploadFile(file: File) {
+  //   const fileID = Math.random().toString(36).substring(7);
+  //   // upload file to firebase storage
+  //   const firebaseUrl = await uploadFileToFirebase(file, fileID);
+
+  //   return upload;
+  // }
 
   async function FileDrop(files: File[]) {
     let newFiles: any = [];
@@ -183,12 +200,6 @@ export const UploadsProvider = ({children}: Props) => {
     }
     setUploadList([...(uploadList || []), ...newFiles]);
   }
-
-  // async function FileUpload(event: any) {
-  //   const file = event.target.files[0];
-  //   const newFile = await uploadFile(file);
-  //   setUploadList([...(uploadList || []), newFile]);
-  // }
 
   const ReNameUpload = (fileId: string, name: string) => {
     // renmame file field in firebase storage
@@ -291,6 +302,7 @@ export const UploadsProvider = ({children}: Props) => {
     setUploadedFileLocal,
     uploadProgress,
     setUploadProgress,
+    cancelUpload,
   };
 
   return (

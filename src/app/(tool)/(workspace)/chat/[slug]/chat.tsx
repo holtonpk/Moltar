@@ -55,7 +55,7 @@ const Chat = () => {
   return (
     <>
       {!project?.chat || project.chat?.length === 0 ? (
-        <div className="flex flex-col  items-center justify-center mt-4 md:mt-0  flex-grow  w-full  relative  z-10 ">
+        <div className="flex flex-col  items-center justify-center mt-4 md:mt-0   flex-grow  w-full  relative  z-10 ">
           <div className="px-4 w-[95%] min-w-[300px] md:w-fit">
             <div className=" flex-col gap-2 items-center mt-auto hidden md:flex">
               <h2 className="font-bold mt-auto text-theme-blue">
@@ -69,7 +69,7 @@ const Chat = () => {
         </div>
       ) : (
         <>
-          <div className="w-full h-full flex-grow  justify-between  md:relative md:dark:bg-white/10 flex flex-col gap-0 items-center  p-0  ">
+          <div className="w-full h-full   justify-between rounded-l-lg md:relative md:dark:bg-white/10 flex flex-col gap-0 items-center  p-0  ">
             <Header />
 
             <div

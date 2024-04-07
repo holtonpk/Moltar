@@ -15,7 +15,7 @@ const YoutubeVideoView = ({upload}: {upload: YoutubeScrapeUpload}) => {
   const isVideoSharable = true;
 
   return (
-    <div className="flex flex-col gap-4 h-full ">
+    <div className="flex flex-col gap-4 h-full overflow-scroll ">
       <div className="w-full flex justify-between p-1 ">
         <LinkButton
           href={"/upload"}
@@ -29,7 +29,7 @@ const YoutubeVideoView = ({upload}: {upload: YoutubeScrapeUpload}) => {
       <Icons.ellipsis />
     </Button> */}
       </div>
-      <div className="flex flex-col gap-4 w-full p-6 pt-0 h-full justify-center">
+      <div className="flex flex-col gap-2 w-full p-6 pt-0 h-fit  justify-center">
         <div className="w-full aspect-[16/9] relative rounded-lg overflow-hidden mb-2">
           {isVideoSharable ? (
             <iframe
@@ -43,29 +43,24 @@ const YoutubeVideoView = ({upload}: {upload: YoutubeScrapeUpload}) => {
             />
           )}
         </div>
-        <Label className="flex items-center gap-1">
-          <TooltipProvider>
-            <Tooltip>
+        <Label className="flex items-center text-lg gap-1 mt-2 font-bold">
+          {/* <TooltipProvider>
+            <Tooltip className="z-50">
               <TooltipTrigger>
                 <Icons.info className="text-primary/60 h-4 w-4" />
               </TooltipTrigger>
 
-              <TooltipContent className="border-border bg-card w-[200px]">
+              <TooltipContent className="border-border bg-card z-50 w-[200px]">
                 <p>
                   Edit the transcript text as needed. Moltar will utilize this
                   text for your chat.
                 </p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          </TooltipProvider> */}
           Video Transcript
         </Label>
-        <Textarea
-          style={{resize: "none"}}
-          className="flex-grow overflow-scroll"
-        >
-          {upload.text}
-        </Textarea>
+        <div className="h-fit ">{upload.text}</div>
       </div>
     </div>
   );

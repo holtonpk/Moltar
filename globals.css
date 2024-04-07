@@ -332,3 +332,69 @@ input:focus {
     opacity: 1;
   }
 }
+
+.dark .upload-row-edge-grad-right {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    90deg,
+    hsl(var(--card) / 0) 0%,
+    hsl(var(--card) / 1) 99%
+  );
+}
+
+.upload-row-edge-grad-right {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    90deg,
+    rgba(243, 243, 243, 0) 0%,
+    rgba(243, 243, 243, 1) 99%
+  );
+}
+
+.dark .upload-row-edge-grad-left {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    270deg,
+    hsl(var(--card) / 0) 0%,
+    hsl(var(--card) / 1) 99%
+  );
+}
+
+.upload-row-edge-grad-left {
+  /* global 94%+ browsers support */
+  background: linear-gradient(
+    270deg,
+    hsl(var(--card) / 0) 0%,
+    hsl(var(--card) / 1) 99%
+  );
+}
+
+.slide-in-from-bottom {
+  animation: slide-in-from-bottom 0.5s ease-out;
+}
+
+@keyframes slide-in-from-bottom {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.transition-width {
+  transition: width 0.5s;
+}
+
+.group:hover .expand-hover-animation {
+  animation: fade-in 0.2s ease-in-out 200ms forwards;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
