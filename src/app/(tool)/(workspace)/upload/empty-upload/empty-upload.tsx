@@ -9,6 +9,8 @@ import {LucideProps} from "lucide-react";
 import {WebsiteScrape} from "../upload-dialogs/website-scrape";
 import {YoutubeScrape} from "../upload-dialogs/youtube-scrape";
 
+import MaxSizeDialog, {MaxSizeMessage} from "../upload-dialogs/max-size";
+
 export const EmptyUploadList = () => {
   const {uploadFile, setUploadedFile, setShowDialog} = useUploads()!;
   // const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
@@ -20,11 +22,11 @@ export const EmptyUploadList = () => {
 
       for (let file of files) {
         if (file.size > 10000000) {
-          toast({
-            title: `${file.name} is too large`,
-            description: "Please upload a file less than 10MB",
-            variant: "destructive",
+          setMaxSizeMessage({
+            title: "Sorry this file is too large for Moltar 😔 ",
+            description: "Try uploading a file less than 10MB",
           });
+          setOpenMaxSizeDialog(true);
         } else {
           const fileData = await uploadFile(file);
           setUploadedFile(fileData);
@@ -44,80 +46,115 @@ export const EmptyUploadList = () => {
   const [openYoutubeDialog, setOpenYoutubeDialog] = useState(false);
   const [youtubeScrape, setYoutubeScrape] = useState<YoutubeScrapeResult>();
 
+  // max size dialog states
+  const [openMaxSizeDialog, setOpenMaxSizeDialog] = useState(false);
+  const [maxSizeMessage, setMaxSizeMessage] = useState<MaxSizeMessage>({
+    title: "",
+    description: "",
+  });
+
   const scrapeUrl = async () => {
-    setScraping(true);
-    // see if the url is Youtube
-    const url = new URL(urlInput);
-    if (url.hostname === "www.youtube.com") {
-      await fetch("/api/scrape-youtube", {
-        method: "POST",
-        body: JSON.stringify({url: urlInput}),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.text) {
+    try {
+      setScraping(true);
+
+      const url = new URL(urlInput);
+      let scrapeResponse = null;
+
+      if (url.hostname === "www.youtube.com") {
+        scrapeResponse = await fetch("/api/scrape-youtube", {
+          method: "POST",
+          body: JSON.stringify({url: urlInput}),
+        }).then((res) => res.json());
+
+        if (scrapeResponse.text) {
+          const tokenResponse = await fetch("/api/get-tokens", {
+            method: "POST",
+            body: JSON.stringify({str: scrapeResponse.text}),
+          }).then((res) => res.json());
+
+          console.log("ttttt", tokenResponse);
+          console.log("url");
+
+          if (tokenResponse.isAcceptable) {
             setYoutubeScrape({
               success: true,
-              text: data.text,
-              id: data.id,
-              title: data.title,
-              thumbnail: data.thumbnail,
+              text: scrapeResponse.text,
+              id: scrapeResponse.id,
+              title: scrapeResponse.title,
+              thumbnail: scrapeResponse.thumbnail,
             });
             setOpenYoutubeDialog(true);
-          } else
-            toast({
-              title: "Error",
-              description: "We couldn't find any text from this video",
-              variant: "destructive",
+          } else {
+            setMaxSizeMessage({
+              title: "Sorry this video is too large for Moltar 😔 ",
+              description:
+                "Try uploading a shorter video or clips from the video",
             });
-          setScraping(false);
-        })
-        .catch((error) => {
+            setOpenMaxSizeDialog(true);
+          }
+        } else {
           toast({
             title: "Error",
-            description: error,
+            description: "We couldn't find any text from this video",
             variant: "destructive",
           });
-          setScraping(false);
-        });
-    } else {
-      await fetch("/api/scrape-text", {
-        method: "POST",
-        body: JSON.stringify({url: urlInput}),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.text)
+        }
+      } else {
+        scrapeResponse = await fetch("/api/scrape-text", {
+          method: "POST",
+          body: JSON.stringify({url: urlInput}),
+        }).then((res) => res.json());
+
+        if (scrapeResponse.text) {
+          const tokenResponse = await fetch("/api/get-tokens", {
+            method: "POST",
+            body: JSON.stringify({str: scrapeResponse.text}),
+          }).then((res) => {
+            console.log(res.json());
+            return res.json();
+          });
+
+          if (tokenResponse.isAcceptable) {
             setScrapeText({
               success: true,
-              text: data.text,
-              title: data.title,
-              favicon: data.favicon,
+              text: scrapeResponse.text,
+              title: scrapeResponse.title,
+              favicon: scrapeResponse.favicon,
             });
-          else
-            setScrapeText({
-              success: false,
-              text: "",
-              title: "",
-              favicon:
-                "https://firebasestorage.googleapis.com/v0/b/moltar-bc665.appspot.com/o/website.png?alt=media&token=19ac6d99-82e9-469d-badb-bdf0c39f626f",
+            setOpenScrapeDialog(true);
+          } else {
+            setMaxSizeMessage({
+              title: "Sorry this website has too much for Moltar to read 😔 ",
+              description: "Try using a smaller page",
             });
-          setScraping(false);
-          setOpenScrapeDialog(true);
-        })
-        .catch((error) => {
-          toast({
-            title: "Error",
-            description: error,
-            variant: "destructive",
+            setOpenMaxSizeDialog(true);
+          }
+        } else {
+          setScrapeText({
+            success: false,
+            text: "",
+            title: "",
+            favicon:
+              "https://firebasestorage.googleapis.com/v0/b/moltar-bc665.appspot.com/o/website.png?alt=media&token=19ac6d99-82e9-469d-badb-bdf0c39f626f",
           });
-          setScraping(false);
-        });
+          setOpenScrapeDialog(true);
+        }
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setScraping(false);
     }
   };
 
   const goBackFunction = () => {
+    setOpenYoutubeDialog(false);
     setOpenScrapeDialog(false);
+    setOpenMaxSizeDialog(false);
   };
 
   return (
@@ -184,7 +221,7 @@ export const EmptyUploadList = () => {
               }}
               value={urlInput}
               placeholder="Enter A URL"
-              className="border-none text-xl  p-6 rounded-md bg-card dark:bg-white/5 focus-visible:ring-theme-blue focus-visible:border-transparent pr-10 "
+              className="border-none text-xl  p-6 rounded-md bg-card dark:bg-white/5 focus-visible:ring-theme-blue focus-visible:border-transparent pl-3 pr-12"
               onChange={(e) => setUrlInput(e.target.value)}
             />
             <Button
@@ -242,6 +279,13 @@ export const EmptyUploadList = () => {
         scrapeResult={youtubeScrape}
         goBackFunction={goBackFunction}
         url={urlInput}
+      />
+      <MaxSizeDialog
+        open={openMaxSizeDialog}
+        setIsOpen={setOpenMaxSizeDialog}
+        goBackFunction={goBackFunction}
+        maxSizeMessage={maxSizeMessage}
+        setMaxSizeMessage={setMaxSizeMessage}
       />
     </>
   );

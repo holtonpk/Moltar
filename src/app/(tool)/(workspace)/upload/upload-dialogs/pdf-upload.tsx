@@ -213,7 +213,7 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
           />
 
           <Dialog open={showDialogLocal} onOpenChange={handleCloseDialog}>
-            <DialogContent className={`max-w-none w-fit  `}>
+            <DialogContent className={`max-w-none w-fit pt-10 `}>
               <div className={`flex  gap-10 items-center  flex-col `}>
                 {file && (
                   <Document
@@ -303,12 +303,12 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                     )}
                   </>
                 ) : (
-                  <div className="flex flex-col items-center   w-[300px]   ">
-                    <DialogHeader className="font-bold  text-lg ">
+                  <DialogHeader className="flex flex-col items-center   w-[300px]   ">
+                    <DialogTitle className="font-bold  text-lg ">
                       Successfully
                       {scanSuccess ? " scanned " : " uploaded "}
                       👍
-                    </DialogHeader>
+                    </DialogTitle>
                     <DialogDescription className="text-center ">
                       Your file will be in the upload panel. You can click on it
                       to anytime start a project
@@ -320,7 +320,7 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                       Start a new project
                       <Icons.chevronRight className="h-5 w-5" />
                     </Button>
-                  </div>
+                  </DialogHeader>
                 )}
               </div>
             </DialogContent>

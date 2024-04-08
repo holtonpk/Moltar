@@ -3,7 +3,7 @@ import {Icons} from "@/components/icons";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/use-toast";
 import {useUploads} from "@/context/upload-context";
-
+import MaxSizeDialog, {MaxSizeMessage} from "./max-size";
 export const FileInput = ({
   setIsOpen,
 }: {
@@ -54,11 +54,11 @@ export const FileInput = ({
       for (let file of pdfFiles) {
         // get the total words in the pdf file
         if (file.size > 10000000) {
-          toast({
-            title: `${file.name} is too large`,
-            description: "Please upload a file less than 10MB",
-            variant: "destructive",
+          setMaxSizeMessage({
+            title: "Sorry this file is too large for Moltar 😔 ",
+            description: "Try uploading a file less than 10MB",
           });
+          setOpenMaxSizeDialog(true);
         } else {
           const fileData = await uploadFile(file);
           setUploadedFile(fileData);
@@ -111,12 +111,23 @@ export const FileInput = ({
     }
   };
 
+  // max size dialog states
+  const [openMaxSizeDialog, setOpenMaxSizeDialog] = useState(false);
+  const [maxSizeMessage, setMaxSizeMessage] = useState<MaxSizeMessage>({
+    title: "",
+    description: "",
+  });
+
+  const goBackFunction = () => {
+    setOpenMaxSizeDialog(false);
+  };
+
   return (
     <>
       <div
         ref={dragContainer}
-        className={`w-full h-[200px] rounded-md bg-card border border-dashed sm:flex hidden flex-col items-center justify-center 
-        ${dragging ? "border-theme-blue" : "border-transparent"}
+        className={` w-full h-[200px] rounded-md bg-card/50 dark:bg-card/70 border  sm:flex hidden flex-col items-center justify-center 
+        ${dragging ? "border-theme-blue" : "border-border"}
         `}
       >
         <Icons.uploadCloud className="h-20 w-20 " />
@@ -138,6 +149,13 @@ export const FileInput = ({
           </span>
         </Button>
       </div>
+      <MaxSizeDialog
+        open={openMaxSizeDialog}
+        setIsOpen={setOpenMaxSizeDialog}
+        goBackFunction={goBackFunction}
+        maxSizeMessage={maxSizeMessage}
+        setMaxSizeMessage={setMaxSizeMessage}
+      />
     </>
   );
 };

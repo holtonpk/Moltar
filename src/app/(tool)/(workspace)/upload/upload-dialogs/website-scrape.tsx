@@ -133,9 +133,9 @@ export const WebsiteScrape = ({
                   value={text}
                 />
 
-                <DialogFooter className="gap-4 md:gap-0">
+                <DialogFooter className="gap-4 md:gap-0 max-w-full">
                   <Button onClick={goBackFunction} variant={"ghost"}>
-                    <Icons.arrowRight className="h-4 w-4 mr-2 rotate-180" />
+                    <Icons.arrowRight className="h-4 w-4 rotate-180" />
                     Back to Upload
                   </Button>
                   <Button
@@ -198,16 +198,16 @@ export const WebsiteScrape = ({
                   onChange={(e) => setText(e.target.value)}
                   style={{resize: "none"}}
                   placeholder="Manually copy and paste text here"
-                  className="h-[300px] overflow-scroll border border-border rounded-md p-2"
+                  className="h-[300px] w-full overflow-scroll border border-border rounded-md p-2"
                 ></Textarea>
-                <DialogFooter className="gap-4 md:gap-0">
+                <DialogFooter className="gap-4 md:gap-0 ">
                   <Button
                     onClick={() => {
                       setIsOpen(false);
                     }}
                     variant={"ghost"}
                   >
-                    <Icons.arrowRight className="h-4 w-4 mr-2 rotate-180" />
+                    <Icons.arrowRight className="h-4 w-4  rotate-180" />
                     Back to Upload
                   </Button>
                   <Button

@@ -1,4 +1,5 @@
 import "../../globals.css";
+import {Analytics} from "@vercel/analytics/react";
 
 export const metadata = {
   title: "Moltar ai",
@@ -8,6 +9,7 @@ export const metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en">
+      <Analytics />
       <body className="">{children}</body>
     </html>
   );
