@@ -64,7 +64,7 @@ export default function MobileNav() {
         variants={variants}
         className="absolute grid w-full gap-3 px-10 py-16"
       >
-        {mainNav.map((item, i) => (
+        {/* {mainNav.map((item, i) => (
           <div key={i} className="grid gap-3">
             <MenuItem>
               <Link
@@ -77,7 +77,7 @@ export default function MobileNav() {
             </MenuItem>
             <MenuItem className="my-3 h-px w-full bg-gray-300" />
           </div>
-        ))}
+        ))} */}
 
         <MenuItem key="Login">
           <Link href="/login" className="flex w-full font-semibold capitalize">
