@@ -3,7 +3,7 @@ import {Analytics} from "@vercel/analytics/react";
 
 export const metadata = {
   title: "Moltar ai",
-  description: "Moltar is a ....",
+  description: "Simplify you reading",
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
