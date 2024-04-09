@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useEffect} from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -27,17 +27,56 @@ import {
 } from "@/types";
 import {useChat} from "@/context/chat-context";
 import {circIn} from "framer-motion";
+import {Progress} from "@/components/ui/progress";
 
 export const Project = ({projectData}: {projectData: ProjectType}) => {
+  const [loading, setLoading] = React.useState(true);
+  const [loadingProgress, setLoadingProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    if (loadingProgress <= 95) {
+      setTimeout(() => {
+        setLoadingProgress(loadingProgress + 1);
+      }, 5);
+    }
+  }, [loadingProgress]);
+
+  const [projectDataLocal, setProjectDataLocal] = React.useState<ProjectType>();
+
+  React.useEffect(() => {
+    if (projectData) {
+      setLoadingProgress(100);
+      setProjectDataLocal(projectData);
+      setLoading(false);
+    }
+  }, [projectData]);
+
   return (
     <>
-      <DesktopProject projectData={projectData} />
-      <MobileProject projectData={projectData} />
+      {loading ? (
+        <div className="flex flex-col items-center justify-center h-full w-full gap-4">
+          <Icons.logo className="h-20 w-20 text-theme-blue" />
+          {/* <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" /> */}
+          <Progress
+            value={loadingProgress}
+            className="w-[200px] bg-primary/5 border border-border"
+          />
+        </div>
+      ) : (
+        <>
+          <DesktopProject projectData={projectDataLocal} />
+          <MobileProject projectData={projectDataLocal} />
+        </>
+      )}
     </>
   );
 };
 
-const DesktopProject = ({projectData}: {projectData: ProjectType}) => {
+const DesktopProject = ({
+  projectData,
+}: {
+  projectData: ProjectType | undefined;
+}) => {
   const [expandedChat, setExpandedChat] = React.useState(false);
   const container = React.useRef<HTMLDivElement>(null);
 
@@ -52,7 +91,7 @@ const DesktopProject = ({projectData}: {projectData: ProjectType}) => {
           {container.current?.clientWidth && (
             <div
               style={{width: container.current?.clientWidth * 0.55}}
-              className={`z-10   h-full  absolute  overflow-hidden    
+              className={`z-10 h-full  absolute  overflow-hidden    
 `}
             >
               {projectData && (
@@ -115,27 +154,33 @@ const DesktopProject = ({projectData}: {projectData: ProjectType}) => {
   );
 };
 
-const MobileProject = ({projectData}: {projectData: ProjectType}) => {
+const MobileProject = ({
+  projectData,
+}: {
+  projectData: ProjectType | undefined;
+}) => {
   const {project} = useChat()!;
 
   return (
     <div className="md:hidden block  min-h-full   ">
-      {((projectData && project?.chat === null) ||
-        project?.chat?.length === 0) && (
-        <>
-          {projectData.upload.type === "pdf" && (
-            <PdfFileViewMobile upload={projectData.upload as PDFUpload} />
-          )}
-          {projectData.upload.type === "url" && (
-            <UrlTextViewMobile upload={projectData.upload as UrlScrapeUpload} />
-          )}
-          {projectData.upload.type === "youtube" && (
-            <YoutubeVideoViewMobile
-              upload={projectData.upload as YoutubeScrapeUpload}
-            />
-          )}
-        </>
-      )}
+      {(project?.chat === null || project?.chat?.length === 0) &&
+        projectData && (
+          <>
+            {projectData.upload.type === "pdf" && (
+              <PdfFileViewMobile upload={projectData.upload as PDFUpload} />
+            )}
+            {projectData.upload.type === "url" && (
+              <UrlTextViewMobile
+                upload={projectData.upload as UrlScrapeUpload}
+              />
+            )}
+            {projectData.upload.type === "youtube" && (
+              <YoutubeVideoViewMobile
+                upload={projectData.upload as YoutubeScrapeUpload}
+              />
+            )}
+          </>
+        )}
       <Chat />
     </div>
   );
