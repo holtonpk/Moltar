@@ -13,6 +13,7 @@ import {
 
 import {db} from "@/config/firebase";
 import OpenAI from "openai";
+import {track} from "@vercel/analytics";
 
 import {ProjectType, ChatLog} from "@/types";
 
@@ -172,7 +173,26 @@ export const ChatProvider = ({children, projectId}: Props) => {
       .then((res) => res.json())
 
       .then((data) => {
-        setAiResponse(data.response);
+        if (data.success) {
+          setAiResponse(data.response);
+        } else {
+          console.log("Chat error ===>", {
+            message: data.response,
+            userId: currentUser?.uid ? currentUser?.uid : unSubscribedUserId,
+            projectId: projectId,
+            uploadId: project?.uploadId,
+          });
+          track("chat-error", {
+            message: data.response,
+            userId: currentUser?.uid ? currentUser?.uid : unSubscribedUserId,
+            projectId: projectId,
+            uploadId: project?.uploadId || "null",
+          });
+          setAiResponse(
+            "Moltar isn't working right now. Please try again later."
+          );
+        }
+
         setResponseLoading(false);
       });
     // setAiResponse(

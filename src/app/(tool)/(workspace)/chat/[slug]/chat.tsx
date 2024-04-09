@@ -11,7 +11,6 @@ import {ChatLog, UploadType} from "@/types";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/context/user-auth";
 import ReactMarkdown from "react-markdown";
-
 import {
   Dialog,
   DialogContent,
@@ -161,6 +160,7 @@ const Header = () => {
   const router = useRouter();
   async function goToNewProject() {
     const projectId = await createNewProject(project?.upload as UploadType);
+    console.log("goToNewProject", project?.upload);
     router.push(`/chat/${projectId}`);
   }
 

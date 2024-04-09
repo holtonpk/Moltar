@@ -61,28 +61,28 @@ export const UploadDialog = ({
         }).then((res) => res.json());
 
         if (scrapeResponse.text) {
-          const tokenResponse = await fetch("/api/get-tokens", {
-            method: "POST",
-            body: JSON.stringify({str: scrapeResponse.text}),
-          }).then((res) => res.json());
+          // const tokenResponse = await fetch("/api/get-tokens", {
+          //   method: "POST",
+          //   body: JSON.stringify({str: scrapeResponse.text}),
+          // }).then((res) => res.json());
 
-          if (tokenResponse.isAcceptable) {
-            setYoutubeScrape({
-              success: true,
-              text: scrapeResponse.text,
-              id: scrapeResponse.id,
-              title: scrapeResponse.title,
-              thumbnail: scrapeResponse.thumbnail,
-            });
-            setOpenYoutubeDialog(true);
-          } else {
-            setMaxSizeMessage({
-              title: "Sorry this video is too large for Moltar 😔 ",
-              description:
-                "Try uploading a shorter video or clips from the video",
-            });
-            setOpenMaxSizeDialog(true);
-          }
+          // if (tokenResponse.isAcceptable) {
+          setYoutubeScrape({
+            success: true,
+            text: scrapeResponse.text,
+            id: scrapeResponse.id,
+            title: scrapeResponse.title,
+            thumbnail: scrapeResponse.thumbnail,
+          });
+          setOpenYoutubeDialog(true);
+          // } else {
+          //   setMaxSizeMessage({
+          //     title: "Sorry this video is too large for Moltar 😔 ",
+          //     description:
+          //       "Try uploading a shorter video or clips from the video",
+          //   });
+          //   setOpenMaxSizeDialog(true);
+          // }
         } else {
           toast({
             title: "Error",

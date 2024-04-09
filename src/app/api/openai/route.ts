@@ -20,14 +20,16 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
+      success: true,
       response: completion.choices[0].message.content,
       // response: "this is a test",
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log("error =========", error);
     return NextResponse.json({
-      // response: completion.choices[0].message.content,
-      response: "Moltar isnt working right now. Please try again later.",
+      success: false,
+      response: error.message,
+      // response: "Moltar isnt working right now. Please try again later.",
     });
   }
 }

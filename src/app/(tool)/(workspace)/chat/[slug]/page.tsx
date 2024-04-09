@@ -31,6 +31,11 @@ export default function Page({params}: Params) {
         }/projects`,
         projectId
       );
+      // const docRef = doc(
+      //   db,
+      //   `users/${"VaWSM2NJbgfPVpILyv0OGdgK7A63"}/projects`,
+      //   "rb0y7"
+      // );
       const docSnap = await getDoc(docRef);
       const projectData = docSnap.data() as ProjectType;
       console.log("projectData ====", projectData);
@@ -41,6 +46,11 @@ export default function Page({params}: Params) {
         }/uploads`,
         projectData.uploadId
       );
+      // const uploadRef = doc(
+      //   db,
+      //   `users/${"VaWSM2NJbgfPVpILyv0OGdgK7A63"}/uploads`,
+      //   projectData.uploadId
+      // );
       const uploadSnap = await getDoc(uploadRef);
       const upload = uploadSnap.data();
       console.log("uploadData=====", upload);
