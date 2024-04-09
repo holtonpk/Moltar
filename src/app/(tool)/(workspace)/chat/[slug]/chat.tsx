@@ -107,7 +107,8 @@ export default Chat;
 const ChatError = () => {
   return (
     <div className=" w-fit max-w-[85%] rounded-[8px_8px_8px_8px] shadow-lg flex flex-col items-start  bg-theme-red/20 border border-theme-red p-3  ">
-      Sorry Moltar isn't working right now. The Moltar team has been notified
+      Sorry Moltar isn&apos;t working right now. The Moltar team has been
+      notified
     </div>
   );
 };
