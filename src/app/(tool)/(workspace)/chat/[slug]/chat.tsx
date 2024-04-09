@@ -24,7 +24,7 @@ import {useProjects} from "@/context/projects-context";
 import {toast} from "@/components/ui/use-toast";
 import "./chat-style.css";
 const Chat = () => {
-  const {responseLoading, project} = useChat()!;
+  const {responseLoading, project, chatError} = useChat()!;
 
   // useEffect(() => {
   //   setChat(chat);
@@ -85,6 +85,8 @@ const Chat = () => {
                 </div>
               ))}
               {responseLoading && <AiMessageRender />}
+
+              {chatError && <ChatError />}
             </div>
             <div className="h-fit  overflow-hidden w-full fixed md:absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
               <BigChatBox />
@@ -101,6 +103,14 @@ const Chat = () => {
 };
 
 export default Chat;
+
+const ChatError = () => {
+  return (
+    <div className=" w-fit max-w-[85%] rounded-[8px_8px_8px_8px] shadow-lg flex flex-col items-start  bg-theme-red/20 border border-theme-red p-3  ">
+      Sorry Moltar isn't working right now. The Moltar team has been notified
+    </div>
+  );
+};
 
 const Header = () => {
   const {project} = useChat()!;
@@ -167,16 +177,15 @@ const Header = () => {
   return (
     <div className=" w-full p-4 flex justify-center items-center    h-16  z-30 relative border-b border-border dark:border-none dark:border-white  bg-primary/5 md:bg-card md:dark:bg-[#444748] ">
       <button
-        className="absolute left-4 top-1/2 -translate-y-1/2 text-primary hover:opacity-60"
+        className="absolute pr-4 left-4 top-1/2 -translate-y-1/2 text-primary hover:opacity-60"
         onClick={goToNewProject}
       >
         <Icons.chevronLeft className="h-6 w-6 text-primary" />
       </button>
-
-      {openProject?.name && (
+      {openProject?.name ? (
         <button
           onClick={() => setOpenMenu(true)}
-          className="grid grid-cols-[16px_1fr] px-[30px] w-fit gap-2 items-center mx-auto justify-center hover:opacity-60 text-fade-in "
+          className="grid grid-cols-[16px_1fr] px-[35px] w-fit gap-2 items-center mx-auto justify-center hover:opacity-60 text-fade-in "
         >
           <div
             className="h-4 w-4 rounded-full"
@@ -187,7 +196,12 @@ const Header = () => {
             {openProject?.name}
           </h1>
         </button>
+      ) : (
+        <h1 className="font-bold  mx-auto w-fit  whitespace-nowrap capitalize  overflow-hidden text-ellipsis ">
+          New Chat
+        </h1>
       )}
+
       <Dialog open={openMenu} onOpenChange={setOpenMenu}>
         <DialogContent>
           <DialogHeader>

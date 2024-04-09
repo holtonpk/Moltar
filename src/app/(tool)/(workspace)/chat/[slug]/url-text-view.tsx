@@ -53,7 +53,7 @@ const UrlTextView = ({
         </Button> */}
       </div>
       <div className="flex flex-col gap-4 w-full p-6 px-8 pt-0 flex-grow">
-        <div className="w-full bg-muted  font-bold text-xl">{upload.title}</div>
+        <div className="w-full  font-bold text-xl">{upload.title}</div>
         <div className="grid grid-cols-[48px_1fr] items-center gap-2 bg-background p-2 rounded-md border border-border">
           <img src={upload.fav} className="w-12 h-12 rounded-md" />
           <Link

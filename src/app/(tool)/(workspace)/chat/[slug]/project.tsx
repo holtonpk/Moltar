@@ -28,12 +28,14 @@ import {
 import {useChat} from "@/context/chat-context";
 import {circIn} from "framer-motion";
 import {Progress} from "@/components/ui/progress";
+import {doc} from "firebase/firestore";
 
 export const Project = ({projectData}: {projectData: ProjectType}) => {
   const [loading, setLoading] = React.useState(true);
   const [loadingProgress, setLoadingProgress] = React.useState(0);
 
   React.useEffect(() => {
+    // if (loadingProgress == 100) return;
     if (loadingProgress <= 95) {
       setTimeout(() => {
         setLoadingProgress(loadingProgress + 1);
@@ -41,12 +43,8 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
     }
   }, [loadingProgress]);
 
-  const [projectDataLocal, setProjectDataLocal] = React.useState<ProjectType>();
-
   React.useEffect(() => {
     if (projectData) {
-      setLoadingProgress(100);
-      setProjectDataLocal(projectData);
       setLoading(false);
     }
   }, [projectData]);
@@ -64,8 +62,8 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
         </div>
       ) : (
         <>
-          <DesktopProject projectData={projectDataLocal} />
-          <MobileProject projectData={projectDataLocal} />
+          <DesktopProject projectData={projectData} />
+          <MobileProject projectData={projectData} />
         </>
       )}
     </>
@@ -80,75 +78,95 @@ const DesktopProject = ({
   const [expandedChat, setExpandedChat] = React.useState(false);
   const container = React.useRef<HTMLDivElement>(null);
 
+  console.log("projectData ddd", projectData);
+
+  const [containerWidth, setContainerWidth] = React.useState(0);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (!container.current) return;
+      const width = container.current.clientWidth;
+      if (width) {
+        setContainerWidth(width);
+      }
+    };
+
+    updateWidth();
+
+    // Optional: If you need to handle window resizing
+    window.addEventListener("resize", updateWidth);
+
+    // Cleanup the event listener
+    return () => window.removeEventListener("resize", updateWidth);
+  }, [expandedChat]); // Add any other dependencies that might affect the size
+
+  console.log("containerWidth", containerWidth);
+
   return (
     <div className="md:flex h-full  border border-border  bg-primary/5 dark:bg-background flex-grow hidden">
-      <div ref={container} className="z-20 relative flex-grow h-full flex">
+      <div ref={container} className="z-20  relative flex-grow h-full flex">
         <div
           className={`transition-all relative duration-300  ${
             expandedChat ? "w-[0%] " : " w-[55%]"
           }`}
         >
-          {container.current?.clientWidth && (
-            <div
-              style={{width: container.current?.clientWidth * 0.55}}
-              className={`z-10 h-full  absolute  overflow-hidden    
-`}
-            >
-              {projectData && (
-                <>
-                  {projectData.upload.type === "pdf" && (
-                    <PdfFileView upload={projectData?.upload as PDFUpload} />
-                  )}
-                  {projectData.upload.type === "url" && (
-                    <UrlTextView
-                      upload={projectData?.upload as UrlScrapeUpload}
-                      projectId={projectData.id}
-                    />
-                  )}
-                  {projectData.upload.type === "youtube" && (
-                    <YoutubeVideoView
-                      upload={projectData?.upload as YoutubeScrapeUpload}
-                    />
-                  )}
-                </>
-              )}
-            </div>
-          )}
-        </div>
-        {container.current?.clientWidth && (
           <div
             style={{
-              width: !expandedChat
-                ? container.current?.clientWidth * 0.45
-                : "100%",
+              // width: "100%",
+              width: containerWidth * 0.55,
             }}
-            className={`py-2 flex bg-[#E9ECED] dark:bg-background relative pl-4 flex-grow transition-transform duration-300
+            className={`z-10 h-full  absolute  overflow-hidden    
+`}
+          >
+            {projectData && (
+              <>
+                {projectData.upload.type === "pdf" && (
+                  <PdfFileView upload={projectData?.upload as PDFUpload} />
+                )}
+                {projectData.upload.type === "url" && (
+                  <UrlTextView
+                    upload={projectData?.upload as UrlScrapeUpload}
+                    projectId={projectData.id}
+                  />
+                )}
+                {projectData.upload.type === "youtube" && (
+                  <YoutubeVideoView
+                    upload={projectData?.upload as YoutubeScrapeUpload}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        <div
+          style={{
+            width: !expandedChat ? containerWidth * 0.45 : "100%",
+          }}
+          className={`py-2 flex bg-[#E9ECED] dark:bg-background relative pl-4 flex-grow transition-transform duration-300
 
   `}
-          >
-            <div className="absolute top-1/2 -translate-y-1/2 left-2 z-30  -translate-x-1/2 ">
-              <button
-                onClick={() => setExpandedChat(!expandedChat)}
-                className={`relative group
+        >
+          <div className="absolute top-1/2 -translate-y-1/2 left-2 z-30  -translate-x-1/2 ">
+            <button
+              onClick={() => setExpandedChat(!expandedChat)}
+              className={`relative group
     
     `}
-              >
-                <div
-                  className={` ${expandedChat ? "transform rotate-180" : ""}`}
-                >
-                  <HoverIcon />
-                </div>
-                <span className="expand-hover-animation opacity-0  pointer-events-none z-40 shadow-md absolute whitespace-nowrap top-1/2 -translate-y-1/2 left-full bg-background  rounded-md p-2 text-sm">
-                  <Icons.chevronLeft className="h-6 w-6 absolute left-0 -translate-x-1/2 fill-background text-background" />
-                  {!expandedChat ? <p>Hide Upload</p> : <p>Show Upload</p>}
-                </span>
-              </button>
-            </div>
-            <div className="w-full rounded-l-lg z-20 h-full  bg-card border border-border border-r-0  flex items-center justify-center relative overflow-hidden">
-              <Chat />
-            </div>
+            >
+              <div className={` ${expandedChat ? "transform rotate-180" : ""}`}>
+                <HoverIcon />
+              </div>
+              <span className="expand-hover-animation opacity-0  pointer-events-none z-40 shadow-md absolute whitespace-nowrap top-1/2 -translate-y-1/2 left-full bg-background  rounded-md p-2 text-sm">
+                <Icons.chevronLeft className="h-6 w-6 absolute left-0 -translate-x-1/2 fill-background text-background" />
+                {!expandedChat ? <p>Hide Upload</p> : <p>Show Upload</p>}
+              </span>
+            </button>
           </div>
-        )}
+          <div className="w-full rounded-l-lg z-20 h-full  bg-card border border-border border-r-0  flex items-center justify-center relative overflow-hidden">
+            <Chat />
+          </div>
+        </div>
       </div>
     </div>
   );

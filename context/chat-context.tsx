@@ -41,6 +41,8 @@ interface ChatContextType {
   responseRendering: boolean;
   animatedMessage: string;
   responseLoading: boolean;
+  chatError: boolean;
+  setChatError: (value: boolean) => void;
 }
 
 export const ChatProvider = ({children, projectId}: Props) => {
@@ -135,24 +137,40 @@ export const ChatProvider = ({children, projectId}: Props) => {
   const [responseRendering, setResponseRendering] = React.useState(false);
   const [animatedMessage, setAnimatedMessage] = React.useState("");
   const [aiResponse, setAiResponse] = React.useState("");
+  const [chatError, setChatError] = React.useState(false);
 
   useEffect(() => {
-    if (prompt) {
+    if (prompt && !chatError) {
       const UpdatedChat = {
         sender: "human",
         text: prompt,
       };
       // set the name & color of the project making it a valid project
-      if (project && !project.name && prompt.trim() !== "") {
-        generateNewProject(prompt);
-      }
 
       updateChat(UpdatedChat as ChatLog);
       setResponseRendering(true);
       setResponseLoading(true);
       fetchAiResponse(prompt);
     }
-  }, [prompt]);
+  }, [prompt, chatError]);
+
+  // useEffect(() => {
+  //   if (prompt && !chatError) {
+  //     const UpdatedChat = {
+  //       sender: "human",
+  //       text: prompt,
+  //     };
+  //     // set the name & color of the project making it a valid project
+  //     if (project && !project.name && prompt.trim() !== "") {
+  //       generateNewProject(prompt);
+  //     }
+
+  //     updateChat(UpdatedChat as ChatLog);
+  //     setResponseRendering(true);
+  //     setResponseLoading(true);
+  //     fetchAiResponse(prompt);
+  //   }
+  // }, [prompt, chatError]);
 
   const fetchAiResponse = async (prompt: string) => {
     console.log(
@@ -166,7 +184,6 @@ export const ChatProvider = ({children, projectId}: Props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // prompt: `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text  : ${project?.upload.text}`,
         prompt: `Respond to the following with a formatted response. ${prompt} based on the following text: ${project?.upload.text}`,
       }),
     })
@@ -175,53 +192,25 @@ export const ChatProvider = ({children, projectId}: Props) => {
       .then((data) => {
         if (data.success) {
           setAiResponse(data.response);
+          setResponseLoading(false);
+          setChatError(false);
         } else {
-          console.log("Chat error ===>", {
-            message: data.response,
-            userId: currentUser?.uid ? currentUser?.uid : unSubscribedUserId,
-            projectId: projectId,
-            uploadId: project?.uploadId,
-          });
           track("chat-error", {
             message: data.response,
             userId: currentUser?.uid ? currentUser?.uid : unSubscribedUserId,
             projectId: projectId,
             uploadId: project?.uploadId || "null",
+            date: new Date().toISOString(),
           });
-          setAiResponse(
-            "Moltar isn't working right now. Please try again later."
-          );
-        }
+          setChatError(true);
 
-        setResponseLoading(false);
+          setResponseLoading(false);
+        }
       });
-    // setAiResponse(
-    //   "The document provides an overview of the importance of time management in helping individuals achieve their goals and lead a more productive life. It highlights how effective time management can lead to increased efficiency, reduced stress levels, and improved overall well-being. The document emphasizes the significance of setting priorities, creating a to-do list, and practicing self-discipline to make the most of one's time. It also discusses the benefits of breaking tasks into smaller, more manageable parts and incorporating breaks into a daily routine. Ultimately, the document serves as a guide to help readers optimize their time and reach their full potential."
-    // );
-    // setResponseLoading(false);
   };
 
   useEffect(() => {
-    if (!responseLoading && responseRendering) {
-      // const animationInterval = setInterval(() => {
-      //   if (aiResponse.length > animatedMessage.length) {
-      //     setAnimatedMessage(
-      //       (prevMessage) => prevMessage + aiResponse[animatedMessage.length]
-      //     );
-      //   } else {
-      //     clearInterval(animationInterval);
-      //     setResponseRendering(false);
-
-      //     const UpdatedChat = {
-      //       sender: "ai",
-      //       text: aiResponse,
-      //     };
-      //     updateChat(UpdatedChat as ChatLog);
-      //     setAnimatedMessage("");
-      //   }
-      // }, 10); // Adjust the speed of the animation here (milliseconds)
-
-      // return () => clearInterval(animationInterval);
+    if (!responseLoading && responseRendering && !chatError) {
       setResponseRendering(false);
 
       const UpdatedChat = {
@@ -230,8 +219,11 @@ export const ChatProvider = ({children, projectId}: Props) => {
       };
       updateChat(UpdatedChat as ChatLog);
       setAnimatedMessage("");
+      if (project && !project.name && prompt.trim() !== "") {
+        generateNewProject(prompt);
+      }
     }
-  }, [aiResponse, animatedMessage, responseLoading]);
+  }, [aiResponse, animatedMessage, responseLoading, chatError, prompt]);
 
   async function generateNewProject(prompt: string) {
     const name = await generateProjectName(prompt);
@@ -303,6 +295,8 @@ export const ChatProvider = ({children, projectId}: Props) => {
     responseRendering,
     animatedMessage,
     responseLoading,
+    chatError,
+    setChatError,
   };
 
   return <ChatContext.Provider value={values}>{children}</ChatContext.Provider>;
