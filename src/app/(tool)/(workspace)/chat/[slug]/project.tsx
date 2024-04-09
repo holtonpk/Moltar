@@ -92,15 +92,18 @@ const DesktopProject = ({
     };
 
     updateWidth();
+    if (!container.current) return;
 
     // Optional: If you need to handle window resizing
-    window.addEventListener("resize", updateWidth);
+    container.current.addEventListener("resize", updateWidth);
 
     // Cleanup the event listener
-    return () => window.removeEventListener("resize", updateWidth);
-  }, [expandedChat]); // Add any other dependencies that might affect the size
+    return () => {
+      if (!container.current) return;
 
-  console.log("containerWidth", containerWidth);
+      container.current.removeEventListener("resize", updateWidth);
+    };
+  }, [expandedChat]); // Add any other dependencies that might affect the size
 
   return (
     <div className="md:flex h-full  border border-border  bg-primary/5 dark:bg-background flex-grow hidden">

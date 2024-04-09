@@ -272,10 +272,10 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                   <>
                     {scanning ? (
                       <div className="flex flex-col items-center   [300px] ">
-                        <DialogHeader className="font-bold text-lg ">
+                        <DialogHeader className="font-bold text-lg text-center ">
                           Scanning Your Document for text
                         </DialogHeader>
-                        <DialogDescription>
+                        <DialogDescription className="text-center">
                           This will only take a few minutes
                         </DialogDescription>
                         <Button className="bg-theme-blue hover:bg-theme-blue text-white mt-4 ">
@@ -285,11 +285,11 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                       </div>
                     ) : (
                       <div className="flex flex-col items-center   w-[300px] ">
-                        <DialogHeader className="font-bold text-lg ">
+                        <DialogHeader className="font-bold text-lg text-center ">
                           We didn&apos;t find any text in your pdf. Would you
                           like us to scan it?
                         </DialogHeader>
-                        <DialogDescription>
+                        <DialogDescription className="text-center">
                           This will allow moltar to read your upload
                         </DialogDescription>
                         <Button
@@ -304,7 +304,7 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
                   </>
                 ) : (
                   <DialogHeader className="flex flex-col items-center   w-[300px]   ">
-                    <DialogTitle className="font-bold  text-lg ">
+                    <DialogTitle className="font-bold  text-lg text-center ">
                       Successfully
                       {scanSuccess ? " scanned " : " uploaded "}
                       👍

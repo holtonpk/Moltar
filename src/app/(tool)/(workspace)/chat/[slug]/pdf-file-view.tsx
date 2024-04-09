@@ -23,8 +23,6 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  console.log("loading document =============>", upload);
-
   const [pdfLoading, setPdfLoading] = React.useState<boolean>(true);
 
   async function onDocumentLoadSuccess({numPages}: {numPages: number}) {
@@ -98,13 +96,35 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
     }
   };
 
+  // useEffect(() => {
+  //   calculateWidth();
+  //   const container = containerRef.current;
+  //   if (container) {
+  //     calculateWidth();
+  //   }
+  // }, []);
+
   useEffect(() => {
-    calculateWidth();
-    const container = containerRef.current;
-    if (container) {
+    const updateWidth = () => {
+      if (!containerRef.current) return;
       calculateWidth();
-    }
-  }, []);
+    };
+
+    updateWidth();
+
+    if (!containerRef.current) return;
+
+    containerRef.current.addEventListener("resize", updateWidth);
+
+    // Cleanup the event listener
+    return () => {
+      if (!containerRef.current) return;
+
+      containerRef.current.removeEventListener("resize", updateWidth);
+    };
+  }, [containerRef.current]); // Add any other dependencies that might affect the size
+
+  console.log("containerWidth", containerWidth);
 
   return (
     <div className="flex flex-col  items-center justify-center h-full w-full  shadow-2xl relative ">
@@ -389,17 +409,19 @@ const PdfPage = ({
 }) => {
   const [loading, setLoading] = React.useState(true);
 
+  console.log("containerWidth", containerWidth);
+
   return (
     <div id={`page-number-${index + 1}`} className="h-full w-full  ">
       <Page
         width={containerWidth}
         onLoadSuccess={() => setLoading(false)}
         className={`shadow-lg  border rounded-lg  p-1 
-        
         ${loading ? "hidden" : "visible"}
+      
         `}
         pageNumber={index + 1}
-      ></Page>
+      />
       {loading && (
         <Skeleton
           style={{width: containerWidth}}
