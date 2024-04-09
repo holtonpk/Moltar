@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import {useProjects} from "@/context/projects-context";
 import {toast} from "@/components/ui/use-toast";
+import {motion} from "framer-motion";
+
 import "./chat-style.css";
 const Chat = () => {
   const {responseLoading, project, chatError} = useChat()!;
@@ -54,15 +56,19 @@ const Chat = () => {
   return (
     <>
       {!project?.chat || project.chat?.length === 0 ? (
-        <div className="flex flex-col  items-center justify-center mt-4 md:mt-0   flex-grow  w-full  relative  z-10 ">
-          <div className="px-4 w-[95%] min-w-[300px] md:w-fit">
-            <div className=" flex-col gap-2 items-center mt-auto hidden md:flex">
-              <h2 className="font-bold mt-auto text-theme-blue">
+        <div className="flex flex-col   items-center justify-center mt-4 md:mt-0   flex-grow  w-full  relative  z-10 ">
+          <div className="  w-[85%]  min-w-[300px] ">
+            <div className="flex flex-col gap-4 mb-4  p-8  pb-0 rounded-lg">
+              <div className="  rounded-md  flex-col gap-2 items-center mt-auto hidden md:flex">
+                {/* <h2 className="font-bold mt-auto text-theme-blue">
                 Enter your prompt here
               </h2>
-              <Icons.chevronDown className="h-6 w-6 text-theme-blue animate-bounce" />
+              <Icons.chevronDown className="h-6 w-6 text-theme-blue animate-bounce" /> */}
+                <Icons.logo className="h-16 w-16 text-theme-blue" />
+                <p className="font-bold text-2xl">How can Moltar help?</p>
+              </div>
+              <ChatBox />
             </div>
-            <ChatBox />
             <PresetChat />
           </div>
         </div>
@@ -327,34 +333,51 @@ const HumanMessage = ({message}: {message: string}) => {
 
 const ChatBox = () => {
   const {setPrompt} = useChat()!;
-  const promptRef = React.useRef<HTMLTextAreaElement>(null);
+  const [inputValue, setInputValue] = React.useState<string>("");
 
   const sendMessage = () => {
-    setPrompt(promptRef.current?.value ?? "");
-    promptRef.current!.value = "";
+    setPrompt(inputValue);
+    setInputValue("");
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault(); // Prevents inserting a new line
       sendMessage();
     }
   };
 
+  // useEffect(() => {
+  //   document.getElementById("prompt-input")?.focus();
+
+  //   // return () => {
+  // }, []);
+
   return (
     <div className="w-full p-0 pt-0  px-0 s ">
       <div className="grid grid-cols-[1fr_42px] items-center  border-gradient  p-[4px] shadow-xl ">
-        <textarea
-          ref={promptRef}
+        <input
+          autoFocus
+          id="prompt-input"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
           placeholder="Enter your prompt here..."
-          className="w-full p-2 rounded-l-lg h-[42px] rounded-r-none  textarea-no-resize bg-card dark:bg-[#444748] "
+          className="w-full p-2 rounded-l-lg h-fit rounded-r-none  textarea-no-resize bg-card  "
           onKeyDown={handleKeyDown}
         />
         <button
           onClick={sendMessage}
-          className=" p-2 h-[42px] w-[42px] flex items-center justify-center rounded-r-lg bg-card dark:bg-[#444748]"
+          disabled={inputValue === ""}
+          className={`p-2 h-full w-[42px] flex items-center justify-center rounded-r-lg bg-card 
+          
+          `}
         >
-          <Icons.send className="h-6 w-6 text-theme-green " />
+          <Icons.send
+            className={`h-6 w-6 text-theme-green 
+          ${inputValue === "" ? "opacity-30 " : ""}
+          
+          `}
+          />
         </button>
       </div>
     </div>
@@ -400,71 +423,108 @@ const BigChatBox = () => {
 const PresetChat = () => {
   const {setPrompt} = useChat()!;
 
-  const selectPreset = (message: string) => {
-    setPrompt(message);
+  const container = {
+    hidden: {opacity: 1, scale: 0},
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delayChildren: 0.75,
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const item = {
+    hidden: {y: 20, opacity: 0},
+    visible: {
+      y: 0,
+      opacity: 1,
+    },
   };
 
   return (
     <>
-      <div className="flex flex-col items-center gap-2 md:gap-4 mt-4 w-full">
-        <button
-          onClick={() => setPrompt("Create a detailed note outline")}
-          className="border border-border hover:border-theme-blue w-full rounded-lg  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
-        >
-          <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-green/40 p-1 md:p-2 rounded-md flex justify-center items-center">
-              <Icons.newspaper className="h-4 w-4 md:h-6 md:w-6 text-theme-green" />
+      <motion.ul
+        variants={container}
+        className="flex flex-col items-center gap-2 md:gap-4 mt-4 w-full   p-0 "
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div className="w-full" variants={item}>
+          <button
+            onClick={() => setPrompt("Create a detailed note outline")}
+            className="border border-border hover:bg-primary/5 w-full rounded-lg group  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
+          >
+            <div className="flex gap-2 w-fit items-center">
+              <div className="h-10  aspect-square bg-theme-green/40 p-1 md:p-2 rounded-md flex justify-center items-center">
+                <Icons.newspaper className="h-4 w-4 md:h-6 md:w-6 text-theme-green" />
+              </div>
+              <h1 className="font-bold capitalize text-sm md:text-base">
+                Create a detailed note outline
+              </h1>
             </div>
-            <h1 className="font-bold capitalize text-sm md:text-base">
-              Create a detailed note outline
-            </h1>
-          </div>
-          <Icons.chevronRight className="h-4 w-4 md:h-6 md:w-6" />
-        </button>
-        <button
-          onClick={() => setPrompt("Create 5 questions to help me study")}
-          className="border border-border hover:border-theme-blue w-full group rounded-lg  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
-        >
-          <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-blue/40 p-1 md:p-2 rounded-md flex justify-center items-center">
-              <Icons.pencil className="h-4 w-4 md:h-6 md:w-6 text-theme-blue" />
+            <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
+              <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
             </div>
-            <h1 className="font-bold capitalize text-sm md:text-base">
-              5 questions to help me study
-            </h1>
-          </div>
-          <Icons.chevronRight className="h-4 w-4 md:h-6 md:w-6" />
-        </button>
-        <button
-          onClick={() => setPrompt("list the main points")}
-          className="border border-border hover:border-theme-blue w-full rounded-lg  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
-        >
-          <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-orange/40 p-1 md:p-2 rounded-md flex justify-center items-center">
-              <Icons.chart className="h-4 w-4 md:h-6 md:w-6 text-theme-orange" />
+          </button>
+        </motion.div>
+        <motion.div className="w-full" variants={item}>
+          <button
+            onClick={() => setPrompt("Create 5 questions to help me study")}
+            className="border border-border  hover:bg-primary/5 w-full group rounded-lg  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
+          >
+            <div className="flex gap-2 w-fit items-center">
+              <div className="h-10  aspect-square bg-theme-blue/40 p-1 md:p-2 rounded-md flex justify-center items-center">
+                <Icons.pencil className="h-4 w-4 md:h-6 md:w-6 text-theme-blue" />
+              </div>
+              <h1 className="font-bold capitalize text-sm md:text-base">
+                5 questions to help me study
+              </h1>
             </div>
-            <h1 className="font-bold capitalize text-sm md:text-base">
-              List the main points
-            </h1>
-          </div>
-          <Icons.chevronRight className="h-4 w-4 md:h-6 md:w-6" />
-        </button>
-        <button
-          onClick={() => setPrompt("Create a short summary")}
-          className="hidden md:flex border border-border hover:border-theme-blue w-full rounded-lg h-16 md:h-20 p-2 md:p-4 flex-row items-center justify-between cursor-pointer"
-        >
-          <div className="flex gap-2 w-fit items-center">
-            <div className="h-10  aspect-square bg-theme-purple/40 p-1 md:p-2 rounded-md flex justify-center items-center">
-              <Icons.bookText className="h-4 w-4 md:h-6 md:w-6 text-theme-purple" />
+            <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
+              <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
             </div>
-            <h1 className="font-bold capitalize text-sm md:text-base">
-              Give me a short summary
-            </h1>
-          </div>
+          </button>
+        </motion.div>
+        <motion.div className="w-full" variants={item}>
+          <button
+            onClick={() => setPrompt("list the main points")}
+            className="border border-border  hover:bg-primary/5 w-full rounded-lg group h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
+          >
+            <div className="flex gap-2 w-fit items-center">
+              <div className="h-10  aspect-square bg-theme-orange/40 p-1 md:p-2 rounded-md flex justify-center items-center">
+                <Icons.chart className="h-4 w-4 md:h-6 md:w-6 text-theme-orange" />
+              </div>
+              <h1 className="font-bold capitalize text-sm md:text-base">
+                List the main points
+              </h1>
+            </div>
+            <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
+              <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
+            </div>
+          </button>
+        </motion.div>
+        <motion.div className="w-full" variants={item}>
+          <button
+            onClick={() => setPrompt("Create a short summary")}
+            className="hidden md:flex border border-border group  hover:bg-primary/5 w-full rounded-lg h-16 md:h-20 p-2 md:p-4 flex-row items-center justify-between cursor-pointer"
+          >
+            <div className="flex gap-2 w-fit items-center">
+              <div className="h-10  aspect-square bg-theme-purple/40 p-1 md:p-2 rounded-md flex justify-center items-center">
+                <Icons.bookText className="h-4 w-4 md:h-6 md:w-6 text-theme-purple" />
+              </div>
+              <h1 className="font-bold capitalize text-sm md:text-base">
+                Give me a short summary
+              </h1>
+            </div>
 
-          <Icons.chevronRight className="h-4 w-4 md:h-6 md:w-6" />
-        </button>
-      </div>
+            <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
+              <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
+            </div>
+          </button>
+        </motion.div>
+      </motion.ul>
     </>
   );
 };

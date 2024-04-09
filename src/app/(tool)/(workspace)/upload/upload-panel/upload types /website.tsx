@@ -1,5 +1,5 @@
 import React from "react";
-import {UploadOptions} from "../components/upload-options";
+import {UploadPreview} from "../components/upload-options";
 import {UploadPanelContext} from "../context/upload-panel-context";
 import {UrlScrapeUpload} from "@/types";
 import {Icons} from "@/components/icons";
@@ -40,7 +40,7 @@ export const UrlUpload = ({
           </div>
         </div>
       </div>
-      <div
+      {/* <div
         className={`px-6  flex items-center justify-center rounded-t-md absolute bg-card/80 pb-4 z-30 bottom-0 overflow-hidden h-fit w-[100%] left-1/2 -translate-x-1/2 transition-transform ${
           openOptions
             ? "translate-y-0"
@@ -63,7 +63,8 @@ export const UrlUpload = ({
           open={openOptions}
           setOpen={setOpenOptions}
         />
-      </div>
+      </div> */}
+      <UploadPreview file={file} />
     </div>
   );
 };

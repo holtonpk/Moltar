@@ -35,25 +35,23 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const directions = "Create a detailed note outline of the main points";
-
-  const prompt = `create a detailed note outline of the main points`;
+  const directions = "Create a detailed note outline";
 
   try {
     const contentMessages = await createChunks(transcript);
-    const completion = await openai.chat.completions.create({
-      messages: [
-        ...contentMessages,
-        {
-          role: "system",
-          content: prompt,
-        },
-      ],
-      model: "gpt-3.5-turbo",
-    });
+    // const completion = await openai.chat.completions.create({
+    //   messages: [
+    //     ...contentMessages,
+    //     {
+    //       role: "system",
+    //       content: prompt,
+    //     },
+    //   ],
+    //   model: "gpt-3.5-turbo",
+    // });
 
     return NextResponse.json({
-      response: completion.choices[0].message.content,
+      response: contentMessages,
       // response: "this is a test",
     });
   } catch (error) {
@@ -67,46 +65,49 @@ export async function GET() {
 
 async function createChunks(text: string) {
   const tokenizer = new GPT4Tokenizer({type: "gpt3"}); // or 'codex'
-  const estimatedTokenCount = tokenizer.chunkText(text, 2000); // 7
+  const chunkedText = tokenizer.chunkText(text, 1500); // 7
 
   const uploadType = "podcast script";
 
-  type Message = {
-    role: "system";
-    content: string;
-    name?: string;
-  };
+  let chunks = [];
 
-  let messages: Message[] = [
-    {
-      role: "system",
-      content: `You will be receiving a ${uploadType} in chunks. Your task is to wait for all the chunks and then follow further instructions Wait for me to start.`,
-    },
-  ];
-
-  for (let i = 0; i < estimatedTokenCount.length; i++) {
-    const instructions = `=== INSTRUCTIONS === 
-    Your task is ONLY to confirm receipt of this chunk, chunk ${i + 1}/${
-      estimatedTokenCount.length
-    }, and not generate any text.`;
-
-    const chunkIdentifier = `=== CHUNK ${i + 1}/${
-      estimatedTokenCount.length
-    } ===`;
-
-    const chunkEnder = `=== END OF CHUNK ${i + 1}/${
-      estimatedTokenCount.length
-    } ===`;
-
-    const message: Message = {
-      role: "system",
-      content: `${instructions} \n ${chunkIdentifier} \n ${estimatedTokenCount[i].text} \n ${chunkEnder}`,
-    };
-
-    messages.push(message);
+  for (let i = 0; i < chunkedText.length; i++) {
+    chunks.push(chunkedText[i].text);
   }
 
-  return messages;
+  // let messages: Message[] = [
+  //   {
+  //     role: "system",
+  //     content: `You will be receiving a ${uploadType} in chunks. Your task is to wait for all the chunks and then follow further instructions Wait for me to start.`,
+  //   },
+  // ];
+
+  // for (let i = 0; i < estimatedTokenCount.length; i++) {
+  //   const instructions = `=== INSTRUCTIONS ===
+  //   Your task is ONLY to confirm receipt of this chunk, chunk ${i + 1}/${
+  //     estimatedTokenCount.length
+  //   }, and not generate any text.`;
+
+  //   const chunkIdentifier = `=== CHUNK ${i + 1}/${
+  //     estimatedTokenCount.length
+  //   } ===`;
+
+  //   const chunkEnder = `=== END OF CHUNK ${i + 1}/${
+  //     estimatedTokenCount.length
+  //   } ===`;
+
+  //   const message: Message = {
+  //     role: "system",
+  //     content: `${instructions} \n ${chunkIdentifier} \n ${estimatedTokenCount[i].text} \n ${chunkEnder}`,
+  //   };
+
+  //   messages.push(message);
+  // }
+
+  return {
+    totalChunks: chunks.length,
+    chunks,
+  };
 }
 
 const transcript =
