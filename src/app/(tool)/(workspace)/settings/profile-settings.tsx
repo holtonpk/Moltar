@@ -140,6 +140,8 @@ const Avatar = () => {
     });
   };
 
+  console.log("pp", profilePic);
+
   return (
     <div className="grid grid-cols-[1fr_96px] border-border justify-between w-full border rounded-md p-4 gap-2 relative pb-[72px]">
       <div className="grid">

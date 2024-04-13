@@ -23,32 +23,31 @@ export default function Page({params}: Params) {
 
   React.useEffect(() => {
     const fetchProject = async (projectId: string) => {
-      console.log("fethcing ******");
       const docRef = doc(
         db,
         `users/${
-          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+          // currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+          "xgIi2eEedgQZ1ZZAQEWXOMdRhDA3"
         }/projects`,
         projectId
       );
 
       const docSnap = await getDoc(docRef);
       const projectData = docSnap.data() as ProjectType;
-      console.log("projectData ====", projectData);
-      const uploadRef = doc(
-        db,
-        `users/${
-          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
-        }/uploads`,
-        projectData.uploadId
-      );
-      const uploadSnap = await getDoc(uploadRef);
-      const upload = uploadSnap.data();
-      console.log("uploadData=====", upload);
+
+      // const uploadRef = doc(
+      //   db,
+      //   `users/${
+      //     currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+      //   }/uploads`,
+      //   projectData.uploadId
+      // );
+      // const uploadSnap = await getDoc(uploadRef);
+      // const upload = uploadSnap.data();
 
       const projectLocal = {
         ...projectData,
-        upload: upload,
+        // upload: upload,
       } as ProjectType;
 
       setProject(projectLocal);
@@ -58,7 +57,7 @@ export default function Page({params}: Params) {
     fetchProject(params.slug);
   }, [params.slug, unSubscribedUserId, currentUser?.uid]);
 
-  console.log("project 111111", params.slug, project);
+  console.log("fetching project", currentUser?.uid);
 
   return (
     <ChatProvider projectId={params.slug}>

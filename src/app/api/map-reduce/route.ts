@@ -23,6 +23,8 @@ import {StringOutputParser} from "@langchain/core/output_parsers";
 //   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 // });
 
+export const maxDuration = 300; // 5 minutes
+
 // Initialize the OpenAI model
 export async function POST(req: Request) {
   const {prompt, text} = await req.json();

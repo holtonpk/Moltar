@@ -78,8 +78,6 @@ const DesktopProject = ({
   const [expandedChat, setExpandedChat] = React.useState(false);
   const container = React.useRef<HTMLDivElement>(null);
 
-  console.log("projectData ddd", projectData);
-
   const [containerWidth, setContainerWidth] = React.useState(0);
 
   useEffect(() => {

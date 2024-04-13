@@ -8,6 +8,8 @@ const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 });
 
+export const maxDuration = 300; // 5 minutes
+
 const OPEN_AI_TOKEN_Limit = 1500;
 
 export async function POST(req: Request) {
