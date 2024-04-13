@@ -11,6 +11,7 @@ import {ChatLog, UploadType} from "@/types";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/context/user-auth";
 import ReactMarkdown from "react-markdown";
+import {BookText, Newspaper, Pencil, List} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,8 +23,8 @@ import {
 } from "@/components/ui/dialog";
 import {useProjects} from "@/context/projects-context";
 import {toast} from "@/components/ui/use-toast";
-import {motion} from "framer-motion";
-
+import {color, motion} from "framer-motion";
+import NavBackground from "@/components/nav-background";
 import "./chat-style.css";
 const Chat = () => {
   const {responseLoading, project, chatError} = useChat()!;
@@ -57,15 +58,17 @@ const Chat = () => {
     <>
       {!project?.chat || project.chat?.length === 0 ? (
         <div className="flex flex-col   items-center justify-center mt-4 md:mt-0   flex-grow  w-full  relative  z-10 ">
-          <div className="  w-[85%]  min-w-[300px] ">
-            <div className="flex flex-col gap-4 mb-4  p-8  pb-0 rounded-lg">
+          <div className="w-[90%]  md:w-[85%]  min-w-[300px] ">
+            <div className="flex flex-col gap-4 mb-4 md:p-  pb-0 rounded-lg">
               <div className="  rounded-md  flex-col gap-2 items-center mt-auto hidden md:flex">
                 {/* <h2 className="font-bold mt-auto text-theme-blue">
                 Enter your prompt here
               </h2>
               <Icons.chevronDown className="h-6 w-6 text-theme-blue animate-bounce" /> */}
                 <Icons.logo className="h-16 w-16 text-theme-blue" />
-                <p className="font-bold text-2xl">How can Moltar help?</p>
+                <p className="font-bold text-2xl poppins-bold">
+                  How can Moltar help?
+                </p>
               </div>
               <ChatBox />
             </div>
@@ -96,7 +99,7 @@ const Chat = () => {
             </div>
             <div className="h-fit  overflow-hidden w-full fixed md:absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
               <BigChatBox />
-              <p className="text-[12px] text-muted-foreground text-center mt-2 ">
+              <p className="text-[12px] text-muted-foreground text-center mt-2   poppins-regular">
                 Moltar can make mistakes. Consider checking important
                 information.
               </p>
@@ -182,13 +185,15 @@ const Header = () => {
   }
 
   return (
-    <div className=" w-full p-4 flex justify-center items-center    h-16  z-30 relative border-b border-border dark:border-none dark:border-white  bg-primary/5 md:bg-card md:dark:bg-[#444748] ">
-      <button
-        className="absolute pr-4 left-4 top-1/2 -translate-y-1/2 text-primary hover:opacity-60"
-        onClick={goToNewProject}
-      >
-        <Icons.chevronLeft className="h-6 w-6 text-primary" />
-      </button>
+    <div className=" w-full p-4 flex justify-center items-center  poppins-bold  h-16  z-30 relative border-b border-border dark:border-none dark:border-white  bg-primary/5 md:bg-card md:dark:bg-[#444748] ">
+      {currentUser && currentUser?.uid && (
+        <button
+          className="absolute pr-4 left-4 top-1/2 -translate-y-1/2 text-primary hover:opacity-60"
+          onClick={goToNewProject}
+        >
+          <Icons.chevronLeft className="h-6 w-6 text-primary" />
+        </button>
+      )}
       {openProject?.name ? (
         <button
           onClick={() => setOpenMenu(true)}
@@ -304,38 +309,57 @@ const AiMessage = ({message}: {message: string}) => {
   };
 
   return (
-    <div className="max-w-full  w-fit rounded-[8px_8px_8px_0px] shadow-lg bg-theme-blue/20  mr-auto  relative group prose">
-      <ReactMarkdown className={"gap-2 p-4 px-6 flex flex-col items-start"}>
-        {message}
-      </ReactMarkdown>
+    <div className="bg p-[1px] shadow-lg rounded-[8px_8px_8px_0px] overflow-hidden  border-gradient-chat w-fit mr-auto">
+      <div className="max-w-full  w-fit rounded-[8px_8px_8px_0px] bg-background dark:bg-[#444748] border border-border    relative group prose">
+        <ReactMarkdown
+          className={"gap-2 p-4 px-6 flex flex-col items-start   "}
+        >
+          {message}
+        </ReactMarkdown>
 
-      <button
-        onClick={copyToClipboard}
-        className="hidden group-hover:block absolute top-3 right-3 hover:opacity-80 fade-in-fast"
-      >
-        {copied ? (
-          <Icons.check className="h-4 w-4 primary" />
-        ) : (
-          <Icons.copy className="h-4 w-4 primary" />
-        )}
-      </button>
+        <button
+          onClick={copyToClipboard}
+          className="hidden group-hover:block absolute top-3 right-3 hover:opacity-80 fade-in-fast"
+        >
+          {copied ? (
+            <Icons.check className="h-4 w-4 primary" />
+          ) : (
+            <Icons.copy className="h-4 w-4 primary" />
+          )}
+        </button>
+        {/* <NavBackground /> */}
+      </div>
     </div>
   );
 };
 
 const HumanMessage = ({message}: {message: string}) => {
   return (
-    <div className="max-w-[85%] w-fit rounded-[8px_8px_0px_8px] shadow-lg  bg-theme-orange/20 p-3 ml-auto">
+    <div className="max-w-[85%] w-fit rounded-[8px_8px_0px_8px] shadow-lg  border border-theme-blue bg-theme-blue/20 p-3 ml-auto   poppins-regular">
       {message}
     </div>
   );
 };
 
 const ChatBox = () => {
-  const {setPrompt} = useChat()!;
+  const {setPrompt, chat} = useChat()!;
   const [inputValue, setInputValue] = React.useState<string>("");
+  const {projects} = useProjects()!;
+  const {currentUser} = useAuth()!;
 
   const sendMessage = () => {
+    if (
+      projects &&
+      projects?.length > 1 &&
+      (!currentUser || !currentUser?.uid)
+    ) {
+      toast({
+        title: "You've reached the limit without an account",
+        description: "Upgrade to continue chatting, don't worry it's free!",
+      });
+      return;
+    }
+
     setPrompt(inputValue);
     setInputValue("");
   };
@@ -362,7 +386,7 @@ const ChatBox = () => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Enter your prompt here..."
-          className="w-full p-2 rounded-l-lg h-fit rounded-r-none  textarea-no-resize bg-card  "
+          className="w-full p-2 rounded-l-lg h-fit rounded-r-none   poppins-regular textarea-no-resize bg-card  "
           onKeyDown={handleKeyDown}
         />
         <button
@@ -384,11 +408,22 @@ const ChatBox = () => {
   );
 };
 const BigChatBox = () => {
-  const {setPrompt} = useChat()!;
+  const {setPrompt, chat} = useChat()!;
+
+  const {setShowLoginModal, currentUser} = useAuth()!;
 
   const promptRef = React.useRef<HTMLTextAreaElement>(null);
 
   const sendMessage = () => {
+    console.log("chat", currentUser);
+    if (chat && chat?.length >= 2 && (!currentUser || !currentUser?.uid)) {
+      toast({
+        title: "You've reached the limit without an account",
+        description: "Upgrade to continue chatting, don't worry it's free!",
+      });
+      setShowLoginModal(true);
+      return;
+    }
     setPrompt(promptRef.current?.value ?? "");
     promptRef.current!.value = "";
   };
@@ -406,7 +441,7 @@ const BigChatBox = () => {
         <textarea
           ref={promptRef}
           placeholder="Enter your prompt here..."
-          className="w-full p-2 rounded-l-lg h-[84px]  textarea-no-resize bg-card dark:bg-[#444748] "
+          className="w-full p-2 rounded-l-lg h-[84px]  poppins-regular textarea-no-resize bg-card dark:bg-[#444748] "
           onKeyDown={handleKeyDown}
         />
         <button
@@ -443,87 +478,71 @@ const PresetChat = () => {
     },
   };
 
+  const presets = [
+    {
+      title: "Create a detailed note outline",
+      icon: Newspaper,
+      prompt: "Create a detailed note outline",
+      color: "text-theme-green",
+      bgColor: "bg-theme-green/40",
+    },
+    {
+      title: "5 questions to help me study",
+      icon: Pencil,
+      prompt: "Create 5 questions to help me study",
+      color: "text-theme-blue",
+      bgColor: "bg-theme-blue/40",
+    },
+    {
+      title: "List the main points",
+      icon: List,
+      prompt: "List the main points",
+      color: "text-theme-orange",
+      bgColor: "bg-theme-orange/40",
+    },
+    {
+      title: "Give me a short summary",
+      icon: BookText,
+      prompt: "Create a short summary",
+      color: "text-theme-purple",
+      bgColor: "bg-theme-purple/40",
+    },
+  ];
+
   return (
     <>
       <motion.ul
         variants={container}
-        className="flex flex-col items-center gap-2 md:gap-4 mt-4 w-full   p-0 "
+        className="flex flex-col items-center gap-2 md:gap-4 w-full poppins-regular  p-0 "
         initial="hidden"
         animate="visible"
       >
-        <motion.div className="w-full" variants={item}>
-          <button
-            onClick={() => setPrompt("Create a detailed note outline")}
-            className="border border-border hover:bg-primary/5 w-full rounded-lg group  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
-          >
-            <div className="flex gap-2 w-fit items-center">
-              <div className="h-10  aspect-square bg-theme-green/40 p-1 md:p-2 rounded-md flex justify-center items-center">
-                <Icons.newspaper className="h-4 w-4 md:h-6 md:w-6 text-theme-green" />
-              </div>
-              <h1 className="font-bold capitalize text-sm md:text-base">
-                Create a detailed note outline
-              </h1>
-            </div>
-            <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
-              <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
-            </div>
-          </button>
-        </motion.div>
-        <motion.div className="w-full" variants={item}>
-          <button
-            onClick={() => setPrompt("Create 5 questions to help me study")}
-            className="border border-border  hover:bg-primary/5 w-full group rounded-lg  h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
-          >
-            <div className="flex gap-2 w-fit items-center">
-              <div className="h-10  aspect-square bg-theme-blue/40 p-1 md:p-2 rounded-md flex justify-center items-center">
-                <Icons.pencil className="h-4 w-4 md:h-6 md:w-6 text-theme-blue" />
-              </div>
-              <h1 className="font-bold capitalize text-sm md:text-base">
-                5 questions to help me study
-              </h1>
-            </div>
-            <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
-              <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
-            </div>
-          </button>
-        </motion.div>
-        <motion.div className="w-full" variants={item}>
-          <button
-            onClick={() => setPrompt("list the main points")}
-            className="border border-border  hover:bg-primary/5 w-full rounded-lg group h-16 md:h-20 p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
-          >
-            <div className="flex gap-2 w-fit items-center">
-              <div className="h-10  aspect-square bg-theme-orange/40 p-1 md:p-2 rounded-md flex justify-center items-center">
-                <Icons.chart className="h-4 w-4 md:h-6 md:w-6 text-theme-orange" />
-              </div>
-              <h1 className="font-bold capitalize text-sm md:text-base">
-                List the main points
-              </h1>
-            </div>
-            <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
-              <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
-            </div>
-          </button>
-        </motion.div>
-        <motion.div className="w-full" variants={item}>
-          <button
-            onClick={() => setPrompt("Create a short summary")}
-            className="hidden md:flex border border-border group  hover:bg-primary/5 w-full rounded-lg h-16 md:h-20 p-2 md:p-4 flex-row items-center justify-between cursor-pointer"
-          >
-            <div className="flex gap-2 w-fit items-center">
-              <div className="h-10  aspect-square bg-theme-purple/40 p-1 md:p-2 rounded-md flex justify-center items-center">
-                <Icons.bookText className="h-4 w-4 md:h-6 md:w-6 text-theme-purple" />
-              </div>
-              <h1 className="font-bold capitalize text-sm md:text-base">
-                Give me a short summary
-              </h1>
-            </div>
+        {presets.map((preset, index) => {
+          const Icon = preset.icon;
 
-            <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
-              <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
-            </div>
-          </button>
-        </motion.div>
+          return (
+            <motion.div className="w-full" variants={item} key={index}>
+              <button
+                onClick={() => setPrompt(preset.prompt)}
+                className="border border-border hover:bg-primary/5 w-full rounded-lg group   p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
+              >
+                <div className="flex gap-3 w-fit items-center">
+                  <div
+                    className={`  aspect-square  p-1 md:p-2 rounded-md flex justify-center items-center ${preset.bgColor}`}
+                  >
+                    <Icon className={`h-4 w-4 md:h-6 md:w-6 ${preset.color}`} />
+                  </div>
+                  <h1 className=" capitalize text-[12px] md:text-lg">
+                    {preset.title}
+                  </h1>
+                </div>
+                <div className="rounded-md p-1 bg-card md:hidden md:group-hover:block">
+                  <Icons.chevronUp className="h-4 w-4 md:h-6 md:w-6  " />
+                </div>
+              </button>
+            </motion.div>
+          );
+        })}
       </motion.ul>
     </>
   );

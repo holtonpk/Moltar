@@ -60,7 +60,7 @@ const YoutubeVideoView = ({upload}: {upload: YoutubeScrapeUpload}) => {
           </TooltipProvider> */}
           Video Transcript
         </Label>
-        <div className="h-fit ">{upload.text}</div>
+        <div className="h-fit   poppins-regular">{upload.text}</div>
       </div>
     </div>
   );

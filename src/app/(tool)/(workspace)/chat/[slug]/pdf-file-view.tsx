@@ -124,8 +124,6 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
     };
   }, [containerRef.current]); // Add any other dependencies that might affect the size
 
-  console.log("containerWidth", containerWidth);
-
   return (
     <div className="flex flex-col  items-center justify-center h-full w-full  shadow-2xl relative ">
       <LinkButton
@@ -168,8 +166,8 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
       </ScrollArea>
       {upload && numPages && (
         <div className="absolute bottom-4 z-20">
-          <div className="  w-[95%] rounded-lg min-w-fit gap-10 justify-between  py-2  bg-card blurBack dark:bg-[#3A3D3E]   z-20 flex items-center px-2  duration-[5s] fade-in-0 animate-in slide-in-from-bottom-4  ">
-            <div className="w-[200px] min-w-[200px]  flex flex-row items-center gap-2 text-theme-blue bg-card p-2 rounded-md border border-border">
+          <div className="  w-[95%] rounded-lg min-w-fit gap-10 justify-between  py-2  bg-card/70 border border-border blurBack darka:bg-[#3A3D3E]   z-20 flex items-center px-2  duration-[5s] fade-in-0 animate-in slide-in-from-bottom-4  ">
+            <div className="w-[200px] min-w-[200px]  flex flex-row items-center gap-2 text-theme-blue  p-2 rounded-md ">
               {zoomValue + "%"}
               <Slider
                 defaultValue={[75]}
@@ -181,9 +179,8 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
             </div>
 
             <Popover open={showGridPages} onOpenChange={setShowGridPages}>
-              <PopoverTrigger className="bg-card   text-theme-blue border dark:border-transparent   p-2 rounded-md flex items-center gap-2">
+              <PopoverTrigger className=" text-theme-blue   p-2 rounded-md flex items-center gap-2 border-4 border-border dark:border-primary/30">
                 <Icons.grid className="h-5 w-5 " />
-                Page View
               </PopoverTrigger>
               <PopoverContent className="blurBack bg-card/10 p-4 w-[500px]  top-4 h-[450px] overflow-scroll">
                 <Document
@@ -218,7 +215,7 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
               </PopoverContent>
             </Popover>
 
-            <span className="p-1 bg-card rounded-md border border-border flex items-center whitespace-nowrap gap-2 w-fit text-[12px] font-bold  ">
+            <span className="p-1  rounded-md  flex items-center whitespace-nowrap gap-2 w-fit text-[12px] font-bold  ">
               <Button
                 onClick={() => goToPage(currentPage - 1)}
                 size="sm"
@@ -236,7 +233,7 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
                   if (value === "") return;
                   goToPage(parseInt(value));
                 }}
-                className="p-1 text-center bg-transparent border rounded-lg aspect-square border-border dark:border-white/30 font-normal text-theme-blue"
+                className="p-1 text-center font-bold bg-transparent border rounded-lg aspect-square border-border dark:border-white/30 text-theme-blue"
               />
               of {numPages}
               <Button

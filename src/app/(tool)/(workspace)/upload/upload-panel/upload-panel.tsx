@@ -46,6 +46,9 @@ import {UploadRow} from "./components/upload-row";
 import {UrlUpload} from "./upload types /website";
 import {PdfUpload} from "./upload types /pdf";
 import {YoutubeUpload} from "./upload types /youtube";
+import {useProjects} from "@/context/projects-context";
+import {toast} from "@/components/ui/use-toast";
+
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -54,6 +57,8 @@ import {Link, Youtube, FileText} from "lucide-react";
 const UploadsPanel = () => {
   const {uploadList, DeleteUpload, ReNameUpload, filterList} = useUploads()!;
   const {currentUser, unSubscribedUserId} = useAuth()!;
+
+  const {projects} = useProjects()!;
 
   async function createNewProject(file: UploadType) {
     const id = Math.random().toString(36).substring(7);
@@ -80,7 +85,21 @@ const UploadsPanel = () => {
 
   const router = useRouter();
 
+  const {setShowLoginModal} = useAuth()!;
+
   async function goToNewProject(file: UploadType) {
+    if (
+      projects &&
+      projects?.length > 1 &&
+      (!currentUser || !currentUser?.uid)
+    ) {
+      toast({
+        title: "You've reached the limit without an account",
+        description: "Upgrade to continue chatting, don't worry it's free!",
+      });
+      setShowLoginModal(true);
+      return;
+    }
     const projectId = await createNewProject(file);
     router.push(`/chat/${projectId}`);
   }

@@ -25,7 +25,7 @@ export const UserInfo = () => {
                 />
               </div>
               <div className="flex flex-col  cursor-pointer">
-                <p className="text-[12px] font-bold text-primary group-hover:opacity-70">
+                <p className="text-[12px] font-bold text-primary group-hover:opacity-70 ">
                   {currentUser?.displayName || "User"}
                 </p>
                 <p className="text-primary/60 text-[12px] group-hover:opacity-70">

@@ -21,6 +21,7 @@ const ChatContext = createContext<ChatContextType | null>(null);
 
 const LOCAL_STORAGE_KEY = "userProjects";
 import {useAuth} from "@/context/user-auth";
+import {text} from "stream/consumers";
 
 export function useChat() {
   return useContext(ChatContext);
@@ -173,18 +174,15 @@ export const ChatProvider = ({children, projectId}: Props) => {
   // }, [prompt, chatError]);
 
   const fetchAiResponse = async (prompt: string) => {
-    console.log(
-      "fetching ai response",
-      // `Respond to the following with a formatted response. Apply the following prompt: ${prompt} - to this text : ${project?.upload.text}`
-      `${prompt} based on the following text: ${project?.upload.text}`
-    );
-    const response = await fetch("/api/openai", {
+    await fetch("/api/openai", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: `Respond to the following with a formatted response. ${prompt} based on the following text: ${project?.upload.text}`,
+        prompt: prompt,
+        text: project?.upload.text,
+        // prompt: `Respond to the following with a formatted response. ${prompt} based on the following text: ${project?.upload.text}`,
       }),
     })
       .then((res) => res.json())
@@ -220,13 +218,13 @@ export const ChatProvider = ({children, projectId}: Props) => {
       updateChat(UpdatedChat as ChatLog);
       setAnimatedMessage("");
       if (project && !project.name && prompt.trim() !== "") {
-        generateNewProject(prompt);
+        generateNewProject(prompt, aiResponse);
       }
     }
   }, [aiResponse, animatedMessage, responseLoading, chatError, prompt]);
 
-  async function generateNewProject(prompt: string) {
-    const name = await generateProjectName(prompt);
+  async function generateNewProject(prompt: string, aiResponse: string) {
+    const name = await generateProjectName(prompt, aiResponse);
     const color = generateTagColor();
     ChangeProjectName(name);
     ChangeProjectColor(color);
@@ -260,15 +258,15 @@ export const ChatProvider = ({children, projectId}: Props) => {
     });
   }
 
-  async function generateProjectName(prompt: string) {
-    // this will be on the server to generate a relevant name
-    const response = await fetch("/api/openai", {
+  async function generateProjectName(prompt: string, aiResponse: string) {
+    const response = await fetch("/api/name-chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        prompt: `Generate a short, descriptive name (40 characters max) for a chat session that is based on the given prompt '${prompt}' and relates to the project ${project?.upload.text}. The name should be concise, memorable, and accurately reflect the discussion's focus on the project. It should engage the target audience of college students and highlight key aspects of the conversation related to the project's theme or goal. don't put it in quotes`,
+        prompt: prompt,
+        response: aiResponse,
       }),
     }).then((res) => res.json());
 

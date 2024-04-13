@@ -29,7 +29,9 @@ export const UploadPreview = ({
     `}
     >
       <div className=" text-primary flex flex-col gap-3  text-sm text-left  font- overflow-hidden text-ellipsis z-10 h-full relative ">
-        <div className="h-full  upload-title-text ">{file.title}</div>
+        <div className="h-full  upload-title-text poppins-regular ">
+          {file.title}
+        </div>
         <div className=" h-full w-full">
           <button
             onClick={() => goToNewProject(file)}

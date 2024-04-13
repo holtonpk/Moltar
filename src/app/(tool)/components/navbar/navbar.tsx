@@ -20,7 +20,7 @@ export const Navbar = () => {
       <div className="grid grid-cols-[32px_1fr]  gap-2 mb-6 ">
         <Icons.logo className="h-8 w-8" />
         {!collapsed && (
-          <span className="font-bold text-primary text-3xl  leading-[32px] fade-in  ">
+          <span className="font-bold text-primary text-3xl  leading-[32px] fade-in poppins-bold  ">
             moltar.ai
           </span>
         )}

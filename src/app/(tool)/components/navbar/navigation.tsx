@@ -25,7 +25,9 @@ export const Navigation = () => {
           `}
       >
         <Icons.upload className="h-6 w-6 aspect-square text-theme-blue" />
-        {!collapsed && <span className="fade-in "> Upload </span>}
+        {!collapsed && (
+          <span className="fade-in poppins-regular "> Upload </span>
+        )}
       </LinkButton>
       <LinkButton
         href="/settings"
@@ -40,7 +42,9 @@ export const Navigation = () => {
           `}
       >
         <Icons.settings className="h-6 w-6 text-theme-green" />
-        {!collapsed && <span className="fade-in"> Settings </span>}
+        {!collapsed && (
+          <span className="fade-in poppins-regular"> Settings </span>
+        )}
       </LinkButton>
     </div>
   );

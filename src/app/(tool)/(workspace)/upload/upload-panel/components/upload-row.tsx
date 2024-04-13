@@ -17,7 +17,7 @@ export const UploadRow = ({
 }) => {
   return (
     <div className="flex flex-col gap-1 px-2 w-full">
-      <div className="font-bold text-lg w-full text-center pl-6 pb-0 md:text-left  h-fit mb-2 mt-6  flex items-center gap-2">
+      <div className="poppins-bold font-bold text-lg w-full text-center pl-6 pb-0 md:text-left  h-fit mb-2 mt-6  flex items-center gap-2">
         <div
           style={{background: `rgba(${color}, .2)`}}
           className="flex items-center justify-center p-1 rounded-md aspect-square bg-opacity-5"

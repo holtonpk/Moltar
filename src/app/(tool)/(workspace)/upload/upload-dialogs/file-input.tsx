@@ -53,17 +53,17 @@ export const FileInput = ({
 
       for (let file of pdfFiles) {
         // get the total words in the pdf file
-        if (file.size > 10000000) {
-          setMaxSizeMessage({
-            title: "Sorry this file is too large for Moltar 😔 ",
-            description: "Try uploading a file less than 10MB",
-          });
-          setOpenMaxSizeDialog(true);
-        } else {
-          const fileData = await uploadFile(file);
-          setUploadedFile(fileData);
-          setShowDialog(true);
-        }
+        // if (file.size > 10000000) {
+        //   setMaxSizeMessage({
+        //     title: "Sorry this file is too large for Moltar 😔 ",
+        //     description: "Try uploading a file less than 10MB",
+        //   });
+        //   setOpenMaxSizeDialog(true);
+        // } else {
+        const fileData = await uploadFile(file);
+        setUploadedFile(fileData);
+        setShowDialog(true);
+        // }
       }
     },
     [uploadFile, toast, setShowDialog, setUploadedFile]

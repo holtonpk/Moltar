@@ -12,26 +12,34 @@ import {YoutubeScrape} from "../upload-dialogs/youtube-scrape";
 import MaxSizeDialog, {MaxSizeMessage} from "../upload-dialogs/max-size";
 
 export const EmptyUploadList = () => {
-  const {uploadFile, setUploadedFile, setShowDialog} = useUploads()!;
+  const {
+    uploadFile,
+    setUploadedFile,
+    setShowDialog,
+    setUploadedFileLocal,
+    setIsLoadingUpload,
+  } = useUploads()!;
   // const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
   const {toast} = useToast();
 
   const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const files = Array.from(event.target.files); // Convert FileList to an array
+      setUploadedFileLocal(files[0]);
+      setIsLoadingUpload(true);
 
       for (let file of files) {
-        if (file.size > 10000000) {
-          setMaxSizeMessage({
-            title: "Sorry this file is too large for Moltar 😔 ",
-            description: "Try uploading a file less than 10MB",
-          });
-          setOpenMaxSizeDialog(true);
-        } else {
-          const fileData = await uploadFile(file);
-          setUploadedFile(fileData);
-          setShowDialog(true);
-        }
+        // if (file.size > 10000000) {
+        //   setMaxSizeMessage({
+        //     title: "Sorry this file is too large for Moltar 😔 ",
+        //     description: "Try uploading a file less than 10MB",
+        //   });
+        //   setOpenMaxSizeDialog(true);
+        // } else {
+        const fileData = await uploadFile(file);
+        setUploadedFile(fileData);
+        setShowDialog(true);
+        // }
       }
     }
   };
@@ -67,31 +75,28 @@ export const EmptyUploadList = () => {
         }).then((res) => res.json());
 
         if (scrapeResponse.text) {
-          const tokenResponse = await fetch("/api/get-tokens", {
-            method: "POST",
-            body: JSON.stringify({str: scrapeResponse.text}),
-          }).then((res) => res.json());
+          // const tokenResponse = await fetch("/api/get-tokens", {
+          //   method: "POST",
+          //   body: JSON.stringify({str: scrapeResponse.text}),
+          // }).then((res) => res.json());
 
-          console.log("ttttt", tokenResponse);
-          console.log("url");
-
-          if (tokenResponse.isAcceptable) {
-            setYoutubeScrape({
-              success: true,
-              text: scrapeResponse.text,
-              id: scrapeResponse.id,
-              title: scrapeResponse.title,
-              thumbnail: scrapeResponse.thumbnail,
-            });
-            setOpenYoutubeDialog(true);
-          } else {
-            setMaxSizeMessage({
-              title: "Sorry this video is too large for Moltar 😔 ",
-              description:
-                "Try uploading a shorter video or clips from the video",
-            });
-            setOpenMaxSizeDialog(true);
-          }
+          // if (tokenResponse.isAcceptable) {
+          setYoutubeScrape({
+            success: true,
+            text: scrapeResponse.text,
+            id: scrapeResponse.id,
+            title: scrapeResponse.title,
+            thumbnail: scrapeResponse.thumbnail,
+          });
+          setOpenYoutubeDialog(true);
+          // } else {
+          //   setMaxSizeMessage({
+          //     title: "Sorry this video is too large for Moltar 😔 ",
+          //     description:
+          //       "Try uploading a shorter video or clips from the video",
+          //   });
+          //   setOpenMaxSizeDialog(true);
+          // }
         } else {
           toast({
             title: "Error",
@@ -106,29 +111,29 @@ export const EmptyUploadList = () => {
         }).then((res) => res.json());
 
         if (scrapeResponse.text) {
-          const tokenResponse = await fetch("/api/get-tokens", {
-            method: "POST",
-            body: JSON.stringify({str: scrapeResponse.text}),
-          }).then((res) => {
-            console.log(res.json());
-            return res.json();
-          });
+          // const tokenResponse = await fetch("/api/get-tokens", {
+          //   method: "POST",
+          //   body: JSON.stringify({str: scrapeResponse.text}),
+          // }).then((res) => {
+          //   console.log(res.json());
+          //   return res.json();
+          // });
 
-          if (tokenResponse.isAcceptable) {
-            setScrapeText({
-              success: true,
-              text: scrapeResponse.text,
-              title: scrapeResponse.title,
-              favicon: scrapeResponse.favicon,
-            });
-            setOpenScrapeDialog(true);
-          } else {
-            setMaxSizeMessage({
-              title: "Sorry this website has too much for Moltar to read 😔 ",
-              description: "Try using a smaller page",
-            });
-            setOpenMaxSizeDialog(true);
-          }
+          // if (tokenResponse.isAcceptable) {
+          setScrapeText({
+            success: true,
+            text: scrapeResponse.text,
+            title: scrapeResponse.title,
+            favicon: scrapeResponse.favicon,
+          });
+          setOpenScrapeDialog(true);
+          // } else {
+          //   setMaxSizeMessage({
+          //     title: "Sorry this website has too much for Moltar to read 😔 ",
+          //     description: "Try using a smaller page",
+          //   });
+          //   setOpenMaxSizeDialog(true);
+          // }
         } else {
           setScrapeText({
             success: false,
@@ -161,7 +166,7 @@ export const EmptyUploadList = () => {
     <>
       <div className="flex bg-card flex-col w-full gap-4 items-center  pt-20   h-full p-6 shadow-2xl  relative z-10">
         <div className="  border-border md:w-fit  rounded-lg  flex flex-col w-full   gap-6 items-center bg-card">
-          <span className="font-bold text-3xl md:text-5xl mb-6 ">
+          <span className="font-bold text-3xl md:text-5xl mb-6 poppins-bold ">
             Let&apos;s get started!
           </span>
           {/* <span className="font-re text-xl">
@@ -172,7 +177,7 @@ export const EmptyUploadList = () => {
               <div className="flex items-center justify-center  rounded-lg bg-theme-blue/20 p-6">
                 <Icons.uploadCloud className="h-20 w-20 text-theme-blue" />
               </div>
-              <h1 className="text- text-2xl font-bold mt-2 whitespace-nowrap md:block hidden ">
+              <h1 className="text- text-2xl font-bold mt-2 whitespace-nowrap md:block hidden poppins-regular">
                 Drag & and drop a PDF file here
               </h1>
               <h1 className="text- text-2xl font-bold mt-2 whitespace-nowrap md:hidden text-center ">
@@ -183,7 +188,7 @@ export const EmptyUploadList = () => {
                 onClick={() => document.getElementById("selectedFile")?.click()}
                 className="text-primary text-sm bg-transparent  w-fit bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue p-0 mt-4"
               >
-                <span className=" bg-theme-blue hover:bg-card/80 text-white px-6 w-fit h-full rounded-md flex items-center justify-center hover:opacity-90">
+                <span className="poppins-regular bg-theme-blue hover:bg-card/80 text-white px-6 w-fit h-full rounded-md flex items-center justify-center hover:opacity-90">
                   Click to browse
                 </span>
               </Button>
@@ -198,7 +203,7 @@ export const EmptyUploadList = () => {
             </div>
 
             <div className="hidden md:flex absolute -left-10  flex-col gap-0 items-end top-[40%] -translate-y-1/2 -translate-x-full text-theme-green">
-              <span className="font-bold text-sm">
+              <span className="font-bold text-xl hand-font">
                 Moltar can read any pdf for you! <br /> Just upload your pdf and
                 <br />
                 start leveraging moltar
@@ -209,7 +214,9 @@ export const EmptyUploadList = () => {
 
           <div className="w-[20%] mx-auto grid grid-cols-[1fr_25px_1fr] items-center">
             <span className="w-full h-[1px] bg-primary/30"></span>
-            <span className="w-full flex justify-center font-bold">or</span>
+            <span className="w-full flex justify-center font-bold poppins-bold">
+              or
+            </span>
             <span className="w-full h-[1px] bg-primary/30"></span>
           </div>
           <div className="w-full shadow-lg relative h-fit  border border-border dark:border-white/10    rounded-md ">
@@ -221,7 +228,7 @@ export const EmptyUploadList = () => {
               }}
               value={urlInput}
               placeholder="Enter A URL"
-              className="border-none text-xl  p-6 rounded-md bg-card dark:bg-white/5 focus-visible:ring-theme-blue focus-visible:border-transparent pl-3 pr-12"
+              className="border-none text-xl poppins-regular p-6 rounded-md bg-card dark:bg-white/5 focus-visible:ring-theme-blue focus-visible:border-transparent pl-3 pr-12"
               onChange={(e) => setUrlInput(e.target.value)}
             />
             <Button
@@ -239,7 +246,7 @@ export const EmptyUploadList = () => {
             </Button>
 
             <div className="absolute   -right-10 hidden md:flex flex-col gap-0 items-start bottom-0 translate-x-full text-theme-purple">
-              <span className="font-bold text-center text-sm">
+              <span className="font-bold text-center text-xl hand-font">
                 Some ideas for URLs:
                 <br />
                 - News article

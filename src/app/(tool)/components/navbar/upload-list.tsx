@@ -67,7 +67,7 @@ export const UploadList = () => {
                   {displayedProjects.length === 0 ? (
                     <div className="flex-grow flex pt-10 fade-in ">
                       <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-card border-border border">
-                        <p className="text-lg text-center text-primary">
+                        <p className="text-lg text-center text-primary poppins-regular">
                           You don&apos;t have any chats yet when you create a
                           chat it will appear here
                         </p>
@@ -75,7 +75,7 @@ export const UploadList = () => {
                     </div>
                   ) : (
                     <div className="flex justify-between items-center pl-2">
-                      <span className="text-sm font-bold text-primary">
+                      <span className="text-sm font-bold text-primary poppins-bold">
                         Your Chats
                       </span>
                     </div>
@@ -108,7 +108,7 @@ export const UploadList = () => {
           {!collapsed && (
             <div className="flex-grow flex pt-10 fade-in">
               <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-card border-border border">
-                <p className="text-lg text-center text-primary">
+                <p className="text-base text-center text-primary poppins-regular">
                   Create an account to save your chats, projects and so much
                   more
                 </p>
@@ -504,7 +504,7 @@ const Project = ({project}: {project: ProjectType}) => {
 
         `}
         />
-        <p className=" text-left text-[12px] whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
+        <p className="poppins-regular text-left text-[12px] whitespace-nowrap flex-grow text-ellipsis max-w-full overflow-hidden text-primary relative z-10">
           {project?.name}
         </p>
       </Link>

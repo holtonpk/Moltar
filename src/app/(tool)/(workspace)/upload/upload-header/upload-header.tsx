@@ -5,6 +5,7 @@ import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons";
 import {useUploads} from "@/context/upload-context";
 import {useToast} from "@/components/ui/use-toast";
+import {useAuth} from "@/context/user-auth";
 
 export const UploadHeader = ({
   setShowUploadDialog,
@@ -19,6 +20,7 @@ export const UploadHeader = ({
     setShowDialog,
     setUploadedFileLocal,
     setIsLoadingUpload,
+    uploadList,
   } = useUploads()!;
   const {toast} = useToast();
 
@@ -39,18 +41,18 @@ export const UploadHeader = ({
       setUploadedFileLocal(files[0]);
       setIsLoadingUpload(true);
       for (let file of files) {
-        if (file.size > 10000000) {
-          toast({
-            title: `${file.name} is too large`,
-            description: "Please upload a file less than 10MB",
-            variant: "destructive",
-          });
-        } else {
-          const fileData = await uploadFile(file); // Upload the file to firebase
-          setUploadedFile(fileData);
-          setShowDialog(true);
-        }
+        // if (file.size > 10000000) {
+        //   toast({
+        //     title: `${file.name} is too large`,
+        //     description: "Please upload a file less than 10MB",
+        //     variant: "destructive",
+        //   });
+        // } else {
+        const fileData = await uploadFile(file); // Upload the file to firebase
+        setUploadedFile(fileData);
+        setShowDialog(true);
       }
+      // }
     }
   };
 
@@ -60,6 +62,8 @@ export const UploadHeader = ({
     // path: "https://firebasestorage.googleapis.com/v0/b/moltar-bc665.appspot.com/o/4ym68it?alt=media&token=7afe9e3e-67a4-40a9-9030-b186fef1b16b",
     path: "https://firebasestorage.googleapis.com/v0/b/moltar-bc665.appspot.com/o/1lrebg?alt=media&token=dc8de7a3-b209-49c8-bb78-e0e4d0037e3f",
   };
+
+  const {currentUser, setShowLoginModal} = useAuth()!;
 
   return (
     <div className="w-full p-2 rounded-md bg-transparent pb-0 z-20">
@@ -87,7 +91,23 @@ export const UploadHeader = ({
         </Button> */}
 
         <Button
-          onClick={() => setShowUploadDialog(true)}
+          onClick={() => {
+            if (
+              uploadList &&
+              uploadList?.length > 0 &&
+              (!currentUser || !currentUser?.uid)
+            ) {
+              toast({
+                title: "You've reached the limit without an account",
+                description:
+                  "Upgrade to continue chatting, don't worry it's free!",
+              });
+              setShowLoginModal(true);
+              return;
+            }
+
+            setShowUploadDialog(true);
+          }}
           className="bg-theme-blue hover:bg-theme-blue/60 text-white w-full  md:w-fit"
         >
           <Icons.add className="h-5 w-5 mr-2" />

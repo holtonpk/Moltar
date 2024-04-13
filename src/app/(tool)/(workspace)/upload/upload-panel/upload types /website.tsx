@@ -25,13 +25,13 @@ export const UrlUpload = ({
             } `}
     >
       <div className="relative w-full flex flex-col h-full z-10">
-        <div className="grid grid-cols-[24px_1fr] gap-1 relative  group mx-auto rounded-t-lg overflow-x-hidden text-ellipsis   max-w-full  z-10 bg-theme-blue/20 whitespace-nowrap p-2 pr-6">
-          <img src={file.fav} className="h-6 w-6 rounded-md" />
-          <span className="w-full overflow-hidden text-ellipsis">
+        <div className="grid grid-cols-[24px_1fr] gap-2 relative  group mx-auto rounded-t-lg overflow-x-hidden text-ellipsis items-end  max-w-full  z-10 bg-theme-blue/20 whitespace-nowrap p-2 pr-6">
+          <img src={file.fav} className="h-6 w-6 rounded-md " />
+          <span className="w-full overflow-hidden text-ellipsis  text-sm ">
             {file.url}
           </span>
         </div>
-        <div className="pr-6 z-20   border-t-border border-t flex-grow   bg-background    w-full  relative  ">
+        <div className="pr-6 z-20 poppins-regular  border-t-border border-t flex-grow   bg-background    w-full  relative  ">
           <div
             onClick={() => goToNewProject(file)}
             className="p-2 text-primary h-full text-sm text-left  font- overflow-hidden text-ellipsis relative z-10 "

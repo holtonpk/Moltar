@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap&family=Poppins:wght@400;500;600;700;800&display=swap");
 /* @import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap"); */
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Just+Another+Hand&family=Swanky+and+Moo+Moo&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Just+Another+Hand&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Swanky+and+Moo+Moo&display=swap");
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
@@ -19,6 +21,60 @@
 
 .hero-font {
   font-family: "porter_sans_blockblock", Arial, sans-serif;
+}
+
+.hand-font {
+  font-family: "Caveat", cursive;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.poppins-extralight {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.poppins-light {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.poppins-medium {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.poppins-semibold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.poppins-bold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.poppins-extrabold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
 }
 
 @layer base {
@@ -159,6 +215,30 @@
   border-radius: 8px; /* Apply border radius to the parent element */
   overflow: hidden; /* Ensure gradient doesn't overflow */
   z-index: 1; /* Ensure the parent is above the pseudo-element */
+}
+
+.border-gradient-chat {
+  position: relative; /* Make sure the parent is positioned */
+  border-radius: 8px, 8px, 8px, 0px; /* Apply border radius to the parent element */
+  overflow: hidden; /* Ensure gradient doesn't overflow */
+  z-index: 1; /* Ensure the parent is above the pseudo-element */
+}
+
+.border-gradient-chat::after {
+  content: ""; /* Add content to the pseudo-element */
+  position: absolute; /* Position the pseudo-element */
+  top: 0; /* Adjust to cover the parent's border */
+  left: 0; /* Adjust to cover the parent's border */
+  right: 0; /* Adjust to cover the parent's border */
+  bottom: 0; /* Adjust to cover the parent's border */
+  z-index: -1; /* Ensure the pseudo-element is behind the content */
+  border-radius: inherit; /* Inherit border-radius from the parent */
+  background: linear-gradient(
+    135deg,
+    rgba(145, 100, 240, 1) 0%,
+    rgba(53, 142, 244, 1) 50%,
+    rgba(74, 171, 103, 1) 100%
+  ); /* Apply gradient as background */
 }
 
 .border-gradient::after {
