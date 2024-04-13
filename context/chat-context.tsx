@@ -174,38 +174,43 @@ export const ChatProvider = ({children, projectId}: Props) => {
   // }, [prompt, chatError]);
 
   const fetchAiResponse = async (prompt: string) => {
-    await fetch("/api/map-reduce", {
-      // await fetch("/api/openai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        text: project?.upload.text,
-        // prompt: `Respond to the following with a formatted response. ${prompt} based on the following text: ${project?.upload.text}`,
-      }),
-    })
-      .then((res) => res.json())
+    try {
+      await fetch("/api/map-reduce", {
+        // await fetch("/api/openai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+          text: project?.upload.text,
+          // prompt: `Respond to the following with a formatted response. ${prompt} based on the following text: ${project?.upload.text}`,
+        }),
+      })
+        .then((res) => res.json())
 
-      .then((data) => {
-        if (data.success) {
-          setAiResponse(data.response);
-          setResponseLoading(false);
-          setChatError(false);
-        } else {
-          track("chat-error", {
-            message: data.response,
-            userId: currentUser?.uid ? currentUser?.uid : unSubscribedUserId,
-            projectId: projectId,
-            uploadId: project?.uploadId || "null",
-            date: new Date().toISOString(),
-          });
-          setChatError(true);
+        .then((data) => {
+          if (data.success) {
+            setAiResponse(data.response);
+            setResponseLoading(false);
+            setChatError(false);
+          } else {
+            track("chat-error", {
+              message: data.response,
+              userId: currentUser?.uid ? currentUser?.uid : unSubscribedUserId,
+              projectId: projectId,
+              uploadId: project?.uploadId || "null",
+              date: new Date().toISOString(),
+            });
+            setChatError(true);
 
-          setResponseLoading(false);
-        }
-      });
+            setResponseLoading(false);
+          }
+        });
+    } catch (error) {
+      setChatError(true);
+      setResponseLoading(false);
+    }
   };
 
   useEffect(() => {
