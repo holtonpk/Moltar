@@ -7,7 +7,6 @@ import {Toaster} from "@/components/ui/toaster";
 import AuthModal from "@/components/auth/auth-modal";
 import {NavbarProvider} from "@/context/navbar-context";
 import MobileNav from "../components/navbar/mobile-nav";
-import FreeLimitDialog from "@/components/dialogs/free-limit";
 
 const Workspace = ({children}: {children: React.ReactNode}) => {
   return (
