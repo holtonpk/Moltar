@@ -6,8 +6,6 @@ import {loadQAMapReduceChain} from "langchain/chains";
 import {Document} from "@langchain/core/documents";
 import {TokenTextSplitter} from "langchain/text_splitter";
 import {get_encoding, encoding_for_model} from "tiktoken";
-import assert from "node:assert";
-import {doc} from "firebase/firestore";
 import {PromptTemplate} from "@langchain/core/prompts";
 import {
   collapseDocs,
@@ -23,7 +21,7 @@ import {StringOutputParser} from "@langchain/core/output_parsers";
 //   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 // });
 
-export const maxDuration = 300; // 5 minutes
+// export const maxDuration = 300; // 5 minutes
 
 // Initialize the OpenAI model
 export async function POST(req: Request) {
