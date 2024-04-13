@@ -174,7 +174,8 @@ export const ChatProvider = ({children, projectId}: Props) => {
   // }, [prompt, chatError]);
 
   const fetchAiResponse = async (prompt: string) => {
-    await fetch("/api/openai", {
+    await fetch("/api/map-reduce", {
+      // await fetch("/api/openai", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
