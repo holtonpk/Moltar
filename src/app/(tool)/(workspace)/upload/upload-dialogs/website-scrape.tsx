@@ -50,6 +50,7 @@ export const WebsiteScrape = ({
       text: text,
       url: url,
       fav: scrapeResult?.favicon,
+      createdAt: serverTimestamp(),
     };
     await setDoc(
       doc(
@@ -101,7 +102,7 @@ export const WebsiteScrape = ({
     <>
       {url && scrapeResult && (
         <Dialog open={open} onOpenChange={setIsOpen}>
-          <DialogContent className="">
+          <DialogContent className="min-w-fit">
             {scrapeResult.success ? (
               <>
                 <DialogHeader>

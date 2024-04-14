@@ -3,7 +3,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["firebasestorage.googleapis.com"],
+    domains: ["firebasestorage.googleapis.com", "img.youtube.com"],
   },
   webpack: (config) => {
     config.resolve.alias.canvas = false;

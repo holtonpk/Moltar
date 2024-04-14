@@ -17,7 +17,7 @@ import {useAuth} from "@/context/user-auth";
 import {doc, setDoc, serverTimestamp} from "firebase/firestore";
 import {db, app} from "@/config/firebase";
 import {YoutubeScrapeResult, YoutubeScrapeUpload} from "@/types";
-
+import Image from "next/image";
 import {useRouter} from "next/navigation";
 
 export const YoutubeScrape = ({
@@ -49,7 +49,9 @@ export const YoutubeScrape = ({
       text: text,
       url: url,
       thumbnail: scrapeResult?.thumbnail,
+      createdAt: serverTimestamp(),
     };
+
     await setDoc(
       doc(
         db,
@@ -102,7 +104,7 @@ export const YoutubeScrape = ({
     <>
       {url && scrapeResult && (
         <Dialog open={open} onOpenChange={setIsOpen}>
-          <DialogContent className="">
+          <DialogContent className=" min-w-fit">
             {scrapeResult.success ? (
               <>
                 <DialogHeader>
@@ -112,26 +114,22 @@ export const YoutubeScrape = ({
                     later
                   </DialogDescription>
                 </DialogHeader>
-                <Link
-                  target="_blank"
-                  href={url}
-                  className="w-full group relative overflow-hidden aspect-[16/9] border border-border rounded-md"
-                >
+                <div className="h-[350px]  group relative overflow-hidden aspect-[16/9] border border-border rounded-md bg-background ">
                   <iframe
                     src={`https://www.youtube.com/embed/${scrapeResult.id}`}
-                    className="w-full h-full absolute top-0 left-0 z-20"
+                    className="relative z-20 w-full h-full"
                   />
-                  <img
+                  {/* <Image
                     src={scrapeResult.thumbnail}
+                    alt={scrapeResult.title}
                     className="w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-                  />
-                  {/* <div className="absolute  bottom-0 w-full h-fit bg-card/40 blurBack z-20 grid grid-cols-[24px_1fr] gap-2 border-t border-border items-center p-2">
-                      <Icons.Youtube className="h-6 w-6 mr-2" />
-                      <span className="font-bold  group-hover:underline">
-                        {scrapeResult.title}
-                      </span>
-                    </div> */}
-                </Link>
+                    sizes={
+                      "(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
+                    }
+                    fill
+                    priority={true}
+                  /> */}
+                </div>
 
                 <DialogFooter className="gap-4 md:gap-0">
                   <Button onClick={goBackFunction} variant={"ghost"}>
@@ -199,7 +197,7 @@ export const YoutubeScrape = ({
                   style={{resize: "none"}}
                   placeholder="Manually copy and paste text here"
                   className="h-[300px] overflow-scroll border border-border rounded-md p-2"
-                ></Textarea>
+                />
                 <DialogFooter className="gap-4 md:gap-0">
                   <Button
                     onClick={() => {

@@ -13,8 +13,10 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
+
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
 // let analytics: any;
 // if (firebaseConfig?.projectId) {
 //   // Initialize Firebase

@@ -29,12 +29,13 @@ export const UserInfo = () => {
                     alt={currentUser.displayName || "User"}
                   />
                   <AvatarFallback>
-                    {currentUser?.displayName?.charAt(0).toUpperCase()}
+                    {currentUser?.firstName?.charAt(0).toUpperCase() +
+                      currentUser?.lastName?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
 
                 <div className="flex flex-col  cursor-pointer">
-                  <p className="text-[12px] font-bold text-primary group-hover:opacity-70 ">
+                  <p className="text-[12px] font-bold text-primary group-hover:opacity-70 capitalize">
                     {currentUser?.displayName || "User"}
                   </p>
                   <p className="text-primary/60 text-[12px] group-hover:opacity-70">

@@ -138,6 +138,7 @@ export const PdfUploadDialog = ({file}: {file: LocalUploadType | null}) => {
       {
         ...file,
         text: text,
+        createdAt: serverTimestamp(),
       },
       {
         merge: true,

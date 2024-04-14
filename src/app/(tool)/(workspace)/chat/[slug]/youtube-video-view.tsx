@@ -14,6 +14,8 @@ import {
 const YoutubeVideoView = ({upload}: {upload: YoutubeScrapeUpload}) => {
   const isVideoSharable = true;
 
+  console.log(upload);
+
   return (
     <div className="flex flex-col gap-4 h-full overflow-scroll ">
       <div className="w-full flex justify-between p-1 ">

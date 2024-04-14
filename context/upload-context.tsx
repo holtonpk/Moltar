@@ -23,6 +23,7 @@ import {
   collection,
   deleteDoc,
   updateDoc,
+  orderBy,
 } from "firebase/firestore";
 
 import {db} from "@/config/firebase";
@@ -92,7 +93,8 @@ export const UploadsProvider = ({children}: Props) => {
           `users/${
             currentUser?.uid ? currentUser?.uid : unSubscribedUserId
           }/uploads`
-        )
+        ),
+        orderBy("createdAt", "asc")
       );
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const uploads = querySnapshot.docs.map((doc) => doc.data());

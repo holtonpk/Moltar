@@ -7,25 +7,26 @@ import {Toaster} from "@/components/ui/toaster";
 import AuthModal from "@/components/auth/auth-modal";
 import {NavbarProvider} from "@/context/navbar-context";
 import MobileNav from "../components/navbar/mobile-nav";
+import {Button} from "@/components/ui/button";
 
 const Workspace = ({children}: {children: React.ReactNode}) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <Toaster />
-      <div className="bg-background  flex h-screen overflow-hidden">
-        <NavbarProvider>
-          <UploadsProvider>
-            <ProjectsProvider>
+      <NavbarProvider>
+        <UploadsProvider>
+          <ProjectsProvider>
+            <div className="bg-background  flex h-screen overflow-hidden">
               <Navbar />
               <div className="md:flex-grow w-full  overflow-hidden   relative h-screen flex-col flex  ">
                 <MobileNav />
                 {children}
               </div>
               <AuthModal />
-            </ProjectsProvider>
-          </UploadsProvider>
-        </NavbarProvider>
-      </div>
+            </div>
+          </ProjectsProvider>
+        </UploadsProvider>
+      </NavbarProvider>
     </ThemeProvider>
   );
 };

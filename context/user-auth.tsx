@@ -36,10 +36,9 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-import {db, auth} from "@/config/firebase";
+import {db, auth, app} from "@/config/firebase";
 import {PlansType} from "@/types/index";
-import {unsubscribe} from "diagnostics_channel";
-
+import emailjs from "@emailjs/browser";
 interface DeleteAccountResponse {
   success?: string;
   error?: string;
@@ -52,7 +51,7 @@ interface AuthContextType {
     email: string,
     name: {first: string; last: string},
     password: string
-  ) => Promise<any>;
+  ) => Promise<{success: boolean; user?: FirebaseUser; error?: string}>;
   logInWithGoogle: () => Promise<any>;
   logOut: () => Promise<void>;
   changeUserPassword: (currentPassword: string, newPassword: string) => any;
@@ -67,6 +66,11 @@ interface AuthContextType {
   newUser: boolean;
   setNewUser: (value: boolean) => void;
   unSubscribedUserId: string | null;
+  showEmailVerificationModal: boolean;
+  setShowEmailVerificationModal: (value: boolean) => void;
+  email: string;
+  VerifyEmail: (code: string, uId: string) => any;
+  sendVerificationEmail: (to_name: string, to_email: string) => any;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -99,6 +103,10 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   const [newUser, setNewUser] = React.useState(true);
   const [loading, setLoading] = useState(true);
   const [rerender, setRerender] = useState(true);
+  const [email, setEmail] = useState("");
+
+  const [showEmailVerificationModal, setShowEmailVerificationModal] =
+    useState(false);
 
   useEffect(() => {
     if (!currentUser) {
@@ -135,17 +143,18 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     email: string,
     name: {first: string; last: string},
     password: string
-  ) {
-    const account = createUserWithEmailAndPassword(auth, email, password)
-      .then((cred: any) => {
-        createUserStorage(cred?.user.uid, name, email);
-        return {success: cred};
-      })
-      .catch((error: any) => {
-        return {error: error.code};
-      });
-
-    return account;
+  ): Promise<{success: boolean; user?: FirebaseUser; error?: string}> {
+    try {
+      const account = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await createUserStorage(account?.user.uid, name, email);
+      return {success: true, user: account.user};
+    } catch (error: any) {
+      return {error: error.code, success: false};
+    }
   }
 
   function signIn(email: string, password: string) {
@@ -216,7 +225,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   ) => {
     const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);
-    console.log("userSnap", userSnap);
+
     if (!userSnap.exists()) {
       await setDoc(userRef, {
         firstName: name.first,
@@ -228,15 +237,18 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       });
     }
 
+    if (!auth.currentUser?.displayName) {
+      await updateProfile(auth.currentUser as FirebaseUser, {
+        displayName: `${name.first} ${name.last}`,
+      });
+    }
+
     //  merge the data of the unsubscribed user to the new user
     if (unSubscribedUserId) {
       copyDocuments(uid);
-      localStorage.removeItem("unSubscribedUserId");
-      setUnSubscribedUserId(null);
-    } else {
-      console.log("no unSubscribedUserId");
+      // localStorage.removeItem("unSubscribedUserId");
+      // setUnSubscribedUserId(null);
     }
-
     // if (!user.photoURL) {
     //   const profileUrl = getRandomImageUrl() as string;
     //   updateProfile(user, {
@@ -424,31 +436,103 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }
   }
 
+  const [verifyCode, setVerifyCode] = useState<string>(
+    Math.floor(100000 + Math.random() * 900000).toString()
+  );
+
+  async function sendVerificationEmail(to_name: string, to_email: string) {
+    console.log("sendVerificationEmail", verifyCode, to_email);
+    await emailjs.send(
+      "service_st6kbsq",
+      "template_xpxefvp",
+      {
+        to_name,
+        code: verifyCode,
+        to_email,
+      },
+      "v0cr80z06j9YsBn-N"
+    );
+  }
+
+  async function VerifyEmail(code: string, uId: string) {
+    if (code !== verifyCode) {
+      return "error";
+    }
+
+    try {
+      const response = await fetch("/api/verify-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: uId,
+        }),
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        await CreateCurrentUser();
+        return "success";
+      } else {
+        return "error";
+      }
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      return "error";
+    }
+  }
+
+  async function CreateCurrentUser() {
+    console.log("CreateCurrentUser");
+    const user = auth.currentUser;
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
+    await auth.currentUser?.getIdToken(true);
+    const decodedToken = await auth.currentUser?.getIdTokenResult();
+    console.log("decodedToken", decodedToken?.claims?.stripeRole);
+
+    setCurrentUser({
+      ...user,
+      firstName: userData?.firstName,
+      lastName: userData?.lastName,
+      photoURL: userData?.photoURL,
+      stripeId: userData?.stripeId,
+      userPlan: Plans[1],
+      // userPlan: Plans[decodedToken?.claims?.stripeRole],
+      welcome_intro: userData?.welcome_intro,
+    });
+  }
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      console.log("user", user);
+      console.log("email ver ====", user?.emailVerified);
       if (user?.uid) {
         const token = await user.getIdToken();
         // nookies.set(undefined, "token", token, { path: "/" });
       }
       if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        const userData = userSnap.data();
-        await auth.currentUser?.getIdToken(true);
-        const decodedToken = await auth.currentUser?.getIdTokenResult();
-        console.log("decodedToken", decodedToken?.claims?.stripeRole);
+        if (user.emailVerified !== false) {
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+          const userData = userSnap.data();
+          await auth.currentUser?.getIdToken(true);
+          const decodedToken = await auth.currentUser?.getIdTokenResult();
+          console.log("decodedToken", decodedToken?.claims?.stripeRole);
 
-        setCurrentUser({
-          ...user,
-          firstName: userData?.firstName,
-          lastName: userData?.lastName,
-          photoURL: userData?.photoURL,
-          stripeId: userData?.stripeId,
-          userPlan: Plans[1],
-          // userPlan: Plans[decodedToken?.claims?.stripeRole],
-          welcome_intro: userData?.welcome_intro,
-        });
+          setCurrentUser({
+            ...user,
+            firstName: userData?.firstName,
+            lastName: userData?.lastName,
+            photoURL: userData?.photoURL,
+            stripeId: userData?.stripeId,
+            userPlan: Plans[1],
+            // userPlan: Plans[decodedToken?.claims?.stripeRole],
+            welcome_intro: userData?.welcome_intro,
+          });
+        }
       } else {
         setRerender(true);
       }
@@ -475,6 +559,11 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     newUser,
     setNewUser,
     unSubscribedUserId,
+    showEmailVerificationModal,
+    setShowEmailVerificationModal,
+    email,
+    VerifyEmail,
+    sendVerificationEmail,
   };
 
   return (

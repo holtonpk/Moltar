@@ -16,8 +16,13 @@ import Link from "next/link";
 const RegisterForm = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
-  const {createAccount, logInWithGoogle, setNewUser, setShowLoginModal} =
-    useAuth()!;
+  const {
+    createAccount,
+    logInWithGoogle,
+    setNewUser,
+    setShowLoginModal,
+    sendVerificationEmail,
+  } = useAuth()!;
   type FormData = z.infer<typeof createUserSchema>;
   const router = useRouter();
 
@@ -39,7 +44,15 @@ const RegisterForm = () => {
     );
 
     if (createAccountResult?.success) {
-      console.log("createAccountResult ******", createAccountResult);
+      if (createAccountResult.user) {
+        await sendVerificationEmail(
+          createAccountResult.user?.displayName as string,
+          createAccountResult.user?.email as string
+        );
+        router.push(
+          "register/verify-email?uid=" + createAccountResult?.user.uid
+        );
+      }
       setShowLoginModal(false);
       setIsLoading(false);
       return;
@@ -50,28 +63,17 @@ const RegisterForm = () => {
           type: "manual",
           message: "An account with this email already exists.",
         });
-        toast({
-          title: "An account with this email already exists.",
-          description: "Please please check your email and try again.",
-          variant: "destructive",
-        });
+        setIsLoading(false);
+        return;
       }
       if (createAccountResult?.error === "auth/invalid-email") {
         setError("email", {
           type: "manual",
           message: "Please enter a valid email.",
         });
-        toast({
-          title: "Please enter a valid email.",
-          description: "Please please check your email and try again.",
-          variant: "destructive",
-        });
+        setIsLoading(false);
+        return;
       } else {
-        console.log(
-          "createAccountResult ======",
-          createAccountResult.error,
-          createAccountResult
-        );
         toast({
           title: "Something went wrong.",
           description: createAccountResult?.error,

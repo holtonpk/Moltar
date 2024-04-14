@@ -8,7 +8,7 @@ export const maxDuration = 300; // 5 minutes
 export async function POST(req: Request) {
   const requestBody = await req.json();
   const url = requestBody.url;
-  const videoID = url.split("=")[1];
+  const videoID = url.split("=")[1].slice(0, 11);
   try {
     const captionsRes = await getSubtitles({
       videoID: videoID, // youtube video id

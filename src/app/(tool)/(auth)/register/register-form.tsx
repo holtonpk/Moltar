@@ -15,7 +15,7 @@ import {useRouter} from "next/navigation";
 const RegisterForm = () => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
-  const {createAccount, logInWithGoogle} = useAuth()!;
+  const {createAccount, logInWithGoogle, sendVerificationEmail} = useAuth()!;
   type FormData = z.infer<typeof createUserSchema>;
   const router = useRouter();
 
@@ -37,36 +37,43 @@ const RegisterForm = () => {
     );
 
     if (createAccountResult?.success) {
-      router.push("/upload");
+      if (createAccountResult.user) {
+        await sendVerificationEmail(
+          createAccountResult.user?.displayName as string,
+          createAccountResult.user?.email as string
+        );
+        router.push(
+          "register/verify-email?uid=" + createAccountResult?.user.uid
+        );
+      }
+      setIsLoading(false);
+
+      return;
     }
     if (createAccountResult?.error === "auth/email-already-in-use") {
       setError("email", {
         type: "manual",
         message: "An account with this email already exists.",
       });
-      toast({
-        title: "An account with this email already exists.",
-        description: "Please please check your email and try again.",
-        variant: "destructive",
-      });
+      setIsLoading(false);
+
+      return;
     } else if (createAccountResult?.error === "auth/invalid-email") {
       setError("email", {
         type: "manual",
         message: "Please enter a valid email.",
       });
-      toast({
-        title: "Please enter a valid email.",
-        description: "Please please check your email and try again.",
-        variant: "destructive",
-      });
+      setIsLoading(false);
+
+      return;
     } else {
       toast({
         title: "Something went wrong.",
         description: createAccountResult?.error,
         variant: "destructive",
       });
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   function handleLoginError(error: any): void {
@@ -97,7 +104,7 @@ const RegisterForm = () => {
     <div className="grid gap-4">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
-          <div className="grid gap-2 grid-cols-2">
+          <div className="grid gap-2 grid-cols-2 ">
             <div>
               <Input
                 className="bg-card  border border-border"

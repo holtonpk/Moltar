@@ -7,7 +7,7 @@ import {UserInfo} from "@/src/app/(tool)/components/navbar/user-info";
 import {ModeToggle} from "@/src/app/(tool)/components/navbar/mode-toggle";
 import {useNavbar} from "@/context/navbar-context";
 import NavBackground from "@/components/nav-background";
-
+import {Button} from "@/components/ui/button";
 export const Navbar = () => {
   const {collapsed, setCollapsed} = useNavbar()!;
 
