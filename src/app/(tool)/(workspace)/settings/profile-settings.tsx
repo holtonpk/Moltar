@@ -6,6 +6,7 @@ import {useAuth} from "@/context/user-auth";
 import {Icons} from "@/components/icons";
 import {toast} from "@/components/ui/use-toast";
 import {PasswordInput} from "@/components/ui/password-input";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
 import {useDeleteAccountModal} from "@/src/app/(tool)/(workspace)/settings/delete-account-modal";
 
@@ -13,7 +14,7 @@ import Image from "next/image";
 const Profile = () => {
   return (
     <div className="h-full w-full relative flex flex-col  gap-8 ">
-      <Avatar />
+      <AvatarChange />
       <Name />
       <Email />
       <AccountSettings />
@@ -115,7 +116,7 @@ const Name = () => {
   );
 };
 
-const Avatar = () => {
+const AvatarChange = () => {
   const {currentUser, uploadProfilePicture, changeProfilePicture} = useAuth()!;
 
   const [profilePic, setProfilePic] = useState<string>(
@@ -140,8 +141,6 @@ const Avatar = () => {
     });
   };
 
-  console.log("pp", profilePic);
-
   return (
     <div className="grid grid-cols-[1fr_96px] border-border justify-between w-full border rounded-md p-4 gap-2 relative pb-[72px]">
       <div className="grid">
@@ -162,7 +161,14 @@ const Avatar = () => {
           onClick={handleButtonClick}
           className="h-24 w-24 border  rounded-full bg-muted hover:opacity-70 relative overflow-hidden"
         >
-          <Image src={profilePic} alt="profile" className="rounded-full" fill />
+          <Avatar className="h-24 w-24">
+            <AvatarImage src={profilePic} alt={"profile picture"} />
+            <AvatarFallback>
+              {currentUser &&
+                currentUser?.firstName?.charAt(0).toUpperCase() +
+                  currentUser?.lastName?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
         </Button>
       </div>
       <div className="w-full absolute bottom-0 left-0 h-14 border-t-border bg-primary/5 border-t flex px-6 justify-between items-center ">

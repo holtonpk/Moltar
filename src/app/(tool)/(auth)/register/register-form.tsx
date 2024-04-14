@@ -190,7 +190,7 @@ const RegisterForm = () => {
       <Button
         onClick={googleSingIn}
         type="button"
-        className="w-full bg-card hover:bg-primary hover:text-card border-none  border border-border"
+        className="w-full bg-card hover:bg-primary hover:text-card  border border-border"
         variant="outline"
       >
         {isGoogleLoading ? (

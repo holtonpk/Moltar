@@ -1,6 +1,5 @@
 import {NextResponse} from "next/server";
 import admin from "firebase-admin";
-const serviceAccount = require("./serviceAccountKey.json");
 
 if (admin.apps.length === 0) {
   // Check if the app is already initialized
