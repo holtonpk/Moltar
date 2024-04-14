@@ -5,7 +5,11 @@ const serviceAccount = require("./serviceAccountKey.json");
 if (admin.apps.length === 0) {
   // Check if the app is already initialized
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(
+      JSON.parse(
+        process.env.NEXT_PUBLIC_FIREBASE_ADIM_SERVICE_ACCOUNT_KEY as string
+      ) as admin.ServiceAccount
+    ),
   });
 }
 async function verifyEmail(userId: string) {
