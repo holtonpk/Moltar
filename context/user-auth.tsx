@@ -1,5 +1,11 @@
 "use client";
-import React, {useContext, useState, useEffect, createContext} from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  createContext,
+  useRef,
+} from "react";
 
 // import nookies from "nookies";
 import {
@@ -71,6 +77,7 @@ interface AuthContextType {
   email: string;
   VerifyEmail: (code: string, uId: string) => any;
   sendVerificationEmail: (to_name: string, to_email: string) => any;
+  resendVerificationEmail: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -436,7 +443,11 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }
   }
 
-  const [verifyCode, setVerifyCode] = useState<string>(
+  // const [verifyCode, setVerifyCode] = useState<string>(
+  //   Math.floor(100000 + Math.random() * 900000).toString()
+  // );
+
+  const verifyCode = useRef<string>(
     Math.floor(100000 + Math.random() * 900000).toString()
   );
 
@@ -447,7 +458,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       "template_xpxefvp",
       {
         to_name,
-        code: verifyCode,
+        code: verifyCode.current,
         to_email,
       },
       "v0cr80z06j9YsBn-N"
@@ -455,7 +466,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   }
 
   async function VerifyEmail(code: string, uId: string) {
-    if (code !== verifyCode) {
+    console.log("VerifyEmail", code, verifyCode);
+    if (code !== verifyCode.current) {
       return "error";
     }
 
@@ -481,6 +493,22 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       console.error("Error verifying email:", error);
       return "error";
     }
+  }
+
+  async function resendVerificationEmail() {
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    // setVerifyCode(newCode);
+    verifyCode.current = newCode;
+    await emailjs.send(
+      "service_st6kbsq",
+      "template_xpxefvp",
+      {
+        to_name: auth.currentUser?.displayName,
+        code: newCode,
+        to_email: auth.currentUser?.email,
+      },
+      "v0cr80z06j9YsBn-N"
+    );
   }
 
   async function CreateCurrentUser() {
@@ -564,6 +592,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     email,
     VerifyEmail,
     sendVerificationEmail,
+    resendVerificationEmail,
   };
 
   return (

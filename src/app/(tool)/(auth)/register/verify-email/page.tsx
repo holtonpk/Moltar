@@ -19,7 +19,7 @@ const EmailVerification = () => {
   const [code, setCode] = React.useState<string>("");
 
   const isValid = code.length === 6;
-  const {VerifyEmail} = useAuth()!;
+  const {VerifyEmail, resendVerificationEmail} = useAuth()!;
 
   const [incorrectError, setIncorrectError] = React.useState<boolean>(false);
 
@@ -45,7 +45,15 @@ const EmailVerification = () => {
     }
   };
 
-  console.log("current user", currentUser);
+  const [resent, setResent] = React.useState<boolean>(false);
+
+  async function onResendVerificationEmail() {
+    setResent(true);
+    await resendVerificationEmail();
+    setTimeout(() => {
+      setResent(false);
+    }, 10000);
+  }
 
   return (
     <div className="container flex h-screen w-screen  flex-col items-center">
@@ -61,7 +69,9 @@ const EmailVerification = () => {
         </div>
         <div className="w-full flex justify-center items-center py-4 flex-col text-3xl px-4">
           {incorrectError && (
-            <p className="text-red-500 mb-3 w-fit">*Incorrect code</p>
+            <span className="text-theme-red mb-3 w-fit text-sm">
+              *Incorrect code
+            </span>
           )}
           <InputOTP
             maxLength={6}
@@ -93,10 +103,19 @@ const EmailVerification = () => {
           <span className="px-4 text-center gap-1 h-fit mt-2 flex items-center text-[12px] md:text-sm text-muted-foreground whitespace-nowrap">
             Cant find the email?{" "}
             <Button
+              disabled={resent}
+              onClick={onResendVerificationEmail}
               variant={"link"}
               className="font-semibold p-0 text-muted-foreground transition-colors hover:text-primary underline"
             >
-              Resend Email
+              {resent ? (
+                <>
+                  Email Sent
+                  <Icons.check className="h-4 w-4 mr-1" />
+                </>
+              ) : (
+                "Resend Email"
+              )}
             </Button>
           </span>
         </div>
