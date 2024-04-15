@@ -47,7 +47,7 @@ import {UrlUpload} from "./upload types /website";
 import {PdfUpload} from "./upload types /pdf";
 import {YoutubeUpload} from "./upload types /youtube";
 import {useProjects} from "@/context/projects-context";
-import {toast} from "@/components/ui/use-toast";
+import {toastLong} from "@/components/ui/use-toast-long";
 
 import pdfjsWorker from "pdfjs-dist/legacy/build/pdf.worker.min.js";
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -93,7 +93,7 @@ const UploadsPanel = () => {
       projects?.length > 1 &&
       (!currentUser || !currentUser?.uid)
     ) {
-      toast({
+      toastLong({
         title: "You've reached the limit without an account",
         description: "Upgrade to continue chatting, don't worry it's free!",
       });

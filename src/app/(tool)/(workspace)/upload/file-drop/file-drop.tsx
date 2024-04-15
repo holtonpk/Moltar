@@ -2,7 +2,8 @@
 import React, {useEffect, useCallback, useState} from "react";
 import {Icons} from "@/components/icons";
 import {useUploads} from "@/context/upload-context";
-import {useToast} from "@/components/ui/use-toast";
+import {toastLong} from "@/components/ui/use-toast-long";
+import {toast} from "@/components/ui/use-toast";
 import {useAuth} from "@/context/user-auth";
 export const FileDrop = ({
   dragContainer,
@@ -23,7 +24,6 @@ export const FileDrop = ({
   const {setShowLoginModal, currentUser} = useAuth()!;
 
   const [dropError, setDropError] = React.useState(false);
-  const {toast} = useToast();
 
   const handleDragOver = useCallback((e: DragEvent) => {
     console.log("dragging");
@@ -45,7 +45,7 @@ export const FileDrop = ({
         uploadList?.length > 0 &&
         (!currentUser || !currentUser?.uid)
       ) {
-        toast({
+        toastLong({
           title: "You've reached the limit without an account",
           description: "Upgrade to continue chatting, don't worry it's free!",
         });

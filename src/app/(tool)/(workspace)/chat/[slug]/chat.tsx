@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import {useProjects} from "@/context/projects-context";
 import {toast} from "@/components/ui/use-toast";
+import {toastLong} from "@/components/ui/use-toast-long";
 import {color, motion} from "framer-motion";
 import NavBackground from "@/components/nav-background";
 import "./chat-style.css";
@@ -353,9 +354,10 @@ const ChatBox = () => {
       projects?.length > 1 &&
       (!currentUser || !currentUser?.uid)
     ) {
-      toast({
+      toastLong({
         title: "You've reached the limit without an account",
         description: "Upgrade to continue chatting, don't worry it's free!",
+        variant: "blue",
       });
       return;
     }
@@ -417,9 +419,10 @@ const BigChatBox = () => {
   const sendMessage = () => {
     console.log("chat", currentUser);
     if (chat && chat?.length >= 2 && (!currentUser || !currentUser?.uid)) {
-      toast({
+      toastLong({
         title: "You've reached the limit without an account",
         description: "Upgrade to continue chatting, don't worry it's free!",
+        variant: "blue",
       });
       setShowLoginModal(true);
       return;

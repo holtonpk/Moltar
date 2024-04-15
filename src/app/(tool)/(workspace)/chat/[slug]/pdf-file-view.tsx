@@ -165,8 +165,8 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
         )}
       </ScrollArea>
       {upload && numPages && (
-        <div className="absolute bottom-4 z-20">
-          <div className="  w-[95%] rounded-lg min-w-fit gap-10 justify-between  py-2  bg-card/70 border border-border blurBack darka:bg-[#3A3D3E]   z-20 flex items-center px-2  duration-[5s] fade-in-0 animate-in slide-in-from-bottom-4  ">
+        <div className="absolute bottom-4 z-20 w-[95%] left-1/2 -translate-x-1/2 ">
+          <div className="  w-full rounded-lg min-w-fit gap-10 justify-between  py-2  bg-card/70 border border-border dark:border-0 blurBack z-20 flex items-center px-2  duration-[5s] fade-in-0 animate-in slide-in-from-bottom-4  ">
             <div className="w-[200px] min-w-[200px]  flex flex-row items-center gap-2 text-theme-blue  p-2 rounded-md ">
               {zoomValue + "%"}
               <Slider

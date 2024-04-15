@@ -4,7 +4,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Icons} from "@/components/icons";
 import {useUploads} from "@/context/upload-context";
-import {useToast} from "@/components/ui/use-toast";
+import {toastLong} from "@/components/ui/use-toast-long";
 import {useAuth} from "@/context/user-auth";
 
 export const UploadHeader = ({
@@ -22,7 +22,6 @@ export const UploadHeader = ({
     setIsLoadingUpload,
     uploadList,
   } = useUploads()!;
-  const {toast} = useToast();
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     // if search value is not empty, resetFilter
@@ -97,7 +96,7 @@ export const UploadHeader = ({
               uploadList?.length > 0 &&
               (!currentUser || !currentUser?.uid)
             ) {
-              toast({
+              toastLong({
                 title: "You've reached the limit without an account",
                 description:
                   "Upgrade to continue chatting, don't worry it's free!",
