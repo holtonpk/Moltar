@@ -26,8 +26,7 @@ export default function Page({params}: Params) {
       const docRef = doc(
         db,
         `users/${
-          // currentUser?.uid ? currentUser?.uid : unSubscribedUserId
-          "xgIi2eEedgQZ1ZZAQEWXOMdRhDA3"
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
         }/projects`,
         projectId
       );
@@ -35,19 +34,19 @@ export default function Page({params}: Params) {
       const docSnap = await getDoc(docRef);
       const projectData = docSnap.data() as ProjectType;
 
-      // const uploadRef = doc(
-      //   db,
-      //   `users/${
-      //     currentUser?.uid ? currentUser?.uid : unSubscribedUserId
-      //   }/uploads`,
-      //   projectData.uploadId
-      // );
-      // const uploadSnap = await getDoc(uploadRef);
-      // const upload = uploadSnap.data();
+      const uploadRef = doc(
+        db,
+        `users/${
+          currentUser?.uid ? currentUser?.uid : unSubscribedUserId
+        }/uploads`,
+        projectData.uploadId
+      );
+      const uploadSnap = await getDoc(uploadRef);
+      const upload = uploadSnap.data();
 
       const projectLocal = {
         ...projectData,
-        // upload: upload,
+        upload: upload,
       } as ProjectType;
 
       setProject(projectLocal);
@@ -65,18 +64,3 @@ export default function Page({params}: Params) {
     </ChatProvider>
   );
 }
-
-const dummyData = {
-  uploadId: "yljgm",
-  chat: null,
-  upload: {
-    id: "yljgm",
-    path: "https://firebasestorage.googleapis.com/v0/b/moltar-bc665.appspot.com/o/yljgm?alt=media&token=e9d2eaea-e713-44f2-bd03-17d93972430b",
-    title: "Casner Park strategy.pdf",
-  },
-  createdAt: {
-    seconds: 1709762996,
-    nanoseconds: 270000000,
-  },
-  id: "ecdok4",
-};

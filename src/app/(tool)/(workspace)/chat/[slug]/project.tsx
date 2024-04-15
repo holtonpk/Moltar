@@ -103,6 +103,8 @@ const DesktopProject = ({
     };
   }, [expandedChat]); // Add any other dependencies that might affect the size
 
+  console.log("pp", projectData);
+
   return (
     <div className="md:flex h-full  border border-border  bg-primary/5 dark:bg-background flex-grow hidden">
       <div ref={container} className="z-20  relative flex-grow h-full flex">
