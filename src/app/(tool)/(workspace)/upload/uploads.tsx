@@ -10,6 +10,7 @@ import {UploadHeader} from "./upload-header/upload-header";
 import {FileDrop} from "./file-drop/file-drop";
 import {EmptyUploadList} from "./empty-upload/empty-upload";
 import {set} from "zod";
+import {useAuth} from "@/context/user-auth";
 
 export const Uploads = () => {
   const {
@@ -45,6 +46,12 @@ export const Uploads = () => {
     setIsLoadingUpload(false);
     cancelUpload.current = true;
   };
+
+  const {currentUser, unSubscribedUserId} = useAuth()!;
+
+  console.log("uploadList", uploadList);
+  console.log("currentUser", currentUser);
+  console.log("un sub user", unSubscribedUserId);
 
   return (
     <>
