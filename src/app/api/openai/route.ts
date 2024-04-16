@@ -1,7 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {NextResponse} from "next/server";
 import OpenAI from "openai";
-import {getEncoding, encodingForModel} from "js-tiktoken";
+import {encodingForModel} from "js-tiktoken";
 
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -56,16 +56,19 @@ export async function POST(req: Request) {
 }
 
 async function mapReduce(prompt: string, text: string) {
-  const res = await fetch(`http://localhost:3000/api/map-reduce`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt: prompt,
-      text: text,
-    }),
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/map-reduce`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        text: text,
+      }),
+    }
+  );
   const resJson = await res.json();
   return resJson;
 }
