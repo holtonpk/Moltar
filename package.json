@@ -63,7 +63,7 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-animatecss": "^3.0.5",
-    "tiktoken": "^1.0.13",
+    "tiktoken": "^1.0.14",
     "urlparse": "^0.0.1",
     "youtube-captions-scraper": "^2.0.3",
     "zod": "^3.22.4"

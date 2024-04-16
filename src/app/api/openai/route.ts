@@ -1,7 +1,6 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {NextResponse} from "next/server";
 import OpenAI from "openai";
-import GPT4Tokenizer from "gpt4-tokenizer";
 import {encoding_for_model} from "tiktoken";
 
 const openai = new OpenAI({

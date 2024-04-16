@@ -406,8 +406,6 @@ const PdfPage = ({
 }) => {
   const [loading, setLoading] = React.useState(true);
 
-  console.log("containerWidth", containerWidth);
-
   return (
     <div id={`page-number-${index + 1}`} className="h-full w-full  ">
       <Page
