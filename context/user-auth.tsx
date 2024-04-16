@@ -124,6 +124,9 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       else {
         const uId = Math.random().toString(36).substring(2, 14);
         localStorage.setItem("unSubscribedUserId", uId);
+        setUnSubscribedUserId(
+          localStorage.getItem("unSubscribedUserId") as string
+        );
       }
     }
   }, [rerender, currentUser]);
@@ -454,7 +457,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   );
 
   async function sendVerificationEmail(to_name: string, to_email: string) {
-    console.log("sendVerificationEmail", verifyCode, to_email);
     await emailjs.send(
       "service_st6kbsq",
       "template_xpxefvp",
@@ -468,7 +470,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   }
 
   async function VerifyEmail(code: string, uId: string) {
-    console.log("VerifyEmail", code, verifyCode);
     if (code !== verifyCode.current) {
       return "error";
     }
@@ -514,7 +515,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   }
 
   async function CreateCurrentUser() {
-    console.log("CreateCurrentUser");
     const user = auth.currentUser;
     if (!user) return;
     const userRef = doc(db, "users", user.uid);
