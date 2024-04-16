@@ -1,7 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {NextResponse} from "next/server";
 import OpenAI from "openai";
-import {encoding_for_model} from "tiktoken";
+import {getEncoding, encodingForModel} from "js-tiktoken";
 
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -88,8 +88,7 @@ export async function GET() {
 }
 
 async function getTokenLength(text: string) {
-  const encodings = await encoding_for_model("gpt-3.5-turbo");
+  const encodings = await encodingForModel("gpt-3.5-turbo");
   const tokens = encodings.encode(text);
-  encodings.free();
   return tokens.length;
 }
