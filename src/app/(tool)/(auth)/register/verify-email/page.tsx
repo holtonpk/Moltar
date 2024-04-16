@@ -63,7 +63,7 @@ const EmailVerification = () => {
             Secure your account
           </h1>
           <p className="text-sm text-muted-foreground">
-            We send a 6 digit code to your email address. Please enter the code
+            We sent a 6 digit code to your email address. Please enter the code
             from the email.
           </p>
         </div>

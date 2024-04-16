@@ -43,8 +43,6 @@ export const UploadDialog = ({
     description: "",
   });
 
-  console.log("open", maxSizeMessage);
-
   const {toast} = useToast();
 
   const scrapeUrl = async () => {

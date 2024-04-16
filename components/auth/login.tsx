@@ -66,6 +66,11 @@ const Login = () => {
         description: "Please try again later.",
         variant: "destructive",
       });
+    } else if (signInResult?.error === "auth/invalid-credential") {
+      setError("password", {
+        type: "manual",
+        message: "Wrong email or password.",
+      });
     } else if (signInResult?.error === "auth/user-disabled") {
       toast({
         title: "User disabled.",
