@@ -124,9 +124,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       else {
         const uId = Math.random().toString(36).substring(2, 14);
         localStorage.setItem("unSubscribedUserId", uId);
-        setUnSubscribedUserId(
-          localStorage.getItem("unSubscribedUserId") as string
-        );
+        setUnSubscribedUserId(uId);
       }
     }
   }, [rerender, currentUser]);
