@@ -198,7 +198,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
             first: result.user?.displayName?.split(" ")[0] || "",
             last: result.user?.displayName?.split(" ")[1] || "",
           },
-          result.user.email || ""
+          result.user.email || "",
+          result.user.photoURL || undefined
         );
         return {success: result};
       } else {
@@ -228,7 +229,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   const createUserStorage = async (
     uid: string,
     name: {first: string; last: string},
-    email: string
+    email: string,
+    photoUrl?: string
   ) => {
     const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);
@@ -238,7 +240,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         firstName: name.first,
         lastName: name.last,
         email: email,
-        photoURL: getRandomImageUrl() as string,
+        photoURL: photoUrl || (getRandomImageUrl() as string),
         uid: uid,
         welcome_intro: false,
       });
