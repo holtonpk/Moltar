@@ -78,7 +78,7 @@ const MobileNav = () => {
   };
 
   return (
-    <div className="md:hidden w-full h-fit px-4 py-4  bg-card border-b dark:bg-[#3A3D3E] grid grid-cols-[36px_1fr] items-center">
+    <div className="md:hidden w-full h-fit px-4 py-4  bg-card border-b border-border dark:bg-primary/5 grid grid-cols-[36px_1fr] items-center ">
       <Sheet open={openMenu} onOpenChange={setOpenMenu}>
         <SheetTrigger asChild>
           <Button

@@ -49,10 +49,6 @@ export const Uploads = () => {
 
   const {currentUser, unSubscribedUserId} = useAuth()!;
 
-  console.log("uploadList", uploadList);
-  console.log("currentUser", currentUser);
-  console.log("un sub user", unSubscribedUserId);
-
   return (
     <>
       {uploadedFile && showDialog && <PdfUploadDialog file={uploadedFile} />}

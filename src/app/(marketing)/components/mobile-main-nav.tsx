@@ -5,6 +5,7 @@ import Link from "next/link";
 import {useParams} from "next/navigation";
 import {ReactNode, useEffect, useMemo, useRef, useState} from "react";
 import {Icons} from "@/components/icons";
+import {LinkButton} from "@/components/ui/link";
 // import { marketingConfig } from "@/config/marketing";
 
 const sidebar = {
@@ -80,19 +81,22 @@ export default function MobileNav() {
         ))} */}
 
         <MenuItem key="Login">
-          <Link href="/login" className="flex w-full font-semibold capitalize">
+          <LinkButton
+            href="/login"
+            variant="outline"
+            className="flex w-full font-semibold capitalize "
+          >
             Log in
-          </Link>
+          </LinkButton>
         </MenuItem>
-        <MenuItem className="my-3 h-px w-full bg-gray-300" />
 
         <MenuItem key="Signup">
-          <Link
-            href="/onboarding/register"
-            className="flex w-full font-semibold capitalize"
+          <LinkButton
+            href="/register"
+            className="flex w-full font-semibold capitalize p-2 items-center justify-center rounded-md"
           >
             Sign Up
-          </Link>
+          </LinkButton>
         </MenuItem>
       </motion.ul>
       <MenuToggle toggle={toggleOpen} isOpen={isOpen} />
