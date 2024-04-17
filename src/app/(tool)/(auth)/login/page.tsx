@@ -27,7 +27,7 @@ const Login = () => {
         Sign up
       </LinkButton>
 
-      <div className="z-10 mt-[calc(15vh)] h-fit w-full  max-w-md overflow-hidden border border-border sm:rounded-2xl sm:shadow-xl">
+      <div className="z-10 mt-[calc(15vh)] h-fit w-full  max-w-md overflow-hidden border border-border rounded-2xl sm:shadow-xl">
         <div className="flex flex-col space-y-2 text-center bg-card px-4 py-6 pt-8">
           {/* <Icons.logo className="mx-auto h-6 w-6" /> */}
 
