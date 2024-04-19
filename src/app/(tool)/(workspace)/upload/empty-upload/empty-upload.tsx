@@ -273,8 +273,8 @@ export const EmptyUploadList = () => {
             ))}
           </div> */}
       </div>
-      <div className="bg-card flex-col w-full rounded-lg gap-4 items-center h-full p-6 shadow-2xl md:hidden flex relative z-10">
-        <div className="border-border rounded-lg  flex flex-col w-full h-full gap-8  items-center bg-card">
+      <div className="bg-card/70 blurBack flex-col w-full rounded-lg gap-4 items-center h-fit p-6 shadow-2xl md:hidden flex relative z-10">
+        <div className="border-border rounded-lg  flex flex-col w-full h-full gap-8  items-center ">
           <span className="font-bold text-3xl poppins-regular ">
             Let&apos;s get started!
           </span>
@@ -296,7 +296,7 @@ export const EmptyUploadList = () => {
                 onClick={() => document.getElementById("selectedFile")?.click()}
                 className="text-primary text-sm bg-transparent  w-full bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue p-[1px] mt-4 shadow-lg h-fit"
               >
-                <span className="poppins-bold text-xl bg-background hover:bg-card/80 text-white px-6 py-2 w-full h-fit rounded-md flex items-center justify-center hover:opacity-90 capitalize">
+                <span className="poppins-bold text-xl bg-background hover:bg-card/80 text-primary px-6 py-2 w-full h-fit rounded-md flex items-center justify-center hover:opacity-90 capitalize">
                   upload a file
                 </span>
               </Button>
@@ -328,12 +328,13 @@ export const EmptyUploadList = () => {
                 }
               }}
               value={urlInput}
-              placeholder="Enter A URL"
+              placeholder="Enter A URL..."
               className="border-none poppins-bold placeholder:text-primary text-xl poppins-regular p-6 rounded-md bg-background focus-visible:ring-theme-blue focus-visible:border-transparent pl-3 pr-12"
               onChange={(e) => setUrlInput(e.target.value)}
             />
             <Button
               onClick={scrapeUrl}
+              disabled={urlInput === ""}
               className={`rounded-full absolute top-1/2 right-2  -translate-y-1/2  aspect-square h-fit w-fit p-1 bg-theme-purple hover:bg-them-purple/70
               ${urlInput === "" ? "flex" : "flex"}
               

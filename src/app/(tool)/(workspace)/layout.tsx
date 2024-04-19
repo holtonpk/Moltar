@@ -7,7 +7,7 @@ import {Toaster} from "@/components/ui/toaster";
 import AuthModal from "@/components/auth/auth-modal";
 import {NavbarProvider} from "@/context/navbar-context";
 import {Button} from "@/components/ui/button";
-import NavBackground from "@/components/nav-background";
+import MobileBackground from "@/components/mobile-background";
 import {useNavbar} from "@/context/navbar-context";
 
 const Workspace = ({children}: {children: React.ReactNode}) => {
@@ -17,11 +17,11 @@ const Workspace = ({children}: {children: React.ReactNode}) => {
       <NavbarProvider>
         <UploadsProvider>
           <ProjectsProvider>
-            <div className="bg-background  flex h-screen overflow-hidden">
+            <div className="bg-background  flex h-fit md:h-screen md:overflow-hidden">
               <Navbar />
-              <div className="md:flex-grow w-full  overflow-hidden   relative h-screen flex-col flex  ">
-                <div className="md:hidden block">
-                  <NavBackground />
+              <div className="md:flex-grow w-full  h-fit md:overflow-hidden   relative md:h-screen flex-col flex  ">
+                <div className="md:hidden block ">
+                  <MobileBackground />
                 </div>
                 {children}
               </div>

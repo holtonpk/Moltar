@@ -22,6 +22,10 @@ export const YoutubeUpload = ({
       className={` w-[250px] group  h-fit flex flex-col  overflow-hidden  relative  border-border border-4 rounded-lg bg-border
 ${filterList && filterList.includes(file.id) ? "visible" : "hidden"} `}
     >
+      <button
+        onClick={() => goToNewProject(file)}
+        className="absolute z-20 top-0 left-0 h-full w-full "
+      />
       <div className="w-full aspect-[16/9] top-0 relative rounded-lg overflow-hidden">
         <img
           src={file.thumbnail}

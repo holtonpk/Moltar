@@ -52,7 +52,7 @@ export const Uploads = () => {
   return (
     <>
       {uploadedFile && showDialog && <PdfUploadDialog file={uploadedFile} />}
-      <div className=" flex flex-col items-center max-h-full overflow-scroll h-full relative p-4 md:p-0">
+      <div className=" flex flex-col items-center md:max-h-full overflow-scroll h-[calc(100vh-72px)] md:h-full relative p-4 md:p-0 z-40 ">
         <UploadDialog open={showUploadDialog} setIsOpen={setShowUploadDialog} />
         {uploadList && uploadList?.length > 0 && (
           <UploadHeader setShowUploadDialog={setShowUploadDialog} />

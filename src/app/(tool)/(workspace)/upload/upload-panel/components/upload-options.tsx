@@ -21,7 +21,7 @@ export const UploadPreview = ({
 
   return (
     <div
-      className={`pr-6 p-2   rounded-t-md rounded-b-none  absolute z-30 bg-card/90 max-h-[100%] bottom-0 overflow-hidden h-fit w-[95%] pl-2 left-1/2 -translate-x-1/2 transition-transform ${
+      className={`pr-6 p-2 hidden md:block  rounded-t-md rounded-b-none  absolute z-30 bg-card/90 max-h-[100%] bottom-0 overflow-hidden h-fit w-[95%] pl-2 left-1/2 -translate-x-1/2 transition-transform ${
         openOptions
           ? "translate-y-0"
           : "translate-y-full  group-hover:translate-y-0 "

@@ -78,12 +78,13 @@ const Chat = () => {
         </div>
       ) : (
         <>
-          <div className="w-full h-full   justify-between rounded-l-lg md:relative md:dark:bg-white/10 flex flex-col gap-0 items-center  p-0  ">
+          {/* desktop -------- */}
+          <div className="w-full h-full  md:flex hidden justify-between rounded-l-lg md:relative md:dark:bg-white/10 flex-col gap-0 items-center  p-0  ">
             <Header />
 
             <div
               ref={chatContainer}
-              className="flex-grow overflow-scroll p-6 pt-4 pb-[130px]  md:pb-[180px] w-full gap-4 flex flex-col"
+              className="flex-grow overflow-scroll p-6 pt-[76px] md:pt-4 pb-[130px]  md:pb-[180px] w-full gap-4 flex flex-col"
             >
               {project.chat.map((message: ChatLog, index: number) => (
                 <div key={index}>
@@ -98,14 +99,37 @@ const Chat = () => {
 
               {chatError && <ChatError />}
             </div>
-            <div className="md:hidden block h-fit bg-card/50 blurBack overflow-hidden w-full fixed  bottom-0 z-20 px-4 pb-2  pt-4">
+
+            <div className=" h-fit  overflow-hidden w-full absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
               <BigChatBox />
               <p className="text-[12px] text-muted-foreground text-center mt-2   poppins-regular">
                 Moltar can make mistakes. Consider checking important
                 information.
               </p>
             </div>
-            <div className="hidden md:block h-fit  overflow-hidden w-full absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
+          </div>
+          {/* mobile -------- */}
+
+          <div className="w-full h-fit  md:hidden  justify-between  rounded-l-lg  md:relative md:dark:bg-white/10 flex flex-col gap-0 items-center  p-0  ">
+            <Header />
+            <div
+              ref={chatContainer}
+              className="h-fit p-6 pt-[76px] md:pt-4 pb-[130px]  md:pb-[180px] w-full gap-4 flex flex-col"
+            >
+              {project.chat.map((message: ChatLog, index: number) => (
+                <div key={index}>
+                  {message.sender === "human" ? (
+                    <HumanMessage message={message.text} />
+                  ) : (
+                    <AiMessage message={message.text} />
+                  )}
+                </div>
+              ))}
+              {responseLoading && <AiMessageRender />}
+
+              {chatError && <ChatError />}
+            </div>
+            <div className="h-fit bg-card/50 blurBack overflow-hidden w-full fixed  bottom-0 z-20 px-4 pb-2  pt-4">
               <BigChatBox />
               <p className="text-[12px] text-muted-foreground text-center mt-2   poppins-regular">
                 Moltar can make mistakes. Consider checking important
@@ -193,7 +217,7 @@ const Header = () => {
   }
 
   return (
-    <div className=" w-full p-4 flex justify-center items-center  poppins-bold  h-16  z-30 relative border-b border-border dark:border-none dark:border-white  bg-primary/5 md:bg-card md:dark:bg-[#444748] ">
+    <div className=" w-full p-4 flex justify-center items-center   poppins-bold  h-16  z-30 fixed md:relative border-b border-border dark:border-none dark:border-white blurBack bg-primary/5 md:bg-card md:dark:bg-[#444748] ">
       {currentUser && currentUser?.uid && (
         <button
           className="absolute pr-4 left-4 top-1/2 -translate-y-1/2 text-primary hover:opacity-60"
@@ -205,7 +229,7 @@ const Header = () => {
       {openProject?.name ? (
         <button
           onClick={() => setOpenMenu(true)}
-          className="grid grid-cols-[16px_1fr] px-[35px] w-fit gap-2 items-center mx-auto justify-center hover:opacity-60 text-fade-in "
+          className="grid grid-cols-[16px_1fr] pl-[35px] pr-[0px] md:pr-[35px]  w-fit gap-2 items-center mx-auto justify-center hover:opacity-60 text-fade-in "
         >
           <div
             className="h-4 w-4 rounded-full"
@@ -422,7 +446,7 @@ const BigChatBox = () => {
 
   const {setShowLoginModal, currentUser} = useAuth()!;
 
-  const promptRef = React.useRef<HTMLTextAreaElement>(null);
+  const promptRef = React.useRef<HTMLInputElement>(null);
 
   const sendMessage = () => {
     console.log("chat", currentUser);
@@ -440,7 +464,7 @@ const BigChatBox = () => {
     promptRef.current!.value = "";
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault(); // Prevents inserting a new line
       sendMessage();
@@ -450,7 +474,7 @@ const BigChatBox = () => {
   return (
     <div className="w-full  h-fit">
       <div className="grid grid-cols-[1fr_42px] items-center  border-gradient p-[1px] md:p-[2px] shadow-xl ">
-        <textarea
+        <input
           ref={promptRef}
           placeholder="Enter your prompt here..."
           className="w-full p-2 rounded-l-lg h-[42px]  poppins-regular textarea-no-resize bg-background md:bg-card md:dark:bg-[#444748] "

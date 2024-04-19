@@ -272,25 +272,24 @@ export const PdfFileViewMobile = ({upload}: {upload: PDFUpload}) => {
 
   return (
     <>
-      <div className="flex flex-col  items-center justify-center h-fit  py-4 w-full   bg-primary/5   relative ">
-        <div className=" px-2 grid grid-cols-[36px_1fr] items-center h-fit justify-center relative z-10">
+      <div className="flex flex-col  items-center justify-center h-fit  py-4 pt-2 w-full   bg-primary/5   relative ">
+        <div className="w-full px-2 flex flex-col  h-fit  relative z-10">
           <LinkButton
             href={"/upload"}
             variant="ghost"
-            className=" z-20 text-theme-blue hover:text-theme-blue/60 p-0 "
+            className=" z-20 text-theme-blue hover:text-theme-blue/60 p-0 w-fit"
           >
             <Icons.chevronLeft className="h-6 w-6" />
+            back to uploads
           </LinkButton>
-          <div className="flex items-center justify-between w-full overflow-hidden  gap-4  ">
-            <span className="w-full overflow-hidden text-ellipsis whitespace-nowrap ">
-              {upload.title}
-            </span>
+          <div className="flex items-center justify-center w-full overflow-hidden  gap-4  ">
+            <span className="max-w-full  ">{upload.title}</span>
           </div>
         </div>
 
         <div className="w-screen h-[200px] mt-4 px-4    overflow-x-scroll relative z-10 flex   gap-3    ">
           <Document
-            className={"relative w-fit  h-[200px]  flex  gap-4   "}
+            className={"relative w-fit  h-[200px] mx-auto  flex  gap-4   "}
             file={upload.path}
             onLoadSuccess={onDocumentLoadSuccess}
             loading={
@@ -365,7 +364,7 @@ export const PdfFileViewMobile = ({upload}: {upload: PDFUpload}) => {
           </div>
           <button
             onClick={() => setShowExpandedView(false)}
-            className="z-10 absolute bg-primary/20 w-full h-full top-0 left-0 blurBack"
+            className="z-10 absolute bg-background/20 w-full h-full top-0 left-0 blurBack"
           />
         </div>
       )}
@@ -447,7 +446,7 @@ const MobilePDFPage = ({
         setSelectedPage(index + 1);
       }}
       id={`page-number-${index + 1}`}
-      className="h-[200px]  overflow-hidden  "
+      className="h-[200px] mx-auto  overflow-hidden  "
     >
       <Page
         // width={141.4}

@@ -136,7 +136,7 @@ const UploadsPanel = () => {
       setShowDeleteDialog={setShowDeleteDialog}
       setOpenRename={setOpenRename}
     >
-      <div className="   h-fit items-center  pb-20  bg-background  w-full absolute -top-2 ">
+      <div className="   h-fit items-center  pb-20  md:bg-background  w-full absolute -top-2 ">
         {youtubeUploads && youtubeUploads.length > 0 && (
           <UploadRow
             title="Youtube Videos"

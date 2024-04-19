@@ -31,7 +31,7 @@ export const PdfUpload = ({
     >
       <button
         onClick={() => goToNewProject(file)}
-        className="absolute  z-20 top-0 left-0 h-full w-full "
+        className="absolute z-20 top-0 left-0 h-full w-full "
       />
 
       <Document

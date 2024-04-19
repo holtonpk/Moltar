@@ -24,6 +24,10 @@ export const UrlUpload = ({
               filterList && filterList.includes(file.id) ? "visible" : "hidden"
             } `}
     >
+      <button
+        onClick={() => goToNewProject(file)}
+        className="absolute z-20 top-0 left-0 h-full w-full "
+      />
       <div className="relative w-full flex flex-col h-full z-10">
         <div className="grid grid-cols-[24px_1fr] gap-2 relative  group mx-auto rounded-t-lg overflow-x-hidden text-ellipsis items-end  max-w-full  z-10 bg-theme-blue/20 whitespace-nowrap p-2 pr-6">
           <img src={file.fav} className="h-6 w-6 rounded-md " />

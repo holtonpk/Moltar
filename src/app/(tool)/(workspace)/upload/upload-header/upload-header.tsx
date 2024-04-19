@@ -130,7 +130,7 @@ export const UploadHeader = ({
 
             setShowUploadDialog(true);
           }}
-          className=" flex md:hidden bg-theme-blue hover:bg-theme-blue/60 text-white w-full p-[1px] bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue"
+          className=" flex md:hidden bg-theme-blue hover:bg-theme-blue/60 text-primary w-full p-[1px] bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue"
         >
           <span className="flex items-center w-full bg-background rounded-md h-full justify-center ">
             New Upload

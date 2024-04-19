@@ -95,26 +95,27 @@ export const UploadDialog = ({
         }).then((res) => res.json());
 
         if (scrapeResponse.text) {
-          const tokenResponse = await fetch("/api/get-tokens", {
-            method: "POST",
-            body: JSON.stringify({str: scrapeResponse.text}),
-          }).then((res) => res.json());
+          // const tokenResponse = await fetch("/api/get-tokens", {
+          //   method: "POST",
+          //   body: JSON.stringify({str: scrapeResponse.text}),
+          // }).then((res) => res.json());
 
-          if (tokenResponse.isAcceptable) {
-            setScrapeText({
-              success: true,
-              text: scrapeResponse.text,
-              title: scrapeResponse.title,
-              favicon: scrapeResponse.favicon,
-            });
-            setOpenScrapeDialog(true);
-          } else {
-            setMaxSizeMessage({
-              title: "Sorry this website has too much for Moltar to read 😔 ",
-              description: "Try using a smaller page",
-            });
-            setOpenMaxSizeDialog(true);
-          }
+          // if (tokenResponse.isAcceptable) {
+          setScrapeText({
+            success: true,
+            text: scrapeResponse.text,
+            title: scrapeResponse.title,
+            favicon: scrapeResponse.favicon,
+          });
+          setOpenScrapeDialog(true);
+          // }
+          // else {
+          //   setMaxSizeMessage({
+          //     title: "Sorry this website has too much for Moltar to read 😔 ",
+          //     description: "Try using a smaller page",
+          //   });
+          //   setOpenMaxSizeDialog(true);
+          // }
         } else {
           setScrapeText({
             success: false,

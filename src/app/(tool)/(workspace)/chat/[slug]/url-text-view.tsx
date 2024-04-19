@@ -84,7 +84,15 @@ export default UrlTextView;
 
 export const UrlTextViewMobile = ({upload}: {upload: UrlScrapeUpload}) => {
   return (
-    <div className="w-full p-4 flex flex-col gap-4 bg-primary/5 items-center">
+    <div className="w-full p-4 flex flex-col gap-4 bg-primary/5 ">
+      <LinkButton
+        href={"/upload"}
+        variant="ghost"
+        className=" z-20 text-theme-blue hover:text-theme-blue/60 p-0 w-fit"
+      >
+        <Icons.chevronLeft className="h-6 w-6" />
+        back to uploads
+      </LinkButton>
       <div className="w-full   font-bold text-sm">{upload.title}</div>
 
       <div className="grid grid-cols-[48px_1fr] items-center gap-2 bg-background p-2 rounded-md border border-border">

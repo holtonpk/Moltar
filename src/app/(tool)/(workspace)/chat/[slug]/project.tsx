@@ -52,7 +52,7 @@ export const Project = ({projectData}: {projectData: ProjectType}) => {
   return (
     <>
       {loading ? (
-        <div className="flex flex-col items-center justify-center h-full w-full gap-4">
+        <div className="flex flex-col items-center justify-center h-full w-full gap-4 fixed md:relative ">
           <Icons.logo className="h-20 w-20 text-theme-blue" />
           {/* <Icons.spinner className="animate-spin h-10 w-10 text-theme-blue" /> */}
           <Progress
@@ -183,7 +183,7 @@ const MobileProject = ({
   const {project} = useChat()!;
 
   return (
-    <div className="md:hidden block  min-h-full   ">
+    <div className="md:hidden block  min-h-full h-screen  ">
       {(project?.chat === null || project?.chat?.length === 0) &&
         projectData && (
           <>
