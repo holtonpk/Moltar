@@ -89,15 +89,17 @@ export const Uploads = () => {
       </div>
       {/* {true && ( */}
       {uploadedFileLocal && isLoadingUpload && (
-        <div className="w-[95%] right-1/2 translate-x-1/2 md:-translate-x-0 md:w-fit z-40 md:right-4 md:bottom-4 bottom-4 absolute flex flex-col items-end gap-4">
-          <div className="h-fit p-4 px-6 w-full grid min-w-[300px] items-center gap-4 rounded-md bg-card shadow-lg  dark:bg-[#2F3233]  border border-border">
-            <span className="text-primary text-sm font-bold whitespace-nowrap overflow-hidden max-w-full text-ellipsis flex flex-row items-center gap-2">
+        <div className="w-[95%] top-4 md:top-auto  right-1/2 translate-x-1/2 md:-translate-x-0 md:w-fit z-40 md:right-4 md:bottom-4  absolute flex flex-col items-end gap-4">
+          <div className="h-fit p-4 px-6 w-full grid min-w-[300px] items-center gap-4 rounded-md bg-card/70 blurBack shadow-lg    border border-border">
+            <span className="text-primary text-sm font-bold whitespace-nowrap overflow-hidden max-w-full text-ellipsis grid grid-cols-[20px_1fr] items-center gap-2">
               {uploadProgress === 100 ? (
                 <Icons.check className="h-5 w-5 text-theme-green" />
               ) : (
                 <Icons.spinner className="h-5 w-5 animate-spin text-theme-blue" />
               )}
-              {uploadedFileLocal.name}
+              <span className="w-full overflow-hidden text-ellipsis">
+                {uploadedFileLocal.name}
+              </span>
             </span>
             <div className="flex items-center gap-2">
               <ProgressBlue

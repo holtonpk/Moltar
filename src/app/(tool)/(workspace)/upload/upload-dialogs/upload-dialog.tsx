@@ -52,9 +52,11 @@ export const UploadDialog = ({
       const url = new URL(urlInput);
       let scrapeResponse = null;
 
+      console.log("url === ", url.hostname);
+
       if (
         url.hostname === "www.youtube.com" ||
-        url.hostname === "https://m.youtube.com"
+        url.hostname === "m.youtube.com"
       ) {
         scrapeResponse = await fetch("/api/scrape-youtube", {
           method: "POST",

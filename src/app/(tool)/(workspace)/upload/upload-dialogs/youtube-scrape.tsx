@@ -114,7 +114,7 @@ export const YoutubeScrape = ({
                     later
                   </DialogDescription>
                 </DialogHeader>
-                <div className="h-[350px]  group relative overflow-hidden aspect-[16/9] border border-border rounded-md bg-background ">
+                <div className=" w-full   group relative overflow-hidden aspect-[16/9] border border-border rounded-md bg-background ">
                   <iframe
                     src={`https://www.youtube.com/embed/${scrapeResult.id}`}
                     className="relative z-20 w-full h-full"
