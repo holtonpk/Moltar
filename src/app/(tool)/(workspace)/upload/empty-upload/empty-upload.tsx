@@ -164,7 +164,7 @@ export const EmptyUploadList = () => {
 
   return (
     <>
-      <div className="flex bg-card flex-col w-full gap-4 items-center  pt-20   h-full p-6 shadow-2xl  relative z-10">
+      <div className="bg-card flex-col w-full gap-4 items-center  pt-20   h-full p-6 shadow-2xl md:flex hidden relative z-10">
         <div className="  border-border md:w-fit  rounded-lg  flex flex-col w-full   gap-6 items-center bg-card">
           <span className="font-bold text-3xl md:text-5xl mb-6 poppins-bold ">
             Let&apos;s get started!
@@ -255,6 +255,96 @@ export const EmptyUploadList = () => {
               </span>
               <Arrow2 className=" h-24 w-24  fill-theme-purple rotate-[110deg]  scale-y-[1]" />
             </div>
+          </div>
+          {/* <Button disabled className="w-full bg-theme-blue text-white" size="lg">
+            Start using Moltar
+          </Button> */}
+        </div>
+
+        {/* <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
+            {uploadQueue.map((file, i) => (
+              <div
+                key={i}
+                className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
+              >
+                <Icons.spinner className="h-5 w-5 animate-spin text-white" />
+                <span className="text-white font-bold">{file.name}</span>
+              </div>
+            ))}
+          </div> */}
+      </div>
+      <div className="bg-card flex-col w-full rounded-lg gap-4 items-center h-full p-6 shadow-2xl md:hidden flex relative z-10">
+        <div className="border-border rounded-lg  flex flex-col w-full h-full gap-8  items-center bg-card">
+          <span className="font-bold text-3xl poppins-regular ">
+            Let&apos;s get started!
+          </span>
+          {/* <span className="font-re text-xl">
+            First you&apos;ll need to upload a resource
+          </span> */}
+          <div className="w-full relative ">
+            <div className="flex items-center flex-col gap-2  rounded-lg   ">
+              <div className="flex relative flex-col gap-0 items-end text-theme-green">
+                <span className="font-bold text-xl hand-font text-center">
+                  Moltar can read any pdf for you! <br /> Just upload your pdf
+                  to
+                  <br />
+                  start leveraging moltar
+                </span>
+                <Arrow1 className="absolute  -bottom-2 right-0 translate-x-1/2  h-14 w-14  fill-theme-green -rotate-[40deg] " />
+              </div>
+              <Button
+                onClick={() => document.getElementById("selectedFile")?.click()}
+                className="text-primary text-sm bg-transparent  w-full bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue p-[1px] mt-4 shadow-lg h-fit"
+              >
+                <span className="poppins-bold text-xl bg-background hover:bg-card/80 text-white px-6 py-2 w-full h-fit rounded-md flex items-center justify-center hover:opacity-90 capitalize">
+                  upload a file
+                </span>
+              </Button>
+              <input
+                multiple
+                id="selectedFile"
+                type="file"
+                accept=".pdf"
+                onChange={onFileChange}
+                style={{display: "none"}}
+              />
+            </div>
+          </div>
+          <div className="   relative flex flex-col gap-0 items-start  text-theme-purple">
+            <span className="font-bold text-center text-xl hand-font">
+              Some ideas for URLs:
+              <br />
+              - News article
+              <br />- Blog post
+              <br />- Youtube video
+            </span>
+            <Arrow2 className=" h-14 w-14  fill-theme-purple rotate-[-40deg]  -scale-x-[1] absolute left-0 -translate-x-1/2  top-[60%] " />
+          </div>
+          <div className="w-full shadow-lg relative h-fit  rounded-md p-[1px] bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue ">
+            <Input
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  scrapeUrl();
+                }
+              }}
+              value={urlInput}
+              placeholder="Enter A URL"
+              className="border-none poppins-bold placeholder:text-primary text-xl poppins-regular p-6 rounded-md bg-background focus-visible:ring-theme-blue focus-visible:border-transparent pl-3 pr-12"
+              onChange={(e) => setUrlInput(e.target.value)}
+            />
+            <Button
+              onClick={scrapeUrl}
+              className={`rounded-full absolute top-1/2 right-2  -translate-y-1/2  aspect-square h-fit w-fit p-1 bg-theme-purple hover:bg-them-purple/70
+              ${urlInput === "" ? "flex" : "flex"}
+              
+              `}
+            >
+              {scraping ? (
+                <Icons.loader className="h-6 w-6 text-white animate-spin" />
+              ) : (
+                <Icons.arrowRight className="h-6 w-6 text-white" />
+              )}
+            </Button>
           </div>
           {/* <Button disabled className="w-full bg-theme-blue text-white" size="lg">
             Start using Moltar

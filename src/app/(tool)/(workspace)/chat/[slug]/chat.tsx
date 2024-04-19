@@ -83,7 +83,7 @@ const Chat = () => {
 
             <div
               ref={chatContainer}
-              className="flex-grow overflow-scroll p-6 pt-4 pb-[230px] md:pb-[180px] w-full gap-4 flex flex-col"
+              className="flex-grow overflow-scroll p-6 pt-4 pb-[130px]  md:pb-[180px] w-full gap-4 flex flex-col"
             >
               {project.chat.map((message: ChatLog, index: number) => (
                 <div key={index}>
@@ -98,7 +98,14 @@ const Chat = () => {
 
               {chatError && <ChatError />}
             </div>
-            <div className="h-fit  overflow-hidden w-full fixed md:absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
+            <div className="md:hidden block h-fit bg-card/50 blurBack overflow-hidden w-full fixed  bottom-0 z-20 px-4 pb-2  pt-4">
+              <BigChatBox />
+              <p className="text-[12px] text-muted-foreground text-center mt-2   poppins-regular">
+                Moltar can make mistakes. Consider checking important
+                information.
+              </p>
+            </div>
+            <div className="hidden md:block h-fit  overflow-hidden w-full absolute bottom-0 z-20  chat-box-bg-gradient px-4 pb-2  pt-6">
               <BigChatBox />
               <p className="text-[12px] text-muted-foreground text-center mt-2   poppins-regular">
                 Moltar can make mistakes. Consider checking important
@@ -311,7 +318,7 @@ const AiMessage = ({message}: {message: string}) => {
 
   return (
     <div className="bg p-[1px] shadow-lg rounded-[8px_8px_8px_0px] overflow-hidden  border-gradient-chat w-fit mr-auto">
-      <div className="max-w-full  w-fit rounded-[8px_8px_8px_0px] bg-background dark:bg-[#444748] border border-border    relative group prose">
+      <div className="max-w-full  w-fit rounded-[8px_8px_8px_0px] bg-background md:dark:bg-[#444748] border border-border    relative group prose">
         <ReactMarkdown
           className={"gap-2 p-4 px-6 flex flex-col items-start   "}
         >
@@ -356,7 +363,8 @@ const ChatBox = () => {
     ) {
       toastLong({
         title: "You've reached the limit without an account",
-        description: "Upgrade to continue chatting, don't worry it's free!",
+        description:
+          "Create an account to continue chatting, don't worry it's free!",
         variant: "blue",
       });
       return;
@@ -381,20 +389,20 @@ const ChatBox = () => {
 
   return (
     <div className="w-full p-0 pt-0  px-0 s ">
-      <div className="grid grid-cols-[1fr_42px] items-center  border-gradient  p-[4px] shadow-xl ">
+      <div className="grid grid-cols-[1fr_42px] items-center  border-gradient p-[1px] md:p-[4px] shadow-xl ">
         <input
           autoFocus
           id="prompt-input"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Enter your prompt here..."
-          className="w-full p-2 rounded-l-lg h-fit rounded-r-none   poppins-regular textarea-no-resize bg-card  "
+          className="w-full p-2 rounded-l-lg h-fit rounded-r-none   poppins-regular textarea-no-resize bg-background md:bg-card  "
           onKeyDown={handleKeyDown}
         />
         <button
           onClick={sendMessage}
           disabled={inputValue === ""}
-          className={`p-2 h-full w-[42px] flex items-center justify-center rounded-r-lg bg-card 
+          className={`p-2 h-full w-[42px] flex items-center justify-center rounded-r-lg bg-background md:bg-card 
           
           `}
         >
@@ -421,7 +429,8 @@ const BigChatBox = () => {
     if (chat && chat?.length >= 2 && (!currentUser || !currentUser?.uid)) {
       toastLong({
         title: "You've reached the limit without an account",
-        description: "Upgrade to continue chatting, don't worry it's free!",
+        description:
+          "Create an account to continue chatting, don't worry it's free!",
         variant: "blue",
       });
       setShowLoginModal(true);
@@ -440,16 +449,16 @@ const BigChatBox = () => {
 
   return (
     <div className="w-full  h-fit">
-      <div className="grid grid-cols-[1fr_42px] items-center  border-gradient  p-[2px] shadow-xl ">
+      <div className="grid grid-cols-[1fr_42px] items-center  border-gradient p-[1px] md:p-[2px] shadow-xl ">
         <textarea
           ref={promptRef}
           placeholder="Enter your prompt here..."
-          className="w-full p-2 rounded-l-lg h-[84px]  poppins-regular textarea-no-resize bg-card dark:bg-[#444748] "
+          className="w-full p-2 rounded-l-lg h-[42px]  poppins-regular textarea-no-resize bg-background md:bg-card md:dark:bg-[#444748] "
           onKeyDown={handleKeyDown}
         />
         <button
           onClick={sendMessage}
-          className=" p-2 h-[84px] w-[42px] flex items-center justify-center rounded-r-lg bg-card dark:bg-[#444748]"
+          className=" p-2 h-[42px] w-[42px] flex items-center justify-center rounded-r-lg bg-background md:bg-card md:dark:bg-[#444748]"
         >
           <Icons.arrowUp className="h-6 w-6 text-theme-green " />
         </button>
@@ -527,13 +536,13 @@ const PresetChat = () => {
             <motion.div className="w-full" variants={item} key={index}>
               <button
                 onClick={() => setPrompt(preset.prompt)}
-                className="border border-border hover:bg-primary/5 w-full rounded-lg group   p-2 md:p-4 flex flex-row items-center justify-between cursor-pointer"
+                className="border border-border hover:bg-primary/5 w-full rounded-lg group   p-4 md:p-4 flex flex-row items-center justify-between cursor-pointer"
               >
                 <div className="flex gap-3 w-fit items-center">
                   <div
                     className={`  aspect-square  p-1 md:p-2 rounded-md flex justify-center items-center ${preset.bgColor}`}
                   >
-                    <Icon className={`h-4 w-4 md:h-6 md:w-6 ${preset.color}`} />
+                    <Icon className={`h-5 w-5 md:h-6 md:w-6 ${preset.color}`} />
                   </div>
                   <h1 className=" capitalize text-[12px] md:text-lg">
                     {preset.title}

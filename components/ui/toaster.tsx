@@ -1,5 +1,5 @@
 "use client";
-
+import React, {useEffect, useState} from "react";
 import {
   Toast,
   ToastClose,
@@ -14,6 +14,13 @@ import {useToastLong} from "@/components/ui/use-toast-long";
 export function Toaster() {
   const {toasts} = useToast();
   const {toastsLong} = useToastLong();
+
+  // get screen width
+  const [width, setWidth] = useState<number>(0);
+
+  useEffect(() => {
+    setWidth(window.innerWidth);
+  }, [window.innerWidth]);
 
   return (
     <>
@@ -34,7 +41,7 @@ export function Toaster() {
         })}
         <ToastViewport />
       </ToastProvider>
-      <ToastProvider duration={30000}>
+      <ToastProvider duration={width > 768 ? 30000 : 5000}>
         {toastsLong.map(function ({id, title, description, action, ...props}) {
           return (
             <Toast key={id} {...props}>

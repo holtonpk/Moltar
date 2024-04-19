@@ -16,7 +16,8 @@ import {UserInfo} from "./user-info";
 import {useToast} from "@/components/ui/use-toast";
 import {useUploads} from "@/context/upload-context";
 import {useSelectedLayoutSegment} from "next/navigation";
-import {useChat} from "@/context/chat-context";
+import NavBackground from "@/components/nav-background";
+
 const MobileNav = () => {
   const [openMenu, setOpenMenu] = React.useState(false);
 
@@ -78,12 +79,14 @@ const MobileNav = () => {
   };
 
   return (
-    <div className="md:hidden w-full h-fit px-4 py-4  bg-card border-b border-border dark:bg-primary/5 grid grid-cols-[36px_1fr] items-center ">
+    <div className="md:hidden w-full h-fit px-4 py-4  bg-background border-b border-border  grid grid-cols-[36px_1fr] items-center ">
+      <NavBackground />
+
       <Sheet open={openMenu} onOpenChange={setOpenMenu}>
         <SheetTrigger asChild>
           <Button
             // onClick={() => setOpenMenu(!openMenu)}
-            className="h-fit aspect-square z-30 p-0 bg-transparent text-primary hover:bg-transparent hover:opacity-70"
+            className="h-fit aspect-square z-30 p-0 bg-transparent text-primary border border-border hover:opacity-70"
           >
             <Icons.menu className="h-6 w-6" />
           </Button>
@@ -103,26 +106,13 @@ const MobileNav = () => {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-      <span className="text-sm font-bold w-full justify-center flex capitalize">
-        {configInstruction()}
-      </span>
 
-      {/* <input
-        multiple
-        id="selectedFile"
-        type="file"
-        accept=".pdf"
-        onChange={onFileChange}
-        style={{display: "none"}}
-        className="bg-theme-blue hover:bg-theme-blue/60 text-white"
-      />
-
-      <Button
-        onClick={() => document.getElementById("selectedFile")?.click()}
-        className="aspect-square h-fit bg-transparent text-primary hover:bg-transparent hover:opacity-70"
-      >
-        <Icons.upload className="h-6 w-6" />
-      </Button> */}
+      <div className="flex items-center gap-2 w-fit mx-auto">
+        <Icons.logoSolid className="h-6 w-6" />
+        <span className="font-bold text-primary text-xl poppins-bold  leading-[30px] sfade-in  ">
+          moltar.ai
+        </span>
+      </div>
     </div>
   );
 };

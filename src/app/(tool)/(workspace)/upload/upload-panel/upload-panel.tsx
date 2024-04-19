@@ -95,7 +95,8 @@ const UploadsPanel = () => {
     ) {
       toastLong({
         title: "You've reached the limit without an account",
-        description: "Upgrade to continue chatting, don't worry it's free!",
+        description:
+          "Create an account to continue chatting, don't worry it's free!",
       });
       setShowLoginModal(true);
       return;

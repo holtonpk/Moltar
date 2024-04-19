@@ -1,6 +1,7 @@
 import React from "react";
 import {Uploads} from "./uploads";
 import {constructMetadata} from "@/lib/utils";
+import MobileNav from "../../components/navbar/mobile-nav";
 
 export const metadata = constructMetadata({
   title: "Upload - Moltar",
@@ -8,7 +9,12 @@ export const metadata = constructMetadata({
   image: "image/favicon.ico",
 });
 const Page = () => {
-  return <Uploads />;
+  return (
+    <>
+      <MobileNav />
+      <Uploads />
+    </>
+  );
 };
 
 export default Page;

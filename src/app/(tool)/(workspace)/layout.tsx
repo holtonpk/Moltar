@@ -6,8 +6,9 @@ import {UploadsProvider} from "@/context/upload-context";
 import {Toaster} from "@/components/ui/toaster";
 import AuthModal from "@/components/auth/auth-modal";
 import {NavbarProvider} from "@/context/navbar-context";
-import MobileNav from "../components/navbar/mobile-nav";
 import {Button} from "@/components/ui/button";
+import NavBackground from "@/components/nav-background";
+import {useNavbar} from "@/context/navbar-context";
 
 const Workspace = ({children}: {children: React.ReactNode}) => {
   return (
@@ -19,7 +20,9 @@ const Workspace = ({children}: {children: React.ReactNode}) => {
             <div className="bg-background  flex h-screen overflow-hidden">
               <Navbar />
               <div className="md:flex-grow w-full  overflow-hidden   relative h-screen flex-col flex  ">
-                <MobileNav />
+                <div className="md:hidden block">
+                  <NavBackground />
+                </div>
                 {children}
               </div>
               <AuthModal />

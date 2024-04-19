@@ -65,7 +65,7 @@ export const UploadHeader = ({
   const {currentUser, setShowLoginModal} = useAuth()!;
 
   return (
-    <div className="w-full p-2 rounded-md bg-transparent pb-0 z-20">
+    <div className="w-full p-2 rounded-md bg-transparent pb-0 z-20 py-0 md:py-2">
       <div className=" w-full     py-3 flex  items-center justify-between  gap-4">
         <Input
           onChange={onSearch}
@@ -99,7 +99,7 @@ export const UploadHeader = ({
               toastLong({
                 title: "You've reached the limit without an account",
                 description:
-                  "Upgrade to continue chatting, don't worry it's free!",
+                  "Create an account to continue chatting, don't worry it's free!",
               });
               setShowLoginModal(true);
               return;
@@ -107,10 +107,35 @@ export const UploadHeader = ({
 
             setShowUploadDialog(true);
           }}
-          className="bg-theme-blue hover:bg-theme-blue/60 text-white w-full  md:w-fit"
+          className="hidden md:flex bg-theme-blue hover:bg-theme-blue/60 text-white w-fit"
         >
           <Icons.add className="h-5 w-5 mr-2" />
           New Upload
+        </Button>
+        <Button
+          onClick={() => {
+            if (
+              uploadList &&
+              uploadList?.length > 0 &&
+              (!currentUser || !currentUser?.uid)
+            ) {
+              toastLong({
+                title: "You've reached the limit without an account",
+                description:
+                  "Create an account to continue chatting, don't worry it's free!",
+              });
+              setShowLoginModal(true);
+              return;
+            }
+
+            setShowUploadDialog(true);
+          }}
+          className=" flex md:hidden bg-theme-blue hover:bg-theme-blue/60 text-white w-full p-[1px] bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue"
+        >
+          <span className="flex items-center w-full bg-background rounded-md h-full justify-center ">
+            New Upload
+            <Icons.add className="h-5 w-5 " />
+          </span>
         </Button>
       </div>
     </div>

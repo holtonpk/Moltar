@@ -109,7 +109,7 @@ const RegisterForm = () => {
   }
 
   return (
-    <div className="   h-fit w-full  overflow-hidden border border-border rounded-2xl shadow-xl z-20 blurBack">
+    <div className="  h-fit w-full  overflow-hidden border border-border sm:rounded-2xl shadow-xl z-20 blurBack">
       <div className="flex flex-col space-y-2 text-center bg-card px-4 py-6 pt-8">
         <h1 className="text-2xl md:text-4xl font-semibold bg-gradient-to-r to-theme-green via-theme-blue from-theme-purple bg-clip-text text-transparent">
           Let&apos;s Get Started!

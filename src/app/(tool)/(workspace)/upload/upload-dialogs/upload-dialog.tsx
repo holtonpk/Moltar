@@ -162,7 +162,7 @@ export const UploadDialog = ({
               onClick={() => document.getElementById("selectedFile")?.click()}
               className="text-primary text-sm bg-transparent  w-full bg-gradient-to-l from-theme-purple via-theme-green to-theme-blue p-[2px] sm:hidden"
             >
-              <span className=" bg-card hover:bg-card/80 text-primary w-full h-full rounded-md flex items-center justify-center hover:opacity-90">
+              <span className="bg-background md:bg-card md:hover:bg-card/80 text-primary w-full h-full rounded-md flex items-center justify-center hover:opacity-90">
                 Click to upload a pdf
               </span>
             </Button>
