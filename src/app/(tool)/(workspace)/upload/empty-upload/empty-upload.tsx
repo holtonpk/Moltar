@@ -68,7 +68,10 @@ export const EmptyUploadList = () => {
       const url = new URL(urlInput);
       let scrapeResponse = null;
 
-      if (url.hostname === "www.youtube.com") {
+      if (
+        url.hostname === "www.youtube.com" ||
+        url.hostname === "https://m.youtube.com"
+      ) {
         scrapeResponse = await fetch("/api/scrape-youtube", {
           method: "POST",
           body: JSON.stringify({url: urlInput}),

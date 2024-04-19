@@ -478,7 +478,7 @@ const BigChatBox = () => {
           <input
             ref={promptRef}
             placeholder="Enter your prompt here..."
-            className="w-full h-full p-2 rounded-lg  poppins-regular textarea-no-resize bg-transparent "
+            className="w-full h-full p-2 rounded-l-lg  poppins-regular textarea-no-resize bg-transparent "
             onKeyDown={handleKeyDown}
           />
           <button
