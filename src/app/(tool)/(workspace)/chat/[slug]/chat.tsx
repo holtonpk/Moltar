@@ -473,19 +473,21 @@ const BigChatBox = () => {
 
   return (
     <div className="w-full  h-fit">
-      <div className="grid grid-cols-[1fr_42px] items-center  border-gradient p-[1px] md:p-[2px] shadow-xl ">
-        <input
-          ref={promptRef}
-          placeholder="Enter your prompt here..."
-          className="w-full p-2 rounded-l-lg h-fit  poppins-regular textarea-no-resize bg-background md:bg-card md:dark:bg-[#444748] "
-          onKeyDown={handleKeyDown}
-        />
-        <button
-          onClick={sendMessage}
-          className=" p-2 h-[42px] w-[42px] flex items-center justify-center rounded-r-lg bg-background md:bg-card md:dark:bg-[#444748]"
-        >
-          <Icons.arrowUp className="h-6 w-6 text-theme-green " />
-        </button>
+      <div className=" items-center  border-gradient p-[1px] md:p-[2px] shadow-xl ">
+        <div className="w-full h-fit rounded-lg grid grid-cols-[1fr_42px] bg-background md:bg-card md:dark:bg-[#444748]">
+          <input
+            ref={promptRef}
+            placeholder="Enter your prompt here..."
+            className="w-full h-full p-2 rounded-lg  poppins-regular textarea-no-resize bg-transparent "
+            onKeyDown={handleKeyDown}
+          />
+          <button
+            onClick={sendMessage}
+            className=" p-2 h-[42px] w-[42px] flex items-center justify-center rounded-r-lg bg-background md:bg-card md:dark:bg-[#444748]"
+          >
+            <Icons.arrowUp className="h-6 w-6 text-theme-green " />
+          </button>
+        </div>
       </div>
     </div>
   );

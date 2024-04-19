@@ -124,6 +124,8 @@ const PdfFileView = ({upload}: {upload: PDFUpload}) => {
     };
   }, [containerRef.current]); // Add any other dependencies that might affect the size
 
+  console.log("upload ****", upload.path, upload.id);
+
   return (
     <div className="flex flex-col  items-center justify-center h-full w-full  shadow-2xl relative ">
       <LinkButton
@@ -270,6 +272,8 @@ export const PdfFileViewMobile = ({upload}: {upload: PDFUpload}) => {
 
   const [showExpandedView, setShowExpandedView] = React.useState(false);
 
+  console.log("upload ****", upload.path, upload.id);
+
   return (
     <>
       <div className="flex flex-col  items-center justify-center h-fit  py-4 pt-2 w-full   bg-primary/5   relative ">
@@ -283,7 +287,7 @@ export const PdfFileViewMobile = ({upload}: {upload: PDFUpload}) => {
             back to uploads
           </LinkButton>
           <div className="flex items-center justify-center w-full overflow-hidden  gap-4  ">
-            <span className="max-w-full  ">{upload.title}</span>
+            <span className="max-w-full">{upload.title}</span>
           </div>
         </div>
 
