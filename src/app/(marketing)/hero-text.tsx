@@ -10,15 +10,20 @@ type HeaderProps = {
 const HeroText: React.FC = () => {
   return (
     <div className=" flex z-10 flex-col items-center gap-2 text-center ">
-      <div className="mx-auto mb-10  px-2.5 text-center flex items-center flex-col max-w-md sm:px-0">
+      <div className="mx-auto mb-10  px-2.5 text-center flex items-center flex-col max-w-lg sm:px-0">
         <h1 className=" mt-5 font-display capitalize text-3xl font-extrabold leading-[1.15] text-primary sm:text-5xl sm:leading-[1.15]">
           {/* <span className="mx-4 text-theme-blue">Never</span> */}
-          With <span className="mx-2 text-theme-blue">Moltar</span> <br />
-          You&apos;ll Never have to read again
+          {/* With <span className="mx-2 text-theme-blue">Moltar</span> <br />
+          You&apos;ll Never have to read again */}
+          Turn <span className="mx-2 text-theme-blue">hours</span> of homework
+          into <span className="mx-2 text-theme-blue">minutes</span>
         </h1>
         <h2 className="mt-5 text-muted-foreground sm:text-xl">
-          Need a 10 page document analyzed? An article read? Our AI model can do
-          it all and more!! Try it out for free below 👇
+          Simply upload any document or URL, Moltar, or Youtube video will
+          analyze the content, offering instant responses and insights to all
+          your questions.
+          <br />
+          Try it out for free below! 👇
         </h2>
 
         <div className="mx-auto mt-6 flex w-full flex-col md:flex-row md:max-w-fit gap-4 ">

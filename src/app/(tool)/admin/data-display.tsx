@@ -15,7 +15,7 @@ import Link from "next/link";
 import {collection, query, onSnapshot, getDocs} from "firebase/firestore";
 import {db} from "@/config/firebase";
 const DataDisplay = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
@@ -83,6 +83,7 @@ const DataDisplay = () => {
               <>
                 {data.map((d, i) => (
                   <div
+                    key={i}
                     onClick={() => setSelectedUser(d)}
                     className="w-full flex  border p-2 hover:bg-primary/5 cursor-pointer"
                   >
@@ -127,7 +128,7 @@ const SelectedUser = ({user}: {user: any}) => {
           <div className="font-bold  text-xl mt-4">Uploads</div>
           <div className="flex flex-col gap-2 mt-2 max-h-[200px] overflow-scroll border rounded-md">
             {user.uploads.map((upload: any) => (
-              <div className="flex gap-4 p-3 border border-y">
+              <div key={upload.id} className="flex gap-4 p-3 border border-y">
                 {upload.type}
                 <Link
                   href={upload?.path || upload?.url}
@@ -144,7 +145,7 @@ const SelectedUser = ({user}: {user: any}) => {
             {user.projects
               .filter((p: any) => p.name)
               .map((project: any) => (
-                <div className="flex gap-4 p-3 border-y">
+                <div key={project.name} className="flex gap-4 p-3 border-y">
                   {project?.name || "null"}
                 </div>
               ))}
