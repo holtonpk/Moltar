@@ -19,7 +19,7 @@ const HeroText: React.FC = () => {
           into <span className="mx-2 text-theme-blue">minutes</span>
         </h1>
         <h2 className="mt-5 text-muted-foreground sm:text-xl">
-          Simply upload any document or URL, Moltar, or Youtube video will
+          Simply upload any document, URL, or Youtube video and Moltar will
           analyze the content, offering instant responses and insights to all
           your questions.
           <br />
