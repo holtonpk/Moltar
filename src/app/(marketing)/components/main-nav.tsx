@@ -21,10 +21,10 @@ const mainNav = [
     title: "Features",
     href: "/#features",
   },
-  {
-    title: "Pricing",
-    href: "/pricing",
-  },
+  // {
+  //   title: "Pricing",
+  //   href: "/pricing",
+  // },
 ];
 
 export default function Nav() {
@@ -53,7 +53,7 @@ export default function Nav() {
               </span>
             </div>
 
-            {/* <nav className="hidden gap-6 md:flex ">
+            <nav className="hidden gap-6 md:flex ">
               {mainNav?.map((item, index) => (
                 <Link
                   key={index}
@@ -68,7 +68,7 @@ export default function Nav() {
                   {item.title}
                 </Link>
               ))}
-            </nav> */}
+            </nav>
           </div>
 
           <div className="hidden items-center space-x-6 sm:flex">
