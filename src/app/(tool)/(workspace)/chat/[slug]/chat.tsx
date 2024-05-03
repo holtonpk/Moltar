@@ -365,7 +365,7 @@ const AiMessage = ({message}: {message: string}) => {
   );
 };
 
-const HumanMessage = ({message}: {message: string}) => {
+export const HumanMessage = ({message}: {message: string}) => {
   return (
     <div className="max-w-[85%] w-fit rounded-[8px_8px_0px_8px] shadow-lg  border border-theme-blue bg-theme-blue/20 p-3 ml-auto ">
       {message}
