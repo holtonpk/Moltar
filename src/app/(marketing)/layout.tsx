@@ -12,7 +12,7 @@ export default async function MarketingLayout({
   children,
 }: MarketingLayoutProps) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <div className="flex min-h-screen h-fit  flex-col">
         <Nav />
         <MobileNav />

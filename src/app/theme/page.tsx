@@ -4,7 +4,7 @@ import {ModeToggle} from "@/components/ui/mode-toggle";
 import {Button} from "@/components/ui/button";
 const Page = () => {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <div className="flex flex-col gap-10 p-20 ">
         <ModeToggle />
         <div className="grid grid-cols-10 gap-4 p-3 text-[12px] rounded-lg ">

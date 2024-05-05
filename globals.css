@@ -496,3 +496,32 @@ input:focus {
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
 }
+
+.upload-scale {
+  animation: scale-up 0.2s linear forwards;
+  /* animation-delay: 0.2s; */
+}
+
+@keyframes scale-up {
+  0% {
+    transform: scale(1), translate(-50%, 0%);
+    top: 0%;
+  }
+  100% {
+    transform: scale(1.2) translate(-50%, -50%);
+    top: 70%;
+  }
+}
+
+/* Additional styles for positioning */
+.hover-card {
+  position: absolute;
+  z-index: 50;
+  /* overflow: hidden; */
+  /* Center vertically in the parent */
+  top: 0%;
+  left: 50%; /* Center horizontally in the parent */
+  transform: translate(-50%, 0%);
+  display: none;
+  transform-origin: 0% 50%; /* Set the transform origin */
+}

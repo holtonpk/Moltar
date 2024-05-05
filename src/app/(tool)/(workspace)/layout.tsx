@@ -12,7 +12,7 @@ import {useNavbar} from "@/context/navbar-context";
 
 const Workspace = ({children}: {children: React.ReactNode}) => {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <Toaster />
       <NavbarProvider>
         <UploadsProvider>

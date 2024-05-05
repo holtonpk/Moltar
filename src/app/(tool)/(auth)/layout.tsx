@@ -19,7 +19,7 @@ import Background from "@/src/app/(marketing)/components/background";
 export default function AuthLayout({children}: AuthLayoutProps) {
   return (
     // <AuthProvider>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <>
         <Link
           href="/"

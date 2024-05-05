@@ -29,10 +29,10 @@ export const UploadRow = ({
         </div>
         {title}
       </div>
-      <div className="w-full h-f relative   rounded-lg  overflow-hidden border  border-border shadow-lg">
+      <div className="w-full h-f relative   rounded-lg  ovserflow-hidden border  border-border shadow-lg">
         <div className="absolute w-20 h-full right-0 top-0 upload-row-edge-grad-right z-30 pointer-events-none" />
-        <div className="absolute w-10 h-full left-0 top-0 upload-row-edge-grad-left z-30 pointer-events-none" />
-        <ScrollArea
+        {/* <div className="absolute w-10 h-full left-0 top-0 upload-row-edge-grad-left z-30 pointer-events-none" /> */}
+        <div
           className={` w-full h-fit items-center    mx-auto   gap-4 bg-card  py-5  relative
         ${collapsed ? "md:flex grid grid-cols-1 " : "md:flex grid-cols-1 "}
         `}
@@ -40,11 +40,11 @@ export const UploadRow = ({
           <div className="w-fit flex gap-4 h-fit items-center px-6  z-10">
             {children}
           </div>
-          <ScrollBar2
+          {/* <ScrollBar2
             orientation="horizontal"
             className="z-30 w-[90%]  mx-auto  rounded-full mb-1"
-          />
-        </ScrollArea>
+          /> */}
+        </div>
       </div>
     </div>
   );

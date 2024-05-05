@@ -157,7 +157,6 @@ const UploadsPanel = () => {
             </>
           </UploadRow>
         )}
-
         {pdfUploads && pdfUploads.length > 0 && (
           <UploadRow
             title="PDFs"
@@ -170,6 +169,7 @@ const UploadsPanel = () => {
             ))}
           </UploadRow>
         )}
+
         {urlUploads && urlUploads.length > 0 && (
           <UploadRow
             title="Websites"
