@@ -525,3 +525,7 @@ input:focus {
   display: none;
   transform-origin: 0% 50%; /* Set the transform origin */
 }
+
+.break-words {
+  overflow-wrap: break-word;
+}

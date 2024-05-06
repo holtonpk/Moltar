@@ -10,6 +10,7 @@ export type PDFUpload = {
   title: string;
   path: string;
   text: string;
+  createdAt: Timestamp | FieldValue; // Allow both types
 };
 
 export type UrlScrapeUpload = {
@@ -19,6 +20,7 @@ export type UrlScrapeUpload = {
   fav: string;
   url: string;
   text: string;
+  createdAt: Timestamp | FieldValue; // Allow both types
 };
 
 export type YoutubeScrapeUpload = {
@@ -28,6 +30,7 @@ export type YoutubeScrapeUpload = {
   thumbnail: string;
   url: string;
   text: string;
+  createdAt: Timestamp | FieldValue; // Allow both types
 };
 
 export type LocalUploadType = {
