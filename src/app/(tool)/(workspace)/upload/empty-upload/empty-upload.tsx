@@ -351,23 +351,6 @@ export const EmptyUploadList = () => {
               )}
             </Button>
           </div>
-          <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-background border-border border">
-            <p className="text-lg text-center text-primary">
-              Create an account to save your chats, projects and so much more
-            </p>
-
-            <Button
-              onClick={() => {
-                setNewUser(true);
-                setShowLoginModal(true);
-              }}
-              className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
-            >
-              <span className="bg-background font-bold w-full h-full rounded-md flex items-center justify-center hover:opacity-80">
-                Sign up
-              </span>
-            </Button>
-          </div>
         </div>
       </div>
       <WebsiteScrape
