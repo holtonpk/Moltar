@@ -8,7 +8,7 @@ import {UrlScrapeResult, YoutubeScrapeResult} from "@/types";
 import {LucideProps} from "lucide-react";
 import {WebsiteScrape} from "../upload-dialogs/website-scrape";
 import {YoutubeScrape} from "../upload-dialogs/youtube-scrape";
-
+import {useAuth} from "@/context/user-auth";
 import MaxSizeDialog, {MaxSizeMessage} from "../upload-dialogs/max-size";
 
 export const EmptyUploadList = () => {
@@ -19,7 +19,6 @@ export const EmptyUploadList = () => {
     setUploadedFileLocal,
     setIsLoadingUpload,
   } = useUploads()!;
-  // const [uploadQueue, setUploadQueue] = React.useState<File[]>([]);
   const {toast} = useToast();
 
   const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,6 +163,8 @@ export const EmptyUploadList = () => {
     setOpenScrapeDialog(false);
     setOpenMaxSizeDialog(false);
   };
+
+  const {currentUser, setShowLoginModal, setNewUser} = useAuth()!;
 
   return (
     <>
@@ -356,10 +357,10 @@ export const EmptyUploadList = () => {
             </p>
 
             <Button
-              // onClick={() => {
-              //   setNewUser(true);
-              //   setShowLoginModal(true);
-              // }}
+              onClick={() => {
+                setNewUser(true);
+                setShowLoginModal(true);
+              }}
               className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
             >
               <span className="bg-background font-bold w-full h-full rounded-md flex items-center justify-center hover:opacity-80">
@@ -367,24 +368,8 @@ export const EmptyUploadList = () => {
               </span>
             </Button>
           </div>
-          {/* <Button disabled className="w-full bg-theme-blue text-white" size="lg">
-            Start using Moltar
-          </Button> */}
         </div>
-
-        {/* <div className=" z-40 right-4 bottom-4 absolute flex flex-col items-end gap-4">
-            {uploadQueue.map((file, i) => (
-              <div
-                key={i}
-                className="h-fit p-4 px-6 w-fit flex items-center gap-4 rounded-full  bg-theme-blue "
-              >
-                <Icons.spinner className="h-5 w-5 animate-spin text-white" />
-                <span className="text-white font-bold">{file.name}</span>
-              </div>
-            ))}
-          </div> */}
       </div>
-
       <WebsiteScrape
         open={openScrapeDialog}
         setIsOpen={setOpenScrapeDialog}

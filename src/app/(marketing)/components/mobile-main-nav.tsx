@@ -57,7 +57,7 @@ export default function MobileNav() {
         className="absolute inset-0 right-0 w-full bg-background"
         variants={sidebar}
       />
-      <motion.ul
+      <motion.div
         variants={variants}
         className="absolute grid w-full gap-3 px-10 py-16"
       >
@@ -94,7 +94,7 @@ export default function MobileNav() {
             Sign Up
           </LinkButton>
         </MenuItem>
-      </motion.ul>
+      </motion.div>
       <MenuToggle toggle={toggleOpen} isOpen={isOpen} />
     </motion.nav>
   );
@@ -153,9 +153,9 @@ const MenuItem = ({
   children?: ReactNode;
 }) => {
   return (
-    <motion.li variants={MenuItemVariants} className={className}>
+    <motion.span variants={MenuItemVariants} className={className}>
       {children}
-    </motion.li>
+    </motion.span>
   );
 };
 
