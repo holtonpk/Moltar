@@ -276,7 +276,7 @@ export const EmptyUploadList = () => {
             ))}
           </div> */}
       </div>
-      <div className="bg-card/70 blurBack flex-col w-full rounded-lg gap-4 items-center h-fit p-6 shadow-2xl md:hidden flex relative z-10">
+      <div className="bg-card/70 blurBack mt-4 flex-col w-full rounded-lg gap-4 items-center h-fit p-6 shadow-2xl md:hidden flex relative z-10">
         <div className="border-border rounded-lg  flex flex-col w-full h-full gap-8  items-center ">
           <span className="font-bold text-3xl poppins-regular ">
             Let&apos;s get started!
@@ -350,6 +350,23 @@ export const EmptyUploadList = () => {
               )}
             </Button>
           </div>
+          <div className="h-fit w-full  rounded-lg  flex flex-col gap-4 p-4 bg-background border-border border">
+            <p className="text-lg text-center text-primary">
+              Create an account to save your chats, projects and so much more
+            </p>
+
+            <Button
+              // onClick={() => {
+              //   setNewUser(true);
+              //   setShowLoginModal(true);
+              // }}
+              className="text-primary text-sm bg-transparent  w-full bg-gradient-to-b from-theme-purple via-theme-green to-theme-blue p-[2px]"
+            >
+              <span className="bg-background font-bold w-full h-full rounded-md flex items-center justify-center hover:opacity-80">
+                Sign up
+              </span>
+            </Button>
+          </div>
           {/* <Button disabled className="w-full bg-theme-blue text-white" size="lg">
             Start using Moltar
           </Button> */}
@@ -367,6 +384,7 @@ export const EmptyUploadList = () => {
             ))}
           </div> */}
       </div>
+
       <WebsiteScrape
         open={openScrapeDialog}
         setIsOpen={setOpenScrapeDialog}

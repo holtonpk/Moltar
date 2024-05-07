@@ -61,7 +61,11 @@ const SettingsPage = () => {
 
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button type="button" variant="secondary">
+                    <Button
+                      className="mt-2 md:mt-0"
+                      type="button"
+                      variant="secondary"
+                    >
                       Close
                     </Button>
                   </DialogClose>

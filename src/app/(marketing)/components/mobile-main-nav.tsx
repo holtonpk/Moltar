@@ -32,10 +32,6 @@ const mainNav = [
     title: "Features",
     href: "/#features",
   },
-  {
-    title: "Pricing",
-    href: "/pricing",
-  },
 ];
 
 const navItems = ["pricing", "changelog"];
@@ -65,20 +61,20 @@ export default function MobileNav() {
         variants={variants}
         className="absolute grid w-full gap-3 px-10 py-16"
       >
-        {/* {mainNav.map((item, i) => (
+        {mainNav.map((item, i) => (
           <div key={i} className="grid gap-3">
             <MenuItem>
               <Link
                 href={item.href}
                 onClick={() => toggleOpen()}
-                className="flex w-full font-semibold capitalize"
+                className="flex w-full font-semibold capitalize text-center text-theme-blue text-2xl rounded-md  p-3"
               >
                 {item.title}
               </Link>
             </MenuItem>
-            <MenuItem className="my-3 h-px w-full bg-gray-300" />
+            {/* <MenuItem className="my-3 h-px w-full bg-gray-300" /> */}
           </div>
-        ))} */}
+        ))}
 
         <MenuItem key="Login">
           <LinkButton

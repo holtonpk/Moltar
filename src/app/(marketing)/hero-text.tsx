@@ -15,8 +15,9 @@ const HeroText: React.FC = () => {
           {/* <span className="mx-4 text-theme-blue">Never</span> */}
           {/* With <span className="mx-2 text-theme-blue">Moltar</span> <br />
           You&apos;ll Never have to read again */}
-          Turn <span className="mx-2 text-theme-blue">hours</span> of homework
-          into <span className="mx-2 text-theme-blue">minutes</span>
+          Turn <span className="mx-1 md:mx-2 text-theme-blue">hours</span> of
+          homework into{" "}
+          <span className="mx-1 md:mx-2 text-theme-blue">minutes</span>
         </h1>
         <h2 className="mt-5 text-muted-foreground sm:text-xl">
           Simply upload any document, URL, or Youtube video and Moltar will
@@ -39,6 +40,17 @@ const HeroText: React.FC = () => {
               </span>
             </LinkButton>
           </div>
+
+          <LinkButton
+            size="lg"
+            href="/register"
+            className="w-full whitespace-nowrap  border border-primary bg-transparent md:hidden  hover:bg-background/60  justify-center md:justify-start"
+          >
+            <span className="flex items-center   gap-3 font-bold text-primary">
+              Sign Up
+              {/* <Icons.arrowRight className="w-5 h-5 inline-block text-primary group-hover:ml-6" /> */}
+            </span>
+          </LinkButton>
         </div>
       </div>
     </div>
