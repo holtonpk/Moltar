@@ -16,7 +16,7 @@ import {ChatLog} from "@/types";
 import {toast} from "@/components/ui/use-toast";
 import ReactMarkdown from "react-markdown";
 import {Input} from "@/components/ui/input";
-
+import {UserData} from "@/context/user-auth";
 const DataDisplay = () => {
   const [data, setData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
@@ -68,7 +68,7 @@ const DataDisplay = () => {
 
   const [totalUsers, setTotalUsers] = useState(0);
 
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<UserData | undefined>();
 
   // const totalPdfs = data.reduce((acc, user) => {
   //   return (
@@ -149,7 +149,13 @@ const DataDisplay = () => {
                     <div
                       key={i}
                       onClick={() => setSelectedUser(d)}
-                      className="w-full grid grid-cols-2 px-6 border p-2 hover:bg-primary/5 cursor-pointer"
+                      className={`w-full grid grid-cols-2 px-6 border p-2 hover:bg-primary/5 cursor-pointer
+                      ${
+                        selectedUser && selectedUser.uid === d.uid
+                          ? "bg-primary/10"
+                          : ""
+                      }
+                      `}
                     >
                       <div className="w-full text-left ">
                         {d?.firstName + " " + d?.lastName || "not signed in"}
@@ -234,7 +240,7 @@ const SelectedUser = ({user}: {user: any}) => {
     <div className="w-full border rounded-md  h-full relative overflow-scroll   ">
       {!user ? (
         <div className="w-full h-full flex justify-center items-center">
-          select a user to see data
+          select a user to see their data
         </div>
       ) : (
         <>
