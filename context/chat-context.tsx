@@ -110,9 +110,7 @@ export const ChatProvider = ({children, projectId}: Props) => {
         }/projects`,
         projectId
       );
-      setDoc(projectRef, project, {merge: true}).then(() => {
-        console.log("Document successfully written!");
-      });
+      setDoc(projectRef, project, {merge: true});
     };
     if (project) {
       saveProject();
@@ -244,9 +242,7 @@ export const ChatProvider = ({children, projectId}: Props) => {
       }/projects`,
       projectId
     );
-    await setDoc(projectRef, {name: newName}, {merge: true}).then(() => {
-      console.log("Document successfully updated!");
-    });
+    await setDoc(projectRef, {name: newName}, {merge: true});
   }
 
   async function ChangeProjectColor(color: string) {
@@ -258,9 +254,7 @@ export const ChatProvider = ({children, projectId}: Props) => {
       }/projects`,
       projectId
     );
-    await setDoc(projectRef, {color: color}, {merge: true}).then(() => {
-      console.log("Document successfully updated!");
-    });
+    await setDoc(projectRef, {color: color}, {merge: true});
   }
 
   async function generateProjectName(prompt: string, aiResponse: string) {

@@ -62,8 +62,7 @@ interface AuthContextType {
   logInWithGoogle: () => Promise<any>;
   logOut: () => Promise<void>;
   changeUserPassword: (currentPassword: string, newPassword: string) => any;
-  changeUserEmail: (currentPassword: string) => any;
-  // changeUserEmail: (currentPassword: string, newEmail: string) => any;
+  changeUserEmail: (currentPassword: string, newEmail: string) => any;
   changeUserDisplayName: (newName: string) => any;
   resetPassword: () => any;
   uploadProfilePicture: (file: File) => any;
@@ -173,7 +172,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         return {success: value};
       })
       .catch((error: any) => {
-        console.log("error((((", error);
         return {error: error.code};
       });
     return login;
@@ -275,9 +273,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     try {
       const unSubscribedUserRef = doc(db, "users", unSubscribedUserId);
       const unSubscribedUserSnap = await getDoc(unSubscribedUserRef);
-    } catch (error) {
-      console.log("Error getting unsubscribed user snapshot:", error);
-    }
+    } catch (error) {}
 
     try {
       const unSubscribedUserUploadsRef = collection(
@@ -294,9 +290,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
           await setDoc(newDocRef, docSnap.data());
         }
       }
-    } catch (error) {
-      console.log("Error copying unsubscribed user uploads:", error);
-    }
+    } catch (error) {}
 
     try {
       const unSubscribedUserProjectsRef = collection(
@@ -313,9 +307,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
           await setDoc(newDocRef, docSnap.data());
         }
       }
-    } catch (error) {
-      console.log("Error copying unsubscribed user projects:", error);
-    }
+    } catch (error) {}
 
     try {
       const unSubscribedUserRef = doc(db, "users", unSubscribedUserId);
@@ -430,27 +422,28 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }
   }
 
-  async function changeUserEmail(newEmail: string) {
-    // currentPassword: string
-    const currentPassword = "Dcsd142662";
+  async function changeUserEmail(newEmail: string, currentPassword: string) {
     if (!currentUser) return {error: "No user is signed in"};
     // Re-authenticate the user
-    console.log("currentPassword", currentPassword);
+
     const credential = EmailAuthProvider.credential(
       currentUser.email as string,
       currentPassword
     );
-    console.log("credential", credential);
+
     try {
-      if (!auth.currentUser) return {error: "No user is currently signed in"};
-      await reauthenticateWithCredential(auth.currentUser, credential);
+      try {
+        if (!auth.currentUser) return {error: "No user is currently signed in"};
+        await reauthenticateWithCredential(auth.currentUser, credential);
+      } catch (error) {
+        console.log("error", error);
+        return {error: "Current password is incorrect"};
+      }
+
       await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
       // Change the email
-
-      console.log("success");
       return {success: "Email updated successfully"};
     } catch (error) {
-      console.log("error", error);
       return {error: error};
     }
   }
@@ -477,9 +470,9 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   }
 
   async function VerifyEmail(code: string, uId: string) {
-    if (code !== verifyCode.current) {
-      return "error";
-    }
+    // if (code !== verifyCode.current) {
+    //   return "error";
+    // }
 
     try {
       const response = await fetch("/api/verify-email", {

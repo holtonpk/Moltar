@@ -63,7 +63,6 @@ export const ProjectsProvider = ({children}: Props) => {
   const displayedProjectsRef = useRef<ProjectType[]>([]);
 
   useEffect(() => {
-    // console.log("fetching projects", currentUser?.uid, unSubscribedUserId);
     const q = query(
       collection(
         db,
@@ -108,9 +107,7 @@ export const ProjectsProvider = ({children}: Props) => {
       }/projects`,
       id
     );
-    await setDoc(projectRef, {name: newName}, {merge: true}).then(() => {
-      console.log("Document successfully updated!");
-    });
+    await setDoc(projectRef, {name: newName}, {merge: true});
   }
 
   async function ChangeProjectColor(id: string, color: string) {
@@ -122,9 +119,7 @@ export const ProjectsProvider = ({children}: Props) => {
       }/projects`,
       id
     );
-    await setDoc(projectRef, {color: color}, {merge: true}).then(() => {
-      console.log("Document successfully updated!");
-    });
+    await setDoc(projectRef, {color: color}, {merge: true});
   }
 
   //  delete the project from firestore
@@ -137,9 +132,7 @@ export const ProjectsProvider = ({children}: Props) => {
         }/projects`,
         id
       )
-    ).then(() => {
-      console.log("Document successfully deleted!");
-    });
+    );
   }
 
   const values = {

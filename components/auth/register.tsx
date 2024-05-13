@@ -85,7 +85,6 @@ const RegisterForm = () => {
   }
 
   function handleLoginError(error: any): void {
-    console.log("error", error.message);
     toast({
       title: "Something went wrong.",
       description: `Please try again later. Error: ${error.message || error}`,

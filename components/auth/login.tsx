@@ -35,7 +35,6 @@ const Login = () => {
     const signInResult = await signIn(data.email, data.password);
 
     setIsLoading(false);
-    console.log("ress", signInResult);
     if (signInResult?.success) {
       setShowLoginModal(false);
       return;
@@ -81,7 +80,6 @@ const Login = () => {
   }
 
   function handleLoginError(error: any): void {
-    console.log("error", error.message);
     toast({
       title: "Something went wrong.",
       description: `Please try again later. Error: ${error.message || error}`,

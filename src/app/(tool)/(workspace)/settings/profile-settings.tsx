@@ -42,18 +42,28 @@ const Email = () => {
     currentUser?.email || ""
   );
 
+  const [passwordValue, setPasswordValue] = useState<string>("");
+
+  const [incorrectPassword, setIncorrectPassword] = useState(false);
+
   const handleSave = async () => {
     setIsLoading(true);
     if (emailValue !== currentUser?.email) {
-      await changeUserEmail(emailValue);
-      toast({
-        title: "Check your email",
-        description:
-          "We sent you a verify link. Be sure to check your spam too.",
-      });
+      const changeResponse = await changeUserEmail(emailValue, passwordValue);
+      if (changeResponse?.error) {
+        setIncorrectPassword(true);
+      } else {
+        setIncorrectPassword(false);
+        toast({
+          title: "Check your email",
+          description:
+            "We sent you a verify link. Be sure to check your spam too.",
+        });
+      }
     }
     setIsLoading(false);
   };
+  const PasswordRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="flex flex-col w-full border border-border rounded-md p-4 gap-2 relative pb-[72px]">
@@ -67,11 +77,31 @@ const Email = () => {
         type={"email"}
         className="bg-transparent border border-border w-[300px]"
       />
+      {incorrectPassword && (
+        <p className="text-sm text-destructive">
+          Incorrect password, please try again
+        </p>
+      )}
+      {emailValue !== currentUser?.email && (
+        <div className="w-[300px] relative">
+          <PasswordInput
+            value={passwordValue}
+            onChange={(e) => setPasswordValue(e.target.value)}
+            placeholder="Enter password to save"
+            className="bg-transparent border border-border w-[300px]"
+          />
+        </div>
+      )}
       <div className="w-full absolute bottom-0 left-0 h-14  border-t border-t-border bg-primary/5 flex px-6 justify-between items-center ">
         <p className="text-muted-foreground text-sm">
           We will email you to verify the change.
         </p>
-        <Button onClick={handleSave} size="sm" className="py-1">
+        <Button
+          disabled={emailValue == currentUser?.email}
+          onClick={handleSave}
+          size="sm"
+          className="py-1"
+        >
           {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
           Save
         </Button>
@@ -81,17 +111,16 @@ const Email = () => {
 };
 
 const Name = () => {
-  const nameRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const {currentUser, changeUserDisplayName} = useAuth()!;
+  const [nameValue, setNameValue] = useState<string>(
+    currentUser?.displayName || ""
+  );
 
   const handleSave = async () => {
     setIsLoading(true);
-    if (
-      nameRef.current?.value !== currentUser?.displayName &&
-      nameRef.current?.value !== undefined
-    ) {
-      await changeUserDisplayName(nameRef.current?.value);
+    if (nameValue !== currentUser?.displayName && nameValue !== undefined) {
+      await changeUserDisplayName(nameValue);
       toast({
         title: "Success",
         description: "Your name has been updated",
@@ -107,16 +136,23 @@ const Name = () => {
         Please enter your full name, or a display name you are comfortable with.
       </p>
       <Input
-        ref={nameRef}
+        value={nameValue}
+        onChange={(e) => setNameValue(e.target.value)}
         defaultValue={currentUser?.displayName || ""}
         type="text"
         className="bg-transparent border border-border w-[300px]"
       />
+
       <div className="w-full absolute bottom-0 left-0 h-14 border-t-border bg-primary/5 border-t flex px-6 justify-between items-center ">
         <p className="text-muted-foreground text-sm">
           Please use 32 characters at maximum.
         </p>
-        <Button onClick={handleSave} size="sm" className="py-1">
+        <Button
+          disabled={nameValue === currentUser?.displayName}
+          onClick={handleSave}
+          size="sm"
+          className="py-1"
+        >
           {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
           Save
         </Button>
@@ -190,17 +226,19 @@ const AvatarChange = () => {
 };
 
 const ChangePassword = () => {
-  const newPass = useRef<HTMLInputElement>(null);
-  const newPassConfirm = useRef<HTMLInputElement>(null);
-  const currentPass = useRef<HTMLInputElement>(null);
+  const [newPassValue, setNewPassValue] = useState<string>("");
+
+  const [newPassConfirmValue, setNewPassConfirmValue] = useState<string>("");
+
+  const [currentPassValue, setCurrentPassValue] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const {changeUserPassword, resetPassword, currentUser} = useAuth()!;
   const handleUpdatePassword = async () => {
     setIsLoading(true);
     if (
-      newPass.current?.value !== newPassConfirm.current?.value ||
-      newPass.current?.value === undefined ||
-      newPassConfirm.current?.value === undefined
+      newPassValue !== newPassConfirmValue ||
+      newPassValue === "" ||
+      newPassConfirmValue === ""
     ) {
       toast({
         title: "Error",
@@ -211,7 +249,7 @@ const ChangePassword = () => {
 
       return;
     }
-    if (currentPass.current?.value === undefined) {
+    if (currentPassValue === undefined) {
       toast({
         title: "Error",
         description: "Please enter your current password",
@@ -221,23 +259,19 @@ const ChangePassword = () => {
 
       return;
     }
-    const res = await changeUserPassword(
-      currentPass.current?.value,
-      newPass.current?.value
-    );
+    const res = await changeUserPassword(currentPassValue, newPassValue);
     setIsLoading(false);
 
     if (res?.error) {
-      console.log(res);
       toast({
         title: "Error",
         description: "there was an problem updating your password",
         variant: "destructive",
       });
     } else {
-      newPass.current.value = "";
-      newPassConfirm.current.value = "";
-      currentPass.current.value = "";
+      setNewPassValue("");
+      setNewPassConfirmValue("");
+      setCurrentPassValue("");
       toast({
         title: "Success",
         description: "Your password has been updated",
@@ -262,8 +296,6 @@ const ChangePassword = () => {
     }
   };
 
-  console.log("cu", currentUser);
-
   return (
     <div className="flex flex-col w-full border border-border rounded-md p-4 relative pb-[72px]">
       <label className="text-xl font-bold text-primary  ">Password</label>
@@ -274,20 +306,23 @@ const ChangePassword = () => {
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 w-full gap-4 justify-between">
             <PasswordInput
-              ref={newPass}
+              value={newPassValue}
+              onChange={(e) => setNewPassValue(e.target.value)}
               id="newPassword"
               placeholder="New password"
               className="border border-border"
             />
             <PasswordInput
-              ref={newPassConfirm}
+              value={newPassConfirmValue}
+              onChange={(e) => setNewPassConfirmValue(e.target.value)}
               id="newPasswordConfirm"
               placeholder="Confirm new password"
               className="border border-border"
             />
           </div>
           <PasswordInput
-            ref={currentPass}
+            value={currentPassValue}
+            onChange={(e) => setCurrentPassValue(e.target.value)}
             id="currentPassword"
             placeholder="Current password"
             className="border border-border"
@@ -308,7 +343,16 @@ const ChangePassword = () => {
         <p className="text-muted-foreground text-sm">
           We will email you to verify the change.
         </p>
-        <Button onClick={handleUpdatePassword} className="py-1" size="sm">
+        <Button
+          disabled={
+            currentPassValue === "" ||
+            newPassValue === "" ||
+            newPassConfirmValue === ""
+          }
+          onClick={handleUpdatePassword}
+          className="py-1"
+          size="sm"
+        >
           {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
           Save
         </Button>
