@@ -12,12 +12,21 @@ import {useDeleteAccountModal} from "@/src/app/(tool)/(workspace)/settings/delet
 
 import Image from "next/image";
 const Profile = () => {
+  const {currentUser} = useAuth()!;
+
+  const googleProvider =
+    currentUser?.providerData[0]?.providerId === "google.com";
+
   return (
     <div className="h-full w-full relative flex flex-col  gap-8 ">
       <AvatarChange />
       <Name />
-      <Email />
-      <AccountSettings />
+      {!googleProvider && (
+        <>
+          <Email />
+          <ChangePassword />
+        </>
+      )}
       <DeleteAccount />
     </div>
   );
@@ -28,15 +37,15 @@ export default Profile;
 const Email = () => {
   const {currentUser, changeUserEmail} = useAuth()!;
   const [isLoading, setIsLoading] = useState(false);
-  const emailRef = useRef<HTMLInputElement>(null);
+
+  const [emailValue, setEmailValue] = useState<string>(
+    currentUser?.email || ""
+  );
 
   const handleSave = async () => {
     setIsLoading(true);
-    if (
-      emailRef.current?.value !== currentUser?.email &&
-      emailRef.current?.value !== undefined
-    ) {
-      // await changeUserEmail(emailRef.current?.value);
+    if (emailValue !== currentUser?.email) {
+      await changeUserEmail(emailValue);
       toast({
         title: "Check your email",
         description:
@@ -53,8 +62,8 @@ const Email = () => {
         This is the email you use to login
       </p>
       <Input
-        ref={emailRef}
-        defaultValue={currentUser?.email || ""}
+        value={emailValue}
+        onChange={(e) => setEmailValue(e.target.value)}
         type={"email"}
         className="bg-transparent border border-border w-[300px]"
       />
@@ -180,12 +189,12 @@ const AvatarChange = () => {
   );
 };
 
-const AccountSettings = () => {
+const ChangePassword = () => {
   const newPass = useRef<HTMLInputElement>(null);
   const newPassConfirm = useRef<HTMLInputElement>(null);
   const currentPass = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const {changeUserPassword, resetPassword} = useAuth()!;
+  const {changeUserPassword, resetPassword, currentUser} = useAuth()!;
   const handleUpdatePassword = async () => {
     setIsLoading(true);
     if (
@@ -252,6 +261,8 @@ const AccountSettings = () => {
       });
     }
   };
+
+  console.log("cu", currentUser);
 
   return (
     <div className="flex flex-col w-full border border-border rounded-md p-4 relative pb-[72px]">

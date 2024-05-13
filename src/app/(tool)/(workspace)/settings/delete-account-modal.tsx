@@ -43,7 +43,7 @@ function DeleteAccountModal({
       setShowDeleteAccountModal(false);
     } else {
       setTimeout(() => {
-        router.push("/onboarding/register");
+        router.push("/register");
       }, 200);
     }
   }

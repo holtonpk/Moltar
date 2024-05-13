@@ -35,7 +35,6 @@ const EmailVerification = () => {
     setIsLoading(true);
     setIncorrectError(false);
     const res = await VerifyEmail(code, uId as string);
-    console.log("res", res);
     if (res == "error") {
       setIncorrectError(true);
       setIsLoading(false);

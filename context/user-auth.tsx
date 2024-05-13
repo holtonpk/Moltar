@@ -22,6 +22,7 @@ import {
   updatePassword,
   sendPasswordResetEmail,
   deleteUser,
+  verifyBeforeUpdateEmail,
 } from "firebase/auth";
 
 import {
@@ -61,7 +62,8 @@ interface AuthContextType {
   logInWithGoogle: () => Promise<any>;
   logOut: () => Promise<void>;
   changeUserPassword: (currentPassword: string, newPassword: string) => any;
-  changeUserEmail: (currentPassword: string, newEmail: string) => any;
+  changeUserEmail: (currentPassword: string) => any;
+  // changeUserEmail: (currentPassword: string, newEmail: string) => any;
   changeUserDisplayName: (newName: string) => any;
   resetPassword: () => any;
   uploadProfilePicture: (file: File) => any;
@@ -217,7 +219,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       const userRef = doc(db, "users", user.uid);
       try {
         await deleteDoc(userRef);
-        await deleteUser(user);
+        await deleteUser(auth.currentUser as FirebaseUser);
         return {success: "Account deleted successfully."};
       } catch (error) {
         return {success: "failed to delete account"};
@@ -411,11 +413,12 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   }
 
   async function changeUserDisplayName(newDisplayName: string) {
-    if (!currentUser) return {error: "No user is signed in"};
+    if (!auth.currentUser || !currentUser)
+      return {error: "No user is signed in"};
     try {
-      // await updateProfile(firebaseUser, {
-      //   displayName: newDisplayName,
-      // });
+      await updateProfile(auth.currentUser, {
+        displayName: newDisplayName,
+      });
       const userRef = doc(db, "users", currentUser.uid);
       await updateDoc(userRef, {
         firstName: newDisplayName.split(" ")[0],
@@ -427,7 +430,9 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }
   }
 
-  async function changeUserEmail(newEmail: string, currentPassword: string) {
+  async function changeUserEmail(newEmail: string) {
+    // currentPassword: string
+    const currentPassword = "Dcsd142662";
     if (!currentUser) return {error: "No user is signed in"};
     // Re-authenticate the user
     console.log("currentPassword", currentPassword);
@@ -437,11 +442,15 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     );
     console.log("credential", credential);
     try {
-      await reauthenticateWithCredential(currentUser, credential);
+      if (!auth.currentUser) return {error: "No user is currently signed in"};
+      await reauthenticateWithCredential(auth.currentUser, credential);
+      await verifyBeforeUpdateEmail(auth.currentUser, newEmail);
       // Change the email
-      await updateEmail(currentUser, newEmail);
+
+      console.log("success");
       return {success: "Email updated successfully"};
     } catch (error) {
+      console.log("error", error);
       return {error: error};
     }
   }

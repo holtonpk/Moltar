@@ -45,10 +45,10 @@ const RegisterForm = () => {
 
     if (createAccountResult?.success) {
       if (createAccountResult.user) {
-        await sendVerificationEmail(
-          createAccountResult.user?.displayName as string,
-          createAccountResult.user?.email as string
-        );
+        // await sendVerificationEmail(
+        //   createAccountResult.user?.displayName as string,
+        //   createAccountResult.user?.email as string
+        // );
         router.push(
           "register/verify-email?uid=" + createAccountResult?.user.uid
         );
