@@ -2,6 +2,7 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {NextResponse} from "next/server";
 import OpenAI from "openai";
 import {encodingForModel} from "js-tiktoken";
+import {dummyTranscript} from "../data";
 
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -73,22 +74,31 @@ async function mapReduce(prompt: string, text: string) {
   return resJson;
 }
 
-export async function GET() {
-  const prompt = "Create 5 questions to help me study";
-  const transcript =
-    "The following is a transcript of a podcast episode. The episode is about the history of the United States. The episode is hosted by a historian who is an expert on the subject. The episode covers the major events in the history of the United States, including the American Revolution, the Civil War, and the Civil Rights Movement. The episode also discusses the impact of these events on American society and culture. The episode is informative and engaging, and the host presents the information in a clear and engaging manner. The episode is well-researched and provides a comprehensive overview of the history of the United States.";
+// export async function GET() {
+//   const prompt = "Create 5 questions to help me study";
+//   const text = dummyTranscript;
 
-  try {
-    return NextResponse.json({
-      response: "",
-    });
-  } catch (error) {
-    console.log("error =========", error);
-    return NextResponse.json({
-      response: "Moltar isn't working right now. Please try again later.",
-    });
-  }
-}
+//   try {
+//     const completion = await openai.chat.completions.create({
+//       messages: [
+//         {
+//           role: "system",
+//           content: `Respond in a formatted response. As the author of this text im seeking your expertise in extracting insights related to the text.  I would like you to answer to following prompt: ${prompt}. Here is the text:\n\n${text}`,
+//         },
+//       ],
+//       model: "gpt-3.5-turbo",
+//     });
+//     return NextResponse.json({
+//       success: true,
+//       response: completion.choices[0].message.content,
+//     });
+//   } catch (error) {
+//     console.log("error =========", error);
+//     return NextResponse.json({
+//       response: error,
+//     });
+//   }
+// }
 
 async function getTokenLength(text: string) {
   const encodings = await encodingForModel("gpt-3.5-turbo");

@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const {prompt, text} = await req.json();
   try {
     const model = new ChatOpenAI({
-      model: "gpt-4-turbo",
+      model: "gpt-4o",
       apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     });
 
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
       options?: {
         config?: BaseCallbackConfig;
       },
-      tokenMax = 4000
+      tokenMax = 40000
     ) => {
       const editableConfig = options?.config;
       let docs = documents;
@@ -143,25 +143,30 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
+  const prompt = "Create a detailed summary";
+  const text = dummyTranscript;
+
+  // create a timer to track the duration of the request
+
+  const start = Date.now();
+
   try {
     const model = new ChatOpenAI({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o",
       apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     });
 
     // Define prompt templates for document formatting, summarizing, collapsing, and combining
     const documentPrompt = PromptTemplate.fromTemplate("{pageContent}");
 
-    const question = "Create 5 questions to help me study";
-
     const summarizePrompt = PromptTemplate.fromTemplate(
-      `As the author of this text im seeking your expertise in extracting insights related to the text. i would like you to answer to following prompt: ${question}. Here is the manuscript for text:\n\n{context}`
+      `As the author of this text im seeking your expertise in extracting insights related to the text. i would like you to answer to following prompt: ${prompt}. Here is the text:\n\n{context}`
     );
     const collapsePrompt = PromptTemplate.fromTemplate(
-      `Collapse this content while retaining the required information to respond to following prompt:${question} content:\n\n{context}`
+      `Collapse this content while still including important ideas from the to answer the question:${prompt} content:\n\n{context}`
     );
     const combinePrompt = PromptTemplate.fromTemplate(
-      `Respond in a formatted response. Combine these responses to best respond to following prompt:${question} :\n\n{context}`
+      `Respond in a formatted response. Combine these to best answer the question:${prompt} :\n\n{context}`
     );
 
     // Wrap the `formatDocument` util so it can format a list of documents
@@ -201,7 +206,7 @@ export async function GET() {
       options?: {
         config?: BaseCallbackConfig;
       },
-      tokenMax = 26385
+      tokenMax = 40000
     ) => {
       const editableConfig = options?.config;
       let docs = documents;
@@ -214,7 +219,6 @@ export async function GET() {
         docs = await Promise.all(
           splitDocs.map((doc) => collapseDocs(doc, collapseChain.invoke))
         );
-        console.log("collapseCount", collapseCount);
         collapseCount += 1;
       }
       return docs;
@@ -244,48 +248,22 @@ export async function GET() {
       reduceChain,
     ]).withConfig({runName: "Map reduce"});
     // Split the text into documents and process them with the map-reduce chain
+    const docs = text.split("\n\n").map(
+      (pageContent: string) =>
+        new Document({
+          pageContent,
+          metadata: {
+            source: "https://www.youtube.com/watch?v=1X_KdkoGxSs",
+          },
+        })
+    );
 
-    const splitter = new TokenTextSplitter({
-      chunkSize: 1600,
-      chunkOverlap: 1,
-    });
-
-    const output = await splitter.createDocuments([dummyTranscript]);
-
-    let outputs = [];
-
-    for (const doc of output) {
-      const result = await mapReduceChain.invoke([doc]);
-      outputs.push(result);
-    }
-
-    // create a final response with the outputs
-
-    const docs = outputs
-      .join(" ")
-      .split("\n\n")
-      .map(
-        (pageContent: string) =>
-          new Document({
-            pageContent,
-            metadata: {
-              source: "https://www.youtube.com/watch?v=1X_KdkoGxSs",
-            },
-          })
-      );
-
-    const combineChain = RunnableSequence.from([
-      {context: formatDocs},
-      combinePrompt,
-      model,
-      outputParser,
-    ]);
-
-    const result = await combineChain.invoke(docs);
+    const result = await mapReduceChain.invoke(docs);
 
     return NextResponse.json({
       success: true,
-      result,
+      duration: Math.round((Date.now() - start) / 1000),
+      response: result,
     });
   } catch (error: any) {
     return NextResponse.json({
