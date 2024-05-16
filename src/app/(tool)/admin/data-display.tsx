@@ -10,13 +10,25 @@ import {
   onSnapshot,
   getDocs,
   Timestamp,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
+import {deleteUser} from "firebase/auth";
 import {db} from "@/config/firebase";
 import {ChatLog} from "@/types";
 import {toast} from "@/components/ui/use-toast";
 import ReactMarkdown from "react-markdown";
 import {Input} from "@/components/ui/input";
 import {UserData} from "@/context/user-auth";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 const DataDisplay = () => {
   const [data, setData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
@@ -131,12 +143,12 @@ const DataDisplay = () => {
             />
           </div>
           <div className="border border-border rounded-lg w-full flex flex-col ">
-            <div className="w-full grid grid-cols-2 px-6  p-2 bg-primary/5">
+            <div className="w-full grid grid-cols-[225px_225px_1fr_1fr] px-6  p-2 bg-primary/5">
               {/* <div className="w-[350px]">id</div> */}
               <div className="w-full">Name</div>
               <div className="w-full">email</div>
-              {/* <div className="w-[200px]">total projects</div> */}
-              {/* <div className="w-[200px]">total uploads</div> */}
+              <div className="w-full flex justify-center">total projects</div>
+              <div className="w-full flex justify-center">total uploads</div>
             </div>
             <div className="h-[500px] w-full flex flex-col overflow-scroll ">
               {loading ? (
@@ -146,32 +158,12 @@ const DataDisplay = () => {
               ) : (
                 <>
                   {filteredData.map((d, i) => (
-                    <div
+                    <UserRow
+                      user={d}
+                      selectedUser={selectedUser}
+                      setSelectedUser={setSelectedUser}
                       key={i}
-                      onClick={() => setSelectedUser(d)}
-                      className={`w-full grid grid-cols-2 px-6 border p-2 hover:bg-primary/5 cursor-pointer
-                      ${
-                        selectedUser && selectedUser.uid === d.uid
-                          ? "bg-primary/10"
-                          : ""
-                      }
-                      `}
-                    >
-                      <div className="w-full text-left ">
-                        {d?.firstName + " " + d?.lastName || "not signed in"}
-                      </div>
-                      <div className="w-full">
-                        {d?.email || "not signed in"}
-                      </div>
-                      {/* <div className="w-[200px]">
-                        {d?.projects.filter((p: any) => p.name).length === 0
-                          ? "--"
-                          : d?.projects.filter((p: any) => p.name).length}
-                      </div>
-                      <div className="w-[200px]">
-                        {d?.uploads.length === 0 ? "--" : d?.uploads.length}
-                      </div> */}
-                    </div>
+                    />
                   ))}
                 </>
               )}
@@ -179,8 +171,87 @@ const DataDisplay = () => {
           </div>
         </div>
         <div className="relative flex-grow  h-full max-h-screen overflow-hidden">
-          <SelectedUser user={selectedUser} />
+          <SelectedUser user={selectedUser} setSelectedUser={setSelectedUser} />
         </div>
+      </div>
+    </div>
+  );
+};
+
+const UserRow = ({
+  user,
+  selectedUser,
+  setSelectedUser,
+}: {
+  user: UserData;
+  selectedUser: UserData | undefined;
+  setSelectedUser: React.Dispatch<React.SetStateAction<UserData | undefined>>;
+}) => {
+  const [userData, setUserData] = useState<any>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) return;
+      const projectsQ = query(collection(db, `users/${user.uid}/projects`));
+
+      const projectSnapshot = await getDocs(projectsQ);
+      const projects = projectSnapshot.docs.map((doc) => doc.data());
+
+      const uploadsQ = query(
+        collection(db, `users/${user.uid}/uploads`) // Corrected the path to uploads
+      );
+
+      const querySnapshot = await getDocs(uploadsQ);
+      const uploads = querySnapshot.docs.map((doc) => doc.data());
+      setUserData({
+        projects: projects,
+        uploads: uploads,
+      });
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(userData);
+
+  return (
+    <div
+      onClick={() => setSelectedUser(user)}
+      className={`w-full grid grid-cols-[225px_225px_1fr_1fr] px-6 border p-2 hover:bg-primary/5 cursor-pointer
+                      ${
+                        selectedUser && selectedUser.uid === user.uid
+                          ? "bg-primary/10"
+                          : ""
+                      }
+                      `}
+    >
+      <div className="w-full text-left ">
+        {user?.firstName + " " + user?.lastName || "not signed in"}
+      </div>
+      <div className="w-full">{user?.email || "not signed in"}</div>
+
+      <div className="w-full flex justify-center">
+        {loading ? (
+          <Icons.spinner className="animate-spin h-5 w-5 mx-auto" />
+        ) : (
+          <>
+            {userData?.projects.filter((p: any) => p.name).length === 0
+              ? "--"
+              : userData?.projects.filter((p: any) => p.name).length}
+          </>
+        )}
+      </div>
+      <div className="w-full flex justify-center">
+        {loading ? (
+          <Icons.spinner className="animate-spin h-5 w-5 mx-auto" />
+        ) : (
+          <>
+            {userData?.uploads.length === 0 ? "--" : userData?.uploads.length}
+          </>
+        )}
       </div>
     </div>
   );
@@ -188,7 +259,13 @@ const DataDisplay = () => {
 
 export default DataDisplay;
 
-const SelectedUser = ({user}: {user: any}) => {
+const SelectedUser = ({
+  user,
+  setSelectedUser,
+}: {
+  user: UserData | undefined;
+  setSelectedUser: React.Dispatch<React.SetStateAction<UserData | undefined>>;
+}) => {
   const [selectedChat, setSelectedChat] = useState<ProjectType | undefined>(
     undefined
   );
@@ -211,6 +288,7 @@ const SelectedUser = ({user}: {user: any}) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user) return;
       setLoading(true);
       const projectsQ = query(collection(db, `users/${user.uid}/projects`));
 
@@ -254,6 +332,10 @@ const SelectedUser = ({user}: {user: any}) => {
                 <>
                   {!selectedChat ? (
                     <div className="flex flex-col p-4">
+                      <DeleteUser
+                        user={user}
+                        setSelectedUser={setSelectedUser}
+                      />
                       <div className="font-bold text-xl">
                         {user?.firstName + " " + user?.lastName ||
                           "not signed in"}
@@ -404,6 +486,67 @@ const SelectedUser = ({user}: {user: any}) => {
         </>
       )}
     </div>
+  );
+};
+
+const DeleteUser = ({
+  user,
+  setSelectedUser,
+}: {
+  user: UserData | undefined;
+  setSelectedUser: React.Dispatch<React.SetStateAction<UserData | undefined>>;
+}) => {
+  const [open, setOpen] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const onDelete = async () => {
+    if (!user) return;
+    const userLocal = user;
+    setLoading(true);
+    toast({
+      title: "User deleted",
+      variant: "destructive",
+    });
+    await deleteDoc(doc(db, `users/${userLocal.uid}`));
+    // await deleteUser(userLocal);
+    setSelectedUser(undefined);
+    setLoading(false);
+    setOpen(false);
+    toast({
+      title: "User deleted",
+      variant: "destructive",
+    });
+  };
+
+  return (
+    <>
+      <Button
+        className="absolute w-fit right-4 top-4"
+        onClick={() => setOpen(true)}
+        variant={"destructive"}
+      >
+        Delete User
+      </Button>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent className="dark">
+          <AlertDialogTitle className="text-white">
+            Are you sure you want to delete this user?
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone.
+          </AlertDialogDescription>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel className="text-white">Cancel</AlertDialogCancel>
+            <Button onClick={onDelete} className="" variant={"destructive"}>
+              {loading && <Icons.spinner className="animate-spin h-5 w-5" />}
+              Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 
