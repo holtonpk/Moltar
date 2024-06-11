@@ -33,7 +33,6 @@ const LoginForm = () => {
     const signInResult = await signIn(data.email, data.password);
 
     setIsLoading(false);
-    console.log("ress", signInResult);
     if (signInResult?.success) {
       router.push("/upload");
     }
@@ -85,8 +84,9 @@ const LoginForm = () => {
     try {
       setIsGoogleLoading(true);
       const createAccountResult = await logInWithGoogle();
-
-      if (createAccountResult.error) {
+      if (createAccountResult.success) {
+        router.push("/upload");
+      } else if (createAccountResult.error) {
         handleLoginError(createAccountResult.error);
       }
     } catch (error: any) {
